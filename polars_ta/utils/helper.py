@@ -1,8 +1,26 @@
+"""
+以下是在github issues中 @cmdlineluser 提供的 注册命名空间 方案
+
+https://github.com/pola-rs/polars/issues/9261
+
+本人做了一定的调整。使用方法如下
+
+expr.ta.func(..., schema=None, skip_nan=False, output_idx=None)
+
+schema: list or tuple
+    返回为多列时，会组装成struct，可以提前设置子列的名字
+skip_nan: bool
+    是否跳过空值。可以处理停牌无数据的问题，但会降低运行速度
+output_idx: int
+    多列输出时，选择只输出其中一列
+
+其它参数按**位置参数**和**命名参数**输入皆可
+"""
 import numpy as np
 import polars as pl
 
 
-def func_wrap_mn(func, cols, *args, schema, skip_nan, **kwargs):
+def func_wrap_mn(func, cols, *args, schema=None, skip_nan=False, output_idx=None, **kwargs):
     """多输入多输出，兼容一输入一输出
 
     Parameters
@@ -12,6 +30,7 @@ def func_wrap_mn(func, cols, *args, schema, skip_nan, **kwargs):
     args
     schema
     skip_nan
+    output_idx
     kwargs
 
     Returns
@@ -46,9 +65,13 @@ def func_wrap_mn(func, cols, *args, schema, skip_nan, **kwargs):
         result = func(*_cols, *args, **kwargs)
 
     if isinstance(result, tuple):
-        # pl.struct(['A').ta.BBANDS
-        # you need alias outside, finally unnest
-        return pl.DataFrame(result, schema=schema).to_struct('')
+        if output_idx is None:
+            # pl.struct(['A').ta.BBANDS
+            # you need alias outside, finally unnest
+            return pl.DataFrame(result, schema=schema).to_struct('')
+        # output only one column
+        if 0 <= output_idx < len(result):
+            return pl.Series(result[output_idx])
     elif not isinstance(result, pl.Series):
         # pl.col('A').bn.move_rank
         return pl.Series(result)
@@ -57,7 +80,7 @@ def func_wrap_mn(func, cols, *args, schema, skip_nan, **kwargs):
         return result
 
 
-def func_wrap_11(func, cols, *args, schema, skip_nan, **kwargs):
+def func_wrap_11(func, cols, *args, schema=None, skip_nan=False, output_idx=None, **kwargs):
     """一输入，一输出。处理速度能更快一些"""
     _cols = cols
 
@@ -102,9 +125,9 @@ class FuncHelper:
         _wrap = object.__getattribute__(self, '_wrap')
         _func = getattr(_lib, name)
         return (
-            lambda *args, schema=None, skip_nan=False, **kwargs:
+            lambda *args, schema=None, skip_nan=False, output_idx=None, **kwargs:
             _expr.map_batches(
-                lambda cols: _wrap(_func, cols, *args, schema=schema, skip_nan=skip_nan, **kwargs)
+                lambda cols: _wrap(_func, cols, *args, schema=schema, skip_nan=skip_nan, output_idx=output_idx, **kwargs)
             )
         )
 

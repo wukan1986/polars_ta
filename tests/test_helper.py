@@ -1,6 +1,10 @@
+import numpy as np
+import polars as pl
 import talib
 
-from polars_ta.helper import *
+from polars_ta.utils.helper import TaLibHelper
+
+_ = TaLibHelper
 
 
 class TestDemoClass:

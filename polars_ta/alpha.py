@@ -37,7 +37,20 @@ def neutralize_demean(x: pl.Expr) -> pl.Expr:
     return x - x.mean()
 
 
-def neutralize_residual(cols: Sequence[pl.Series]) -> pl.Series:
+def neutralize_residual_simple(y: pl.Expr, x: pl.Expr) -> pl.Expr:
+    # https://stackoverflow.com/a/74906705/1894479
+    # 一元回归时，这个版本更快，不需再补充常量1
+    # e_i = y_i - a - bx_i
+    #     = y_i - ȳ + bx̄ - bx_i
+    #     = y_i - ȳ - b(x_i - x̄)
+    x_demeaned = x - x.mean()
+    y_demeaned = y - y.mean()
+    x_demeaned_squared = x_demeaned.pow(2)
+    beta = x_demeaned.dot(y_demeaned) / x_demeaned_squared.sum()
+    return y_demeaned - beta * x_demeaned
+
+
+def neutralize_residual_multiple(cols: Sequence[pl.Series]) -> pl.Series:
     # https://stackoverflow.com/a/74906705/1894479
     # 比struct.unnest要快一些
     cols = [c.to_numpy() for c in cols]

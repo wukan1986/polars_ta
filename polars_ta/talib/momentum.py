@@ -1,6 +1,6 @@
 import polars as pl
 
-from polars_ta.overlap import SMA, EMA
+from polars_ta.talib.overlap import SMA, EMA
 
 
 def MOM(close: pl.Expr, timeperiod: int = 10) -> pl.Expr:
@@ -27,7 +27,12 @@ def WILLR(high: pl.Expr, low: pl.Expr, close: pl.Expr, timeperiod: int = 14) -> 
 
     Notes
     -----
-    talib.WILLR版相当于多乘了-100
+    talib.WILLR版相当于多乘了-100，但个人认为没有必要
+
+    References
+    ----------
+    https://www.investopedia.com/terms/w/williamsr.asp
+    https://school.stockcharts.com/doku.php?id=technical_indicators:williams_r
 
     """
     return (high.rolling_max(timeperiod) - close) / (high.rolling_max(timeperiod) - low.rolling_min(timeperiod))
@@ -76,3 +81,10 @@ def MACD_macdhist(close: pl.Expr, fastperiod: int = 12, slowperiod: int = 26, si
     macd = MACD_macd(close, fastperiod, slowperiod)
     signal = EMA(macd, signalperiod)
     return macd - signal
+
+
+def TRIX(close: pl.Expr, timeperiod: int = 30) -> pl.Expr:
+    EMA1 = EMA(close, timeperiod)
+    EMA2 = EMA(EMA1, timeperiod)
+    EMA3 = EMA(EMA2, timeperiod)
+    return ROCP(EMA3, 1)

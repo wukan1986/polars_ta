@@ -1,5 +1,7 @@
 import polars as pl
 
+from polars_ta.talib.overlap import RMA
+
 
 def TRANGE(high: pl.Expr, low: pl.Expr, close: pl.Expr) -> pl.Expr:
     """
@@ -17,8 +19,8 @@ def TRANGE(high: pl.Expr, low: pl.Expr, close: pl.Expr) -> pl.Expr:
 
 
 def ATR(high: pl.Expr, low: pl.Expr, close: pl.Expr, timeperiod: int = 14) -> pl.Expr:
-    # TODO 需要认真修改
-    return TRANGE(high, low, close).ewm_mean(span=timeperiod, adjust=False, min_periods=timeperiod)
+    """"""
+    return RMA(TRANGE(high, low, close), timeperiod)
 
 
 def NATR(high: pl.Expr, low: pl.Expr, close: pl.Expr, timeperiod: int = 14) -> pl.Expr:

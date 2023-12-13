@@ -12,7 +12,7 @@ class TestDemoClass:
         self.close_pl = pl.DataFrame(self.close_np, schema=["close"])
 
     def test_STDDEV(self):
-        from polars_ta.statistic import STDDEV
+        from polars_ta.talib.statistic import STDDEV
 
         result1 = talib.STDDEV(self.close_np, timeperiod=3)
         result2 = self.close_pl.select(STDDEV(pl.col("close"), timeperiod=3))
@@ -21,7 +21,7 @@ class TestDemoClass:
         assert np.allclose(result1, result3, equal_nan=True)
 
     def test_VAR(self):
-        from polars_ta.statistic import VAR
+        from polars_ta.talib.statistic import VAR
 
         result1 = talib.VAR(self.close_np, timeperiod=5)
         result2 = self.close_pl.select(VAR(pl.col("close"), timeperiod=5))

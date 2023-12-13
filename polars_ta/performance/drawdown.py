@@ -1,5 +1,5 @@
 import polars as pl
 
 
-def drawdown(x: pl.Expr) -> pl.Expr:
-    return x.cum_max() - x
+def drawdown(close: pl.Expr) -> pl.Expr:
+    return close.cum_max() - close

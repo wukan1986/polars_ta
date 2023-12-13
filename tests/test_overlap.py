@@ -18,7 +18,7 @@ class TestDemoClass:
                                   schema=["high", "low", "close"])
 
     def test_SMA(self):
-        from polars_ta.overlap import SMA
+        from polars_ta.talib.overlap import SMA
 
         result1 = talib.SMA(self.close_np, timeperiod=3)
         result2 = self.df_pl.select(SMA(pl.col("close"), timeperiod=3))
@@ -27,7 +27,7 @@ class TestDemoClass:
         assert np.allclose(result1, result3, equal_nan=True)
 
     def test_WMA(self):
-        from polars_ta.overlap import WMA
+        from polars_ta.talib.overlap import WMA
 
         result1 = talib.WMA(self.close_np, timeperiod=3)
         result2 = self.df_pl.select(WMA(pl.col("close"), timeperiod=3))
@@ -36,7 +36,7 @@ class TestDemoClass:
         assert np.allclose(result1, result3, equal_nan=True)
 
     def test_EMA(self):
-        from polars_ta.overlap import EMA
+        from polars_ta.talib.overlap import EMA
         # !!! 此处非常重要，有部分函数受此影响
         # https://github.com/TA-Lib/ta-lib-python/blob/master/talib/_ta_lib.pxd#L28
         talib.set_compatibility(1)
@@ -48,7 +48,7 @@ class TestDemoClass:
         assert np.allclose(result1, result3, equal_nan=True)
 
     def test_DEMA(self):
-        from polars_ta.overlap import DEMA
+        from polars_ta.talib.overlap import DEMA
         # !!! 此处非常重要，有部分函数受此影响
         talib.set_compatibility(1)
 
@@ -59,7 +59,7 @@ class TestDemoClass:
         assert np.allclose(result1, result3, equal_nan=True)
 
     def test_TEMA(self):
-        from polars_ta.overlap import TEMA
+        from polars_ta.talib.overlap import TEMA
         # !!! 此处非常重要，有部分函数受此影响
         talib.set_compatibility(1)
 
@@ -72,8 +72,35 @@ class TestDemoClass:
 
         assert np.allclose(result1, result3, equal_nan=True)
 
+    def test_TRIMA(self):
+        from polars_ta.talib.overlap import TRIMA
+
+        result1 = talib.TRIMA(self.close_np, timeperiod=6)
+        result2 = self.df_pl.select(TRIMA(pl.col("close"), timeperiod=6))
+        result3 = result2['close'].to_numpy()
+        # print()
+        # print(result1)
+        # print(result3)
+
+        assert np.allclose(result1, result3, equal_nan=True)
+
+    # def test_KAMA(self):
+    #     # !!! 此处非常重要，有部分函数受此影响
+    #     talib.set_compatibility(1)
+    #
+    #     from polars_ta.talib.overlap import KAMA
+    #
+    #     result1 = talib.KAMA(self.close_np, timeperiod=5)
+    #     result2 = self.df_pl.select(KAMA(pl.col("close"), timeperiod=5))
+    #     result3 = result2['close'].to_numpy()
+    #     # print()
+    #     # print(result1)
+    #     # print(result3)
+    #
+    #     assert np.allclose(result1, result3, equal_nan=True)
+
     def test_BBANDS(self):
-        from polars_ta.overlap import BBANDS_upperband
+        from polars_ta.talib.overlap import BBANDS_upperband
 
         result1, _, _ = talib.BBANDS(self.close_np, timeperiod=3)
         result2 = self.df_pl.select(BBANDS_upperband(pl.col("close"), timeperiod=3))
@@ -82,7 +109,7 @@ class TestDemoClass:
         assert np.allclose(result1, result3, equal_nan=True)
 
     def test_MIDPOINT(self):
-        from polars_ta.overlap import MIDPOINT
+        from polars_ta.talib.overlap import MIDPOINT
 
         result1 = talib.MIDPOINT(self.close_np, timeperiod=3)
         result2 = self.df_pl.select(MIDPOINT(pl.col("close"), timeperiod=3))
@@ -91,7 +118,7 @@ class TestDemoClass:
         assert np.allclose(result1, result3, equal_nan=True)
 
     def test_MIDPRICE(self):
-        from polars_ta.overlap import MIDPRICE
+        from polars_ta.talib.overlap import MIDPRICE
 
         result1 = talib.MIDPRICE(self.high_np, self.low_np, timeperiod=3)
         result2 = self.df_pl.select(MIDPRICE(pl.col("high"), pl.col("low"), timeperiod=3))
