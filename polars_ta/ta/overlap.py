@@ -2,7 +2,7 @@ from math import ceil, floor
 
 import polars as pl
 
-from polars_ta.talib.statistic import STDDEV
+from polars_ta.ta.statistic import STDDEV
 
 
 def SMA(close: pl.Expr, timeperiod: int = 30) -> pl.Expr:

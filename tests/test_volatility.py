@@ -18,7 +18,7 @@ class TestDemoClass:
                                   schema=["high", "low", "close"])
 
     def test_TRANGE(self):
-        from polars_ta.talib.volatility import TRANGE
+        from polars_ta.ta.volatility import TRANGE
 
         result1 = talib.TRANGE(self.high_np, self.low_np, self.close_np)
         result2 = self.df_pl.select(TRANGE(pl.col("high"), pl.col("low"), pl.col("close")))
@@ -34,7 +34,7 @@ class TestDemoClass:
         # !!!
         talib.set_compatibility(1)
 
-        from polars_ta.talib.volatility import ATR
+        from polars_ta.ta.volatility import ATR
         result1 = talib.ATR(self.high_np, self.low_np, self.close_np, timeperiod=5)
         result2 = self.df_pl.select(ATR(pl.col("high"), pl.col("low"), pl.col("close"), timeperiod=5))
         result3 = result2['max'].to_numpy()

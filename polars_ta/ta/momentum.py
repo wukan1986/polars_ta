@@ -1,6 +1,6 @@
 import polars as pl
 
-from polars_ta.talib.overlap import SMA, EMA
+from polars_ta.ta.overlap import SMA, EMA
 
 
 def MOM(close: pl.Expr, timeperiod: int = 10) -> pl.Expr:

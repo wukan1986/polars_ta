@@ -5,14 +5,16 @@ https://github.com/pola-rs/polars/issues/9261
 
 本人做了一定的调整。使用方法如下
 
-expr.ta.func(..., schema=None, skip_nan=False, output_idx=None)
+expr.ta.func(..., skip_nan=False, output_idx=None, schema=None, schema_format='{}')
 
-schema: list or tuple
-    返回为多列时，会组装成struct，可以提前设置子列的名字
 skip_nan: bool
     是否跳过空值。可以处理停牌无数据的问题，但会降低运行速度
 output_idx: int
     多列输出时，选择只输出其中一列
+schema: list or tuple
+    返回为多列时，会组装成struct，可以提前设置子列的名字
+schema_format: str
+    为子列名指定格式
 
 其它参数按**位置参数**和**命名参数**输入皆可
 """
@@ -20,7 +22,7 @@ import numpy as np
 import polars as pl
 
 
-def func_wrap_mn(func, cols, *args, schema=None, skip_nan=False, output_idx=None, **kwargs):
+def func_wrap_mn(func, cols, *args, skip_nan=False, output_idx=None, schema=None, schema_format='{}', **kwargs):
     """多输入多输出，兼容一输入一输出
 
     Parameters
@@ -28,9 +30,10 @@ def func_wrap_mn(func, cols, *args, schema=None, skip_nan=False, output_idx=None
     func
     cols
     args
-    schema
     skip_nan
     output_idx
+    schema
+    schema_format
     kwargs
 
     Returns
@@ -68,6 +71,10 @@ def func_wrap_mn(func, cols, *args, schema=None, skip_nan=False, output_idx=None
         if output_idx is None:
             # pl.struct(['A').ta.BBANDS
             # you need alias outside, finally unnest
+            if schema is None:
+                schema = [f'column_{i}' for i in range(len(result))]
+
+            schema = [schema_format.format(name) for name in schema]
             return pl.DataFrame(result, schema=schema).to_struct('')
         # output only one column
         if 0 <= output_idx < len(result):
@@ -80,7 +87,7 @@ def func_wrap_mn(func, cols, *args, schema=None, skip_nan=False, output_idx=None
         return result
 
 
-def func_wrap_11(func, cols, *args, schema=None, skip_nan=False, output_idx=None, **kwargs):
+def func_wrap_11(func, cols, *args, skip_nan=False, output_idx=None, schema=None, schema_format='{}', **kwargs):
     """一输入，一输出。处理速度能更快一些"""
     _cols = cols
 
@@ -125,9 +132,10 @@ class FuncHelper:
         _wrap = object.__getattribute__(self, '_wrap')
         _func = getattr(_lib, name)
         return (
-            lambda *args, schema=None, skip_nan=False, output_idx=None, **kwargs:
+            lambda *args, skip_nan=False, output_idx=None, schema=None, schema_format='{}', **kwargs:
             _expr.map_batches(
-                lambda cols: _wrap(_func, cols, *args, schema=schema, skip_nan=skip_nan, output_idx=output_idx, **kwargs)
+                lambda cols: _wrap(_func, cols, *args,
+                                   skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, **kwargs)
             )
         )
 

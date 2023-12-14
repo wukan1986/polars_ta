@@ -1,6 +1,6 @@
 import polars as pl
 
-from polars_ta.talib.overlap import RMA
+from polars_ta.ta.overlap import RMA
 
 
 def TRANGE(high: pl.Expr, low: pl.Expr, close: pl.Expr) -> pl.Expr:

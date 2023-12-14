@@ -16,7 +16,7 @@ df = pl.DataFrame(
 )
 
 # 已经注册到全局，可直接使用。但IDE中没有智能提示
-init(to_globals=True, prefix='')
+init(to_globals=True, name_format='{}')
 
 df = df.with_columns([
     # 一输入一输出，不需处理空值
@@ -27,10 +27,10 @@ df = df.with_columns([
     ATR(pl.col('A'), pl.col('B'), pl.col('C'), 2, skip_nan=True).alias('ATR2'),
 
     # 一输入多输出，可通过prefix为多输出添加前缀
-    BBANDS(pl.col('A'), timeperiod=2, skip_nan=True, prefix='bbands_').alias('BBANDS'),
+    BBANDS(pl.col('A'), timeperiod=2, skip_nan=True, schema_format='bbands_{}').alias('BBANDS'),
 
     # 多输入多输出。可通过schema直接添加
-    AROON(pl.struct(['A', 'B']), timeperiod=2, schema=('aroondown_', 'aroonup_'), skip_nan=True).alias('AROON'),
+    AROON(pl.struct(['A', 'B']), timeperiod=2, skip_nan=True, schema=('aroondown', 'aroonup')).alias('AROON'),
 
 ])
 
@@ -40,7 +40,7 @@ df = df.unnest('BBANDS', 'AROON')
 print(df)
 
 # 另一种调用方法
-t = init(to_globals=False, prefix='ts_')
+t = init(to_globals=False, name_format='ts_{}')
 df = df.with_columns([
     # 一输入一输出，不需处理空值
     t.ts_COS(pl.col('A')).alias('ts_COS'),

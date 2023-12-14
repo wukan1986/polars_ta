@@ -1,5 +1,7 @@
 # polars_ta
 
+基于`polars`的算子库。
+
 ## 设计原则
 
 1. 输入数据使用`Expr`，少用`Series`
@@ -36,7 +38,9 @@
 
 ### 移动求和
 
-`ADX`等一类的指标第一个有效值为SUM，而不是SMA，之后使用ema_mean(alpha=1/N)。此类暂不实现
+`ADX`等一类的指标第一个有效值为`SUM`，而不是`SMA`，之后使用`ema_mean(alpha=1/N)`。此类暂不实现
+
+## TA-Lib封装的演化
 
 ## 参考
 

@@ -21,11 +21,11 @@ df = df.with_columns([
     # 一输入一输出，不需处理空值
     pl.col('A').ta.COS().alias('COS'),
     # 一输入多输出
-    pl.col('A').ta.BBANDS(timeperiod=2, schema=['upperband', 'middleband', 'lowerband'], skip_nan=True).alias('BBANDS'),
+    pl.col('A').ta.BBANDS(timeperiod=2, skip_nan=True, schema=['upperband', 'middleband', 'lowerband']).alias('BBANDS'),
     # 多输入一输出
     pl.struct(['A', 'B', 'C']).ta.ATR(timeperiod=2, skip_nan=True).alias('ATR'),
     # 多输入多输出
-    pl.struct(['A', 'B']).ta.AROON(timeperiod=2, schema=('aroondown', 'aroonup'), skip_nan=True).alias('AROON'),
+    pl.struct(['A', 'B']).ta.AROON(timeperiod=2, skip_nan=True, schema=('aroondown', 'aroonup'), schema_format='XX_{}_YY').alias('AROON'),
     # 多输入一输出
     pl.struct(['A', 'B']).ta.AROON(timeperiod=2, skip_nan=True, output_idx=1).alias('aroonup1'),
     # 调用另一库
