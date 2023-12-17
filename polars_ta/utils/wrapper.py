@@ -2,10 +2,10 @@
 此处是对github issues上提出的 注册命名空间 方案的再封装
 
 之前的使用方法为
-expr.ta.func(..., skip_nan=False, output_idx=None, schema=None, schema_format='{}')
+expr.ta.func(..., skip_nan=False, output_idx=None, schema=None, schema_format='{}', nan_to_null=False)
 
 封装后方法为
-func(expr, ..., skip_nan=False, output_idx=None, schema=None, schema_format='{}')
+func(expr, ..., skip_nan=False, output_idx=None, schema=None, schema_format='{}', nan_to_null=False)
 
 此种封装方法的优点是前缀表达式方便输入到遗传算法工具包中使用
 """
@@ -21,7 +21,10 @@ from polars_ta.utils.helper import TaLibHelper
 _ = TaLibHelper
 
 
-def ta_func(func, func_name, input_names, output_names, *args, skip_nan=False, output_idx=None, schema=None, schema_format='{}', **kwargs):
+def ta_func(func, func_name, input_names, output_names,
+            *args,
+            skip_nan=False, output_idx=None, schema=None, schema_format='{}', nan_to_null=False,
+            **kwargs):
     """
 
     Parameters
@@ -38,6 +41,7 @@ def ta_func(func, func_name, input_names, output_names, *args, skip_nan=False, o
     output_idx
     schema
     schema_format
+    nan_to_null
     kwargs
         命名参数
 
@@ -53,14 +57,20 @@ def ta_func(func, func_name, input_names, output_names, *args, skip_nan=False, o
     else:
         ef = getattr(pl.struct(*exprs).ta, func_name)
 
-    return ef(*param, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, **kwargs)
+    return ef(*param,
+              skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null,
+              **kwargs)
 
 
 def ta_decorator(func, func_name, input_names, output_names):
     @wraps(func)
-    def decorated(*args, skip_nan=False, output_idx=None, schema=None, schema_format='{}', **kwargs):
+    def decorated(*args,
+                  skip_nan=False, output_idx=None, schema=None, schema_format='{}', nan_to_null=False,
+                  **kwargs):
         return ta_func(func, func_name, input_names, output_names,
-                       *args, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, **kwargs)
+                       *args,
+                       skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null,
+                       **kwargs)
 
     return decorated
 

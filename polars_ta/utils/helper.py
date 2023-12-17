@@ -5,7 +5,7 @@ https://github.com/pola-rs/polars/issues/9261
 
 本人做了一定的调整。使用方法如下
 
-expr.ta.func(..., skip_nan=False, output_idx=None, schema=None, schema_format='{}')
+expr.ta.func(..., skip_nan=False, output_idx=None, schema=None, schema_format='{}', nan_to_null=False)
 
 skip_nan: bool
     是否跳过空值。可以处理停牌无数据的问题，但会降低运行速度
@@ -15,6 +15,8 @@ schema: list or tuple
     返回为多列时，会组装成struct，可以提前设置子列的名字
 schema_format: str
     为子列名指定格式
+nan_to_null: bool
+    返回值是否改成null
 
 其它参数按**位置参数**和**命名参数**输入皆可
 """
@@ -22,7 +24,10 @@ import numpy as np
 import polars as pl
 
 
-def func_wrap_mn(func, cols, *args, skip_nan=False, output_idx=None, schema=None, schema_format='{}', **kwargs):
+def func_wrap_mn(func, cols,
+                 *args,
+                 skip_nan=False, output_idx=None, schema=None, schema_format='{}', nan_to_null=False,
+                 **kwargs):
     """多输入多输出，兼容一输入一输出
 
     Parameters
@@ -34,6 +39,7 @@ def func_wrap_mn(func, cols, *args, skip_nan=False, output_idx=None, schema=None
     output_idx
     schema
     schema_format
+    nan_to_null
     kwargs
 
     Returns
@@ -75,19 +81,27 @@ def func_wrap_mn(func, cols, *args, skip_nan=False, output_idx=None, schema=None
                 schema = [f'column_{i}' for i in range(len(result))]
 
             schema = [schema_format.format(name) for name in schema]
-            return pl.DataFrame(result, schema=schema).to_struct('')
+            # nan_to_null 对struct中的nan无效
+            return pl.DataFrame(result, schema=schema, nan_to_null=nan_to_null).to_struct('')
         # output only one column
         if 0 <= output_idx < len(result):
-            return pl.Series(result[output_idx])
+            return pl.Series(result[output_idx], nan_to_null=nan_to_null)
     elif not isinstance(result, pl.Series):
         # pl.col('A').bn.move_rank
-        return pl.Series(result)
+        return pl.Series(result, nan_to_null=nan_to_null)
     else:
         # pl.col('A').ta.COS
-        return result
+        if nan_to_null:
+            return result.fill_nan(None)
+        else:
+            return result
 
 
-def func_wrap_11(func, cols, *args, skip_nan=False, output_idx=None, schema=None, schema_format='{}', **kwargs):
+
+def func_wrap_11(func, cols,
+                 *args,
+                 skip_nan=False, output_idx=None, schema=None, schema_format='{}', nan_to_null=False,
+                 **kwargs):
     """一输入，一输出。处理速度能更快一些"""
     _cols = cols
 
@@ -106,7 +120,13 @@ def func_wrap_11(func, cols, *args, skip_nan=False, output_idx=None, schema=None
     else:
         result = func(_cols, *args, **kwargs)
 
-    return pl.Series(result)
+    if isinstance(result, pl.Series):
+        if nan_to_null:
+            return result.fill_nan(None)
+        else:
+            return result
+    else:
+        return pl.Series(result, nan_to_null=nan_to_null)
 
 
 class FuncHelper:
@@ -132,10 +152,12 @@ class FuncHelper:
         _wrap = object.__getattribute__(self, '_wrap')
         _func = getattr(_lib, name)
         return (
-            lambda *args, skip_nan=False, output_idx=None, schema=None, schema_format='{}', **kwargs:
+            lambda *args, skip_nan=False, output_idx=None, schema=None, schema_format='{}', nan_to_null=False, **kwargs:
             _expr.map_batches(
-                lambda cols: _wrap(_func, cols, *args,
-                                   skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, **kwargs)
+                lambda cols: _wrap(_func, cols,
+                                   *args,
+                                   skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null,
+                                   **kwargs)
             )
         )
 

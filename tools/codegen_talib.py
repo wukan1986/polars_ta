@@ -14,7 +14,7 @@ def {name}({aa}) -> pl.Expr:
 
 """
 
-    extra_args = {'skip_nan': False, 'output_idx': None, 'schema': tuple(output_names), 'schema_format': "'{}'"}
+    extra_args = {'skip_nan': False, 'output_idx': None, 'schema': tuple(output_names), 'schema_format': "'{}'", 'nan_to_null': False}
     a1 = [f'{name}: pl.Expr' for name in input_names]
     a2 = [f'{k}: {type(v).__name__} = {v}' for k, v in parameters.items()]
     a3 = [f'{k}={v}' for k, v in extra_args.items()]
@@ -49,7 +49,7 @@ def {name}({aa}) -> pl.Expr:
 
 """
 
-    extra_args = {'skip_nan': False, 'output_idx': None, 'schema': tuple(output_names), 'schema_format': "'{}'"}
+    extra_args = {'skip_nan': False, 'output_idx': None, 'schema': tuple(output_names), 'schema_format': "'{}'", 'nan_to_null': False}
     a1 = [f'{name}: pl.Expr' for name in input_names]
     a2 = [f'{k}: {type(v).__name__} = {v}' for k, v in parameters.items()]
     a3 = [f'{k}={v}' for k, v in extra_args.items()]

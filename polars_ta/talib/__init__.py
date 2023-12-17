@@ -7,634 +7,634 @@ from polars_ta.utils.helper import TaLibHelper, func_wrap_11, func_wrap_mn
 _ = TaLibHelper
 
 
-def HT_DCPERIOD(close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.HT_DCPERIOD, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def HT_DCPERIOD(close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.HT_DCPERIOD, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def HT_DCPHASE(close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.HT_DCPHASE, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def HT_DCPHASE(close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.HT_DCPHASE, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def HT_PHASOR(close: pl.Expr, skip_nan=False, output_idx=None, schema=('inphase', 'quadrature'), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_mn(talib.HT_PHASOR, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def HT_PHASOR(close: pl.Expr, skip_nan=False, output_idx=None, schema=('inphase', 'quadrature'), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_mn(talib.HT_PHASOR, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def HT_SINE(close: pl.Expr, skip_nan=False, output_idx=None, schema=('sine', 'leadsine'), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_mn(talib.HT_SINE, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def HT_SINE(close: pl.Expr, skip_nan=False, output_idx=None, schema=('sine', 'leadsine'), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_mn(talib.HT_SINE, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def HT_TRENDMODE(close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.HT_TRENDMODE, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def HT_TRENDMODE(close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.HT_TRENDMODE, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def ADD(high: pl.Expr, low: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return pl.struct(high, low).map_batches(lambda x: func_wrap_mn(talib.ADD, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def ADD(high: pl.Expr, low: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(high, low).map_batches(lambda x: func_wrap_mn(talib.ADD, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def DIV(high: pl.Expr, low: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return pl.struct(high, low).map_batches(lambda x: func_wrap_mn(talib.DIV, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def DIV(high: pl.Expr, low: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(high, low).map_batches(lambda x: func_wrap_mn(talib.DIV, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def MAX(close: pl.Expr, timeperiod: int = 30, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.MAX, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def MAX(close: pl.Expr, timeperiod: int = 30, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.MAX, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def MAXINDEX(close: pl.Expr, timeperiod: int = 30, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.MAXINDEX, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def MAXINDEX(close: pl.Expr, timeperiod: int = 30, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.MAXINDEX, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def MIN(close: pl.Expr, timeperiod: int = 30, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.MIN, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def MIN(close: pl.Expr, timeperiod: int = 30, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.MIN, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def MININDEX(close: pl.Expr, timeperiod: int = 30, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.MININDEX, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def MININDEX(close: pl.Expr, timeperiod: int = 30, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.MININDEX, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def MINMAX(close: pl.Expr, timeperiod: int = 30, skip_nan=False, output_idx=None, schema=('min', 'max'), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_mn(talib.MINMAX, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def MINMAX(close: pl.Expr, timeperiod: int = 30, skip_nan=False, output_idx=None, schema=('min', 'max'), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_mn(talib.MINMAX, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def MINMAXINDEX(close: pl.Expr, timeperiod: int = 30, skip_nan=False, output_idx=None, schema=('minidx', 'maxidx'), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_mn(talib.MINMAXINDEX, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def MINMAXINDEX(close: pl.Expr, timeperiod: int = 30, skip_nan=False, output_idx=None, schema=('minidx', 'maxidx'), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_mn(talib.MINMAXINDEX, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def MULT(high: pl.Expr, low: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return pl.struct(high, low).map_batches(lambda x: func_wrap_mn(talib.MULT, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def MULT(high: pl.Expr, low: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(high, low).map_batches(lambda x: func_wrap_mn(talib.MULT, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def SUB(high: pl.Expr, low: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return pl.struct(high, low).map_batches(lambda x: func_wrap_mn(talib.SUB, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def SUB(high: pl.Expr, low: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(high, low).map_batches(lambda x: func_wrap_mn(talib.SUB, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def SUM(close: pl.Expr, timeperiod: int = 30, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.SUM, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def SUM(close: pl.Expr, timeperiod: int = 30, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.SUM, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def ACOS(close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.ACOS, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def ACOS(close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.ACOS, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def ASIN(close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.ASIN, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def ASIN(close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.ASIN, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def ATAN(close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.ATAN, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def ATAN(close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.ATAN, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CEIL(close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.CEIL, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CEIL(close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.CEIL, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def COS(close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.COS, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def COS(close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.COS, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def COSH(close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.COSH, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def COSH(close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.COSH, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def EXP(close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.EXP, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def EXP(close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.EXP, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def FLOOR(close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.FLOOR, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def FLOOR(close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.FLOOR, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def LN(close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.LN, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def LN(close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.LN, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def LOG10(close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.LOG10, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def LOG10(close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.LOG10, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def SIN(close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.SIN, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def SIN(close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.SIN, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def SINH(close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.SINH, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def SINH(close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.SINH, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def SQRT(close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.SQRT, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def SQRT(close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.SQRT, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def TAN(close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.TAN, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def TAN(close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.TAN, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def TANH(close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.TANH, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def TANH(close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.TANH, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def ADX(high: pl.Expr, low: pl.Expr, close: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return pl.struct(high, low, close).map_batches(lambda x: func_wrap_mn(talib.ADX, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def ADX(high: pl.Expr, low: pl.Expr, close: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(high, low, close).map_batches(lambda x: func_wrap_mn(talib.ADX, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def ADXR(high: pl.Expr, low: pl.Expr, close: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return pl.struct(high, low, close).map_batches(lambda x: func_wrap_mn(talib.ADXR, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def ADXR(high: pl.Expr, low: pl.Expr, close: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(high, low, close).map_batches(lambda x: func_wrap_mn(talib.ADXR, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def APO(close: pl.Expr, fastperiod: int = 12, slowperiod: int = 26, matype: int = 0, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.APO, x, fastperiod, slowperiod, matype, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def APO(close: pl.Expr, fastperiod: int = 12, slowperiod: int = 26, matype: int = 0, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.APO, x, fastperiod, slowperiod, matype, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def AROON(high: pl.Expr, low: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('aroondown', 'aroonup'), schema_format='{}') -> pl.Expr:
-    return pl.struct(high, low).map_batches(lambda x: func_wrap_mn(talib.AROON, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def AROON(high: pl.Expr, low: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('aroondown', 'aroonup'), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(high, low).map_batches(lambda x: func_wrap_mn(talib.AROON, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def AROONOSC(high: pl.Expr, low: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return pl.struct(high, low).map_batches(lambda x: func_wrap_mn(talib.AROONOSC, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def AROONOSC(high: pl.Expr, low: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(high, low).map_batches(lambda x: func_wrap_mn(talib.AROONOSC, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def BOP(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.BOP, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def BOP(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.BOP, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CCI(high: pl.Expr, low: pl.Expr, close: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return pl.struct(high, low, close).map_batches(lambda x: func_wrap_mn(talib.CCI, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CCI(high: pl.Expr, low: pl.Expr, close: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(high, low, close).map_batches(lambda x: func_wrap_mn(talib.CCI, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CMO(close: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.CMO, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CMO(close: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.CMO, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def DX(high: pl.Expr, low: pl.Expr, close: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return pl.struct(high, low, close).map_batches(lambda x: func_wrap_mn(talib.DX, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def DX(high: pl.Expr, low: pl.Expr, close: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(high, low, close).map_batches(lambda x: func_wrap_mn(talib.DX, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def MACD(close: pl.Expr, fastperiod: int = 12, slowperiod: int = 26, signalperiod: int = 9, skip_nan=False, output_idx=None, schema=('macd', 'macdsignal', 'macdhist'), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_mn(talib.MACD, x, fastperiod, slowperiod, signalperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def MACD(close: pl.Expr, fastperiod: int = 12, slowperiod: int = 26, signalperiod: int = 9, skip_nan=False, output_idx=None, schema=('macd', 'macdsignal', 'macdhist'), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_mn(talib.MACD, x, fastperiod, slowperiod, signalperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def MACDEXT(close: pl.Expr, fastperiod: int = 12, fastmatype: int = 0, slowperiod: int = 26, slowmatype: int = 0, signalperiod: int = 9, signalmatype: int = 0, skip_nan=False, output_idx=None, schema=('macd', 'macdsignal', 'macdhist'), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_mn(talib.MACDEXT, x, fastperiod, fastmatype, slowperiod, slowmatype, signalperiod, signalmatype, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def MACDEXT(close: pl.Expr, fastperiod: int = 12, fastmatype: int = 0, slowperiod: int = 26, slowmatype: int = 0, signalperiod: int = 9, signalmatype: int = 0, skip_nan=False, output_idx=None, schema=('macd', 'macdsignal', 'macdhist'), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_mn(talib.MACDEXT, x, fastperiod, fastmatype, slowperiod, slowmatype, signalperiod, signalmatype, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def MACDFIX(close: pl.Expr, signalperiod: int = 9, skip_nan=False, output_idx=None, schema=('macd', 'macdsignal', 'macdhist'), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_mn(talib.MACDFIX, x, signalperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def MACDFIX(close: pl.Expr, signalperiod: int = 9, skip_nan=False, output_idx=None, schema=('macd', 'macdsignal', 'macdhist'), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_mn(talib.MACDFIX, x, signalperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def MFI(high: pl.Expr, low: pl.Expr, close: pl.Expr, volume: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return pl.struct(high, low, close, volume).map_batches(lambda x: func_wrap_mn(talib.MFI, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def MFI(high: pl.Expr, low: pl.Expr, close: pl.Expr, volume: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(high, low, close, volume).map_batches(lambda x: func_wrap_mn(talib.MFI, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def MINUS_DI(high: pl.Expr, low: pl.Expr, close: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return pl.struct(high, low, close).map_batches(lambda x: func_wrap_mn(talib.MINUS_DI, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def MINUS_DI(high: pl.Expr, low: pl.Expr, close: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(high, low, close).map_batches(lambda x: func_wrap_mn(talib.MINUS_DI, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def MINUS_DM(high: pl.Expr, low: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return pl.struct(high, low).map_batches(lambda x: func_wrap_mn(talib.MINUS_DM, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def MINUS_DM(high: pl.Expr, low: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(high, low).map_batches(lambda x: func_wrap_mn(talib.MINUS_DM, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def MOM(close: pl.Expr, timeperiod: int = 10, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.MOM, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def MOM(close: pl.Expr, timeperiod: int = 10, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.MOM, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def PLUS_DI(high: pl.Expr, low: pl.Expr, close: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return pl.struct(high, low, close).map_batches(lambda x: func_wrap_mn(talib.PLUS_DI, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def PLUS_DI(high: pl.Expr, low: pl.Expr, close: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(high, low, close).map_batches(lambda x: func_wrap_mn(talib.PLUS_DI, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def PLUS_DM(high: pl.Expr, low: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return pl.struct(high, low).map_batches(lambda x: func_wrap_mn(talib.PLUS_DM, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def PLUS_DM(high: pl.Expr, low: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(high, low).map_batches(lambda x: func_wrap_mn(talib.PLUS_DM, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def PPO(close: pl.Expr, fastperiod: int = 12, slowperiod: int = 26, matype: int = 0, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.PPO, x, fastperiod, slowperiod, matype, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def PPO(close: pl.Expr, fastperiod: int = 12, slowperiod: int = 26, matype: int = 0, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.PPO, x, fastperiod, slowperiod, matype, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def ROC(close: pl.Expr, timeperiod: int = 10, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.ROC, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def ROC(close: pl.Expr, timeperiod: int = 10, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.ROC, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def ROCP(close: pl.Expr, timeperiod: int = 10, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.ROCP, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def ROCP(close: pl.Expr, timeperiod: int = 10, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.ROCP, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def ROCR(close: pl.Expr, timeperiod: int = 10, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.ROCR, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def ROCR(close: pl.Expr, timeperiod: int = 10, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.ROCR, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def ROCR100(close: pl.Expr, timeperiod: int = 10, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.ROCR100, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def ROCR100(close: pl.Expr, timeperiod: int = 10, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.ROCR100, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def RSI(close: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.RSI, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def RSI(close: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.RSI, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def STOCH(high: pl.Expr, low: pl.Expr, close: pl.Expr, fastk_period: int = 5, slowk_period: int = 3, slowk_matype: int = 0, slowd_period: int = 3, slowd_matype: int = 0, skip_nan=False, output_idx=None, schema=('slowk', 'slowd'), schema_format='{}') -> pl.Expr:
-    return pl.struct(high, low, close).map_batches(lambda x: func_wrap_mn(talib.STOCH, x, fastk_period, slowk_period, slowk_matype, slowd_period, slowd_matype, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def STOCH(high: pl.Expr, low: pl.Expr, close: pl.Expr, fastk_period: int = 5, slowk_period: int = 3, slowk_matype: int = 0, slowd_period: int = 3, slowd_matype: int = 0, skip_nan=False, output_idx=None, schema=('slowk', 'slowd'), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(high, low, close).map_batches(lambda x: func_wrap_mn(talib.STOCH, x, fastk_period, slowk_period, slowk_matype, slowd_period, slowd_matype, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def STOCHF(high: pl.Expr, low: pl.Expr, close: pl.Expr, fastk_period: int = 5, fastd_period: int = 3, fastd_matype: int = 0, skip_nan=False, output_idx=None, schema=('fastk', 'fastd'), schema_format='{}') -> pl.Expr:
-    return pl.struct(high, low, close).map_batches(lambda x: func_wrap_mn(talib.STOCHF, x, fastk_period, fastd_period, fastd_matype, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def STOCHF(high: pl.Expr, low: pl.Expr, close: pl.Expr, fastk_period: int = 5, fastd_period: int = 3, fastd_matype: int = 0, skip_nan=False, output_idx=None, schema=('fastk', 'fastd'), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(high, low, close).map_batches(lambda x: func_wrap_mn(talib.STOCHF, x, fastk_period, fastd_period, fastd_matype, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def STOCHRSI(close: pl.Expr, timeperiod: int = 14, fastk_period: int = 5, fastd_period: int = 3, fastd_matype: int = 0, skip_nan=False, output_idx=None, schema=('fastk', 'fastd'), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_mn(talib.STOCHRSI, x, timeperiod, fastk_period, fastd_period, fastd_matype, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def STOCHRSI(close: pl.Expr, timeperiod: int = 14, fastk_period: int = 5, fastd_period: int = 3, fastd_matype: int = 0, skip_nan=False, output_idx=None, schema=('fastk', 'fastd'), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_mn(talib.STOCHRSI, x, timeperiod, fastk_period, fastd_period, fastd_matype, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def TRIX(close: pl.Expr, timeperiod: int = 30, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.TRIX, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def TRIX(close: pl.Expr, timeperiod: int = 30, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.TRIX, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def ULTOSC(high: pl.Expr, low: pl.Expr, close: pl.Expr, timeperiod1: int = 7, timeperiod2: int = 14, timeperiod3: int = 28, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return pl.struct(high, low, close).map_batches(lambda x: func_wrap_mn(talib.ULTOSC, x, timeperiod1, timeperiod2, timeperiod3, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def ULTOSC(high: pl.Expr, low: pl.Expr, close: pl.Expr, timeperiod1: int = 7, timeperiod2: int = 14, timeperiod3: int = 28, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(high, low, close).map_batches(lambda x: func_wrap_mn(talib.ULTOSC, x, timeperiod1, timeperiod2, timeperiod3, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def WILLR(high: pl.Expr, low: pl.Expr, close: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return pl.struct(high, low, close).map_batches(lambda x: func_wrap_mn(talib.WILLR, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def WILLR(high: pl.Expr, low: pl.Expr, close: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(high, low, close).map_batches(lambda x: func_wrap_mn(talib.WILLR, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def BBANDS(close: pl.Expr, timeperiod: int = 5, nbdevup: float = 2.0, nbdevdn: float = 2.0, matype: int = 0, skip_nan=False, output_idx=None, schema=('upperband', 'middleband', 'lowerband'), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_mn(talib.BBANDS, x, timeperiod, nbdevup, nbdevdn, matype, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def BBANDS(close: pl.Expr, timeperiod: int = 5, nbdevup: float = 2.0, nbdevdn: float = 2.0, matype: int = 0, skip_nan=False, output_idx=None, schema=('upperband', 'middleband', 'lowerband'), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_mn(talib.BBANDS, x, timeperiod, nbdevup, nbdevdn, matype, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def DEMA(close: pl.Expr, timeperiod: int = 30, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.DEMA, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def DEMA(close: pl.Expr, timeperiod: int = 30, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.DEMA, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def EMA(close: pl.Expr, timeperiod: int = 30, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.EMA, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def EMA(close: pl.Expr, timeperiod: int = 30, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.EMA, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def HT_TRENDLINE(close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.HT_TRENDLINE, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def HT_TRENDLINE(close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.HT_TRENDLINE, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def KAMA(close: pl.Expr, timeperiod: int = 30, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.KAMA, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def KAMA(close: pl.Expr, timeperiod: int = 30, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.KAMA, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def MA(close: pl.Expr, timeperiod: int = 30, matype: int = 0, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.MA, x, timeperiod, matype, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def MA(close: pl.Expr, timeperiod: int = 30, matype: int = 0, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.MA, x, timeperiod, matype, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def MAMA(close: pl.Expr, fastlimit: float = 0.5, slowlimit: float = 0.05, skip_nan=False, output_idx=None, schema=('mama', 'fama'), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_mn(talib.MAMA, x, fastlimit, slowlimit, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def MAMA(close: pl.Expr, fastlimit: float = 0.5, slowlimit: float = 0.05, skip_nan=False, output_idx=None, schema=('mama', 'fama'), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_mn(talib.MAMA, x, fastlimit, slowlimit, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def MAVP(close: pl.Expr, periods: pl.Expr, minperiod: int = 2, maxperiod: int = 30, matype: int = 0, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return pl.struct(close, periods).map_batches(lambda x: func_wrap_mn(talib.MAVP, x, minperiod, maxperiod, matype, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def MAVP(close: pl.Expr, periods: pl.Expr, minperiod: int = 2, maxperiod: int = 30, matype: int = 0, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(close, periods).map_batches(lambda x: func_wrap_mn(talib.MAVP, x, minperiod, maxperiod, matype, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def MIDPOINT(close: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.MIDPOINT, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def MIDPOINT(close: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.MIDPOINT, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def MIDPRICE(high: pl.Expr, low: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return pl.struct(high, low).map_batches(lambda x: func_wrap_mn(talib.MIDPRICE, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def MIDPRICE(high: pl.Expr, low: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(high, low).map_batches(lambda x: func_wrap_mn(talib.MIDPRICE, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def SAR(high: pl.Expr, low: pl.Expr, acceleration: float = 0.02, maximum: float = 0.2, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return pl.struct(high, low).map_batches(lambda x: func_wrap_mn(talib.SAR, x, acceleration, maximum, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def SAR(high: pl.Expr, low: pl.Expr, acceleration: float = 0.02, maximum: float = 0.2, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(high, low).map_batches(lambda x: func_wrap_mn(talib.SAR, x, acceleration, maximum, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def SAREXT(high: pl.Expr, low: pl.Expr, startvalue: float = 0.0, offsetonreverse: float = 0.0, accelerationinitlong: float = 0.02, accelerationlong: float = 0.02, accelerationmaxlong: float = 0.2, accelerationinitshort: float = 0.02, accelerationshort: float = 0.02, accelerationmaxshort: float = 0.2, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return pl.struct(high, low).map_batches(lambda x: func_wrap_mn(talib.SAREXT, x, startvalue, offsetonreverse, accelerationinitlong, accelerationlong, accelerationmaxlong, accelerationinitshort, accelerationshort, accelerationmaxshort, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def SAREXT(high: pl.Expr, low: pl.Expr, startvalue: float = 0.0, offsetonreverse: float = 0.0, accelerationinitlong: float = 0.02, accelerationlong: float = 0.02, accelerationmaxlong: float = 0.2, accelerationinitshort: float = 0.02, accelerationshort: float = 0.02, accelerationmaxshort: float = 0.2, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(high, low).map_batches(lambda x: func_wrap_mn(talib.SAREXT, x, startvalue, offsetonreverse, accelerationinitlong, accelerationlong, accelerationmaxlong, accelerationinitshort, accelerationshort, accelerationmaxshort, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def SMA(close: pl.Expr, timeperiod: int = 30, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.SMA, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def SMA(close: pl.Expr, timeperiod: int = 30, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.SMA, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def T3(close: pl.Expr, timeperiod: int = 5, vfactor: float = 0.7, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.T3, x, timeperiod, vfactor, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def T3(close: pl.Expr, timeperiod: int = 5, vfactor: float = 0.7, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.T3, x, timeperiod, vfactor, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def TEMA(close: pl.Expr, timeperiod: int = 30, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.TEMA, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def TEMA(close: pl.Expr, timeperiod: int = 30, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.TEMA, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def TRIMA(close: pl.Expr, timeperiod: int = 30, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.TRIMA, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def TRIMA(close: pl.Expr, timeperiod: int = 30, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.TRIMA, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def WMA(close: pl.Expr, timeperiod: int = 30, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.WMA, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def WMA(close: pl.Expr, timeperiod: int = 30, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.WMA, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDL2CROWS(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDL2CROWS, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDL2CROWS(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDL2CROWS, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDL3BLACKCROWS(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDL3BLACKCROWS, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDL3BLACKCROWS(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDL3BLACKCROWS, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDL3INSIDE(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDL3INSIDE, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDL3INSIDE(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDL3INSIDE, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDL3LINESTRIKE(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDL3LINESTRIKE, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDL3LINESTRIKE(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDL3LINESTRIKE, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDL3OUTSIDE(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDL3OUTSIDE, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDL3OUTSIDE(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDL3OUTSIDE, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDL3STARSINSOUTH(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDL3STARSINSOUTH, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDL3STARSINSOUTH(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDL3STARSINSOUTH, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDL3WHITESOLDIERS(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDL3WHITESOLDIERS, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDL3WHITESOLDIERS(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDL3WHITESOLDIERS, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLABANDONEDBABY(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, penetration: float = 0.3, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLABANDONEDBABY, x, penetration, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLABANDONEDBABY(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, penetration: float = 0.3, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLABANDONEDBABY, x, penetration, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLADVANCEBLOCK(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLADVANCEBLOCK, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLADVANCEBLOCK(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLADVANCEBLOCK, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLBELTHOLD(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLBELTHOLD, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLBELTHOLD(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLBELTHOLD, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLBREAKAWAY(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLBREAKAWAY, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLBREAKAWAY(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLBREAKAWAY, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLCLOSINGMARUBOZU(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLCLOSINGMARUBOZU, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLCLOSINGMARUBOZU(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLCLOSINGMARUBOZU, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLCONCEALBABYSWALL(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLCONCEALBABYSWALL, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLCONCEALBABYSWALL(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLCONCEALBABYSWALL, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLCOUNTERATTACK(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLCOUNTERATTACK, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLCOUNTERATTACK(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLCOUNTERATTACK, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLDARKCLOUDCOVER(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, penetration: float = 0.5, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLDARKCLOUDCOVER, x, penetration, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLDARKCLOUDCOVER(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, penetration: float = 0.5, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLDARKCLOUDCOVER, x, penetration, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLDOJI(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLDOJI, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLDOJI(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLDOJI, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLDOJISTAR(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLDOJISTAR, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLDOJISTAR(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLDOJISTAR, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLDRAGONFLYDOJI(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLDRAGONFLYDOJI, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLDRAGONFLYDOJI(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLDRAGONFLYDOJI, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLENGULFING(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLENGULFING, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLENGULFING(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLENGULFING, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLEVENINGDOJISTAR(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, penetration: float = 0.3, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLEVENINGDOJISTAR, x, penetration, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLEVENINGDOJISTAR(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, penetration: float = 0.3, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLEVENINGDOJISTAR, x, penetration, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLEVENINGSTAR(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, penetration: float = 0.3, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLEVENINGSTAR, x, penetration, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLEVENINGSTAR(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, penetration: float = 0.3, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLEVENINGSTAR, x, penetration, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLGAPSIDESIDEWHITE(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLGAPSIDESIDEWHITE, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLGAPSIDESIDEWHITE(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLGAPSIDESIDEWHITE, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLGRAVESTONEDOJI(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLGRAVESTONEDOJI, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLGRAVESTONEDOJI(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLGRAVESTONEDOJI, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLHAMMER(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLHAMMER, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLHAMMER(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLHAMMER, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLHANGINGMAN(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLHANGINGMAN, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLHANGINGMAN(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLHANGINGMAN, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLHARAMI(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLHARAMI, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLHARAMI(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLHARAMI, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLHARAMICROSS(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLHARAMICROSS, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLHARAMICROSS(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLHARAMICROSS, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLHIGHWAVE(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLHIGHWAVE, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLHIGHWAVE(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLHIGHWAVE, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLHIKKAKE(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLHIKKAKE, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLHIKKAKE(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLHIKKAKE, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLHIKKAKEMOD(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLHIKKAKEMOD, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLHIKKAKEMOD(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLHIKKAKEMOD, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLHOMINGPIGEON(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLHOMINGPIGEON, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLHOMINGPIGEON(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLHOMINGPIGEON, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLIDENTICAL3CROWS(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLIDENTICAL3CROWS, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLIDENTICAL3CROWS(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLIDENTICAL3CROWS, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLINNECK(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLINNECK, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLINNECK(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLINNECK, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLINVERTEDHAMMER(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLINVERTEDHAMMER, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLINVERTEDHAMMER(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLINVERTEDHAMMER, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLKICKING(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLKICKING, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLKICKING(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLKICKING, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLKICKINGBYLENGTH(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLKICKINGBYLENGTH, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLKICKINGBYLENGTH(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLKICKINGBYLENGTH, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLLADDERBOTTOM(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLLADDERBOTTOM, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLLADDERBOTTOM(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLLADDERBOTTOM, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLLONGLEGGEDDOJI(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLLONGLEGGEDDOJI, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLLONGLEGGEDDOJI(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLLONGLEGGEDDOJI, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLLONGLINE(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLLONGLINE, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLLONGLINE(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLLONGLINE, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLMARUBOZU(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLMARUBOZU, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLMARUBOZU(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLMARUBOZU, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLMATCHINGLOW(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLMATCHINGLOW, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLMATCHINGLOW(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLMATCHINGLOW, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLMATHOLD(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, penetration: float = 0.5, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLMATHOLD, x, penetration, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLMATHOLD(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, penetration: float = 0.5, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLMATHOLD, x, penetration, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLMORNINGDOJISTAR(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, penetration: float = 0.3, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLMORNINGDOJISTAR, x, penetration, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLMORNINGDOJISTAR(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, penetration: float = 0.3, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLMORNINGDOJISTAR, x, penetration, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLMORNINGSTAR(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, penetration: float = 0.3, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLMORNINGSTAR, x, penetration, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLMORNINGSTAR(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, penetration: float = 0.3, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLMORNINGSTAR, x, penetration, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLONNECK(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLONNECK, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLONNECK(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLONNECK, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLPIERCING(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLPIERCING, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLPIERCING(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLPIERCING, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLRICKSHAWMAN(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLRICKSHAWMAN, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLRICKSHAWMAN(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLRICKSHAWMAN, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLRISEFALL3METHODS(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLRISEFALL3METHODS, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLRISEFALL3METHODS(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLRISEFALL3METHODS, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLSEPARATINGLINES(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLSEPARATINGLINES, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLSEPARATINGLINES(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLSEPARATINGLINES, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLSHOOTINGSTAR(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLSHOOTINGSTAR, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLSHOOTINGSTAR(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLSHOOTINGSTAR, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLSHORTLINE(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLSHORTLINE, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLSHORTLINE(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLSHORTLINE, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLSPINNINGTOP(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLSPINNINGTOP, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLSPINNINGTOP(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLSPINNINGTOP, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLSTALLEDPATTERN(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLSTALLEDPATTERN, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLSTALLEDPATTERN(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLSTALLEDPATTERN, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLSTICKSANDWICH(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLSTICKSANDWICH, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLSTICKSANDWICH(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLSTICKSANDWICH, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLTAKURI(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLTAKURI, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLTAKURI(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLTAKURI, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLTASUKIGAP(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLTASUKIGAP, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLTASUKIGAP(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLTASUKIGAP, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLTHRUSTING(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLTHRUSTING, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLTHRUSTING(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLTHRUSTING, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLTRISTAR(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLTRISTAR, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLTRISTAR(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLTRISTAR, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLUNIQUE3RIVER(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLUNIQUE3RIVER, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLUNIQUE3RIVER(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLUNIQUE3RIVER, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLUPSIDEGAP2CROWS(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLUPSIDEGAP2CROWS, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLUPSIDEGAP2CROWS(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLUPSIDEGAP2CROWS, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CDLXSIDEGAP3METHODS(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLXSIDEGAP3METHODS, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CDLXSIDEGAP3METHODS(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('integer',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.CDLXSIDEGAP3METHODS, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def AVGPRICE(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.AVGPRICE, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def AVGPRICE(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(open, high, low, close).map_batches(lambda x: func_wrap_mn(talib.AVGPRICE, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def MEDPRICE(high: pl.Expr, low: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return pl.struct(high, low).map_batches(lambda x: func_wrap_mn(talib.MEDPRICE, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def MEDPRICE(high: pl.Expr, low: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(high, low).map_batches(lambda x: func_wrap_mn(talib.MEDPRICE, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def TYPPRICE(high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return pl.struct(high, low, close).map_batches(lambda x: func_wrap_mn(talib.TYPPRICE, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def TYPPRICE(high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(high, low, close).map_batches(lambda x: func_wrap_mn(talib.TYPPRICE, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def WCLPRICE(high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return pl.struct(high, low, close).map_batches(lambda x: func_wrap_mn(talib.WCLPRICE, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def WCLPRICE(high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(high, low, close).map_batches(lambda x: func_wrap_mn(talib.WCLPRICE, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def BETA(high: pl.Expr, low: pl.Expr, timeperiod: int = 5, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return pl.struct(high, low).map_batches(lambda x: func_wrap_mn(talib.BETA, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def BETA(high: pl.Expr, low: pl.Expr, timeperiod: int = 5, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(high, low).map_batches(lambda x: func_wrap_mn(talib.BETA, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def CORREL(high: pl.Expr, low: pl.Expr, timeperiod: int = 30, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return pl.struct(high, low).map_batches(lambda x: func_wrap_mn(talib.CORREL, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def CORREL(high: pl.Expr, low: pl.Expr, timeperiod: int = 30, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(high, low).map_batches(lambda x: func_wrap_mn(talib.CORREL, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def LINEARREG(close: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.LINEARREG, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def LINEARREG(close: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.LINEARREG, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def LINEARREG_ANGLE(close: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.LINEARREG_ANGLE, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def LINEARREG_ANGLE(close: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.LINEARREG_ANGLE, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def LINEARREG_INTERCEPT(close: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.LINEARREG_INTERCEPT, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def LINEARREG_INTERCEPT(close: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.LINEARREG_INTERCEPT, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def LINEARREG_SLOPE(close: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.LINEARREG_SLOPE, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def LINEARREG_SLOPE(close: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.LINEARREG_SLOPE, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def STDDEV(close: pl.Expr, timeperiod: int = 5, nbdev: float = 1.0, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.STDDEV, x, timeperiod, nbdev, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def STDDEV(close: pl.Expr, timeperiod: int = 5, nbdev: float = 1.0, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.STDDEV, x, timeperiod, nbdev, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def TSF(close: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.TSF, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def TSF(close: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.TSF, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def VAR(close: pl.Expr, timeperiod: int = 5, nbdev: float = 1.0, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return close.map_batches(lambda x: func_wrap_11(talib.VAR, x, timeperiod, nbdev, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def VAR(close: pl.Expr, timeperiod: int = 5, nbdev: float = 1.0, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return close.map_batches(lambda x: func_wrap_11(talib.VAR, x, timeperiod, nbdev, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def ATR(high: pl.Expr, low: pl.Expr, close: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return pl.struct(high, low, close).map_batches(lambda x: func_wrap_mn(talib.ATR, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def ATR(high: pl.Expr, low: pl.Expr, close: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(high, low, close).map_batches(lambda x: func_wrap_mn(talib.ATR, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def NATR(high: pl.Expr, low: pl.Expr, close: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return pl.struct(high, low, close).map_batches(lambda x: func_wrap_mn(talib.NATR, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def NATR(high: pl.Expr, low: pl.Expr, close: pl.Expr, timeperiod: int = 14, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(high, low, close).map_batches(lambda x: func_wrap_mn(talib.NATR, x, timeperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def TRANGE(high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return pl.struct(high, low, close).map_batches(lambda x: func_wrap_mn(talib.TRANGE, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def TRANGE(high: pl.Expr, low: pl.Expr, close: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(high, low, close).map_batches(lambda x: func_wrap_mn(talib.TRANGE, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def AD(high: pl.Expr, low: pl.Expr, close: pl.Expr, volume: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return pl.struct(high, low, close, volume).map_batches(lambda x: func_wrap_mn(talib.AD, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def AD(high: pl.Expr, low: pl.Expr, close: pl.Expr, volume: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(high, low, close, volume).map_batches(lambda x: func_wrap_mn(talib.AD, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def ADOSC(high: pl.Expr, low: pl.Expr, close: pl.Expr, volume: pl.Expr, fastperiod: int = 3, slowperiod: int = 10, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return pl.struct(high, low, close, volume).map_batches(lambda x: func_wrap_mn(talib.ADOSC, x, fastperiod, slowperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def ADOSC(high: pl.Expr, low: pl.Expr, close: pl.Expr, volume: pl.Expr, fastperiod: int = 3, slowperiod: int = 10, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(high, low, close, volume).map_batches(lambda x: func_wrap_mn(talib.ADOSC, x, fastperiod, slowperiod, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
 
-def OBV(close: pl.Expr, volume: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}') -> pl.Expr:
-    return pl.struct(close, volume).map_batches(lambda x: func_wrap_mn(talib.OBV, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format))
+def OBV(close: pl.Expr, volume: pl.Expr, skip_nan=False, output_idx=None, schema=('real',), schema_format='{}', nan_to_null=False) -> pl.Expr:
+    return pl.struct(close, volume).map_batches(lambda x: func_wrap_mn(talib.OBV, x, skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null))
 
