@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "polars_ta"
+authors = [
+    { name = "wukan", email = "wu-kan@163.com" },
+]
+description = "polars expressions"
+readme = "README.md"
+requires-python = ">=3.8"
+keywords = ["polars", "expression", "talib"]
+license = { file = "LICENSE" }
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python"
+]
+dependencies = [
+    "polars",
+    "numpy",
+    "TA-Lib",
+]
+dynamic = ["version"]
+
+[tool.setuptools]
+packages = ["polars_ta"]
+
+[tool.setuptools.dynamic]
+version = { attr = "polars_ta._version.__version__" }

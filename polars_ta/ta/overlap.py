@@ -3,10 +3,9 @@ from math import ceil, floor
 import polars as pl
 
 from polars_ta.ta.statistic import STDDEV
+from polars_ta.wq.time_series import ts_mean
 
-
-def SMA(close: pl.Expr, timeperiod: int = 30) -> pl.Expr:
-    return close.rolling_mean(timeperiod)
+SMA = ts_mean
 
 
 def EMA(close: pl.Expr, timeperiod: int = 30) -> pl.Expr:

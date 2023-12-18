@@ -1,25 +1,14 @@
 import polars as pl
 
 from polars_ta.ta.overlap import SMA, EMA
+from polars_ta.wq.time_series import ts_delta
 
-
-def MOM(close: pl.Expr, timeperiod: int = 10) -> pl.Expr:
-    return close.diff(timeperiod)
+MOM = ts_delta
+ROCP = ts_returns
 
 
 def ROCR(close: pl.Expr, timeperiod: int = 10) -> pl.Expr:
     return close / close.shift(timeperiod)
-
-
-def ROCP(close: pl.Expr, timeperiod: int = 10) -> pl.Expr:
-    """
-
-    Notes
-    -----
-    ROCR(close, timeperiod) - 1
-
-    """
-    return close.pct_change(timeperiod)
 
 
 def WILLR(high: pl.Expr, low: pl.Expr, close: pl.Expr, timeperiod: int = 14) -> pl.Expr:
