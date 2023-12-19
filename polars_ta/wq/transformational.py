@@ -16,35 +16,34 @@ def arc_tan(x: pl.Expr) -> pl.Expr:
     return x.arctan()
 
 
-def bucket(x,
+def bucket(x: pl.Expr,
            range="0, 1, 0.1",
            buckets="2,5,6,7,10",
            skipBegin=False, skipEnd=False, skipBoth=False,
-           NANGroup=True):
+           NANGroup=True) -> pl.Expr:
     """Convert float values into indexes for user-specified buckets. Bucket is useful for creating group values, which can be passed to group operators as input."""
-    pass
+    # TODO 未完成
+    raise
+    return x.cut()
 
 
-def clamp(x, lower=0, upper=0, inverse=False, mask=np.nan):
+def clamp(x: pl.Expr, lower: float = 0, upper: float = 0, inverse: bool = False, mask=pl.Null) -> pl.Expr:
     """Limits input value between lower and upper bound in inverse = false mode (which is default). Alternatively, when inverse = true, values between bounds are replaced with mask, while values outside bounds are left as is."""
     if inverse:
         # mask is one of: 'nearest_bound', 'mean', 'NAN' or any floating point number
-        return if_else((x > lower) & (x < upper), mask, x)
+        return pl.when(lower < x < upper).then(mask).otherwise(x)
     else:
-        # q = if_else(x < lower, lower, x)
-        # u = if_else(q > upper, upper, q)
-        return np.clip(x, lower, upper)
+        return x.clip(lower, upper)
 
 
 def filter(x, h="1, 2, 3, 4", t="0.5"):
     """Used to filter the value and allows to create filters like linear or exponential decay."""
-    pass
+    raise
 
 
 def keep(x, f, period=5):
     """This operator outputs value x when f changes and continues to do that for “period” days after f stopped changing. After “period” days since last change of f, NaN is output."""
-    D = days_from_last_change(f)
-    return trade_when(D < period, x, D > period)
+    raise
 
 
 def left_tail(x: pl.Expr, maximum: float = 0) -> pl.Expr:
@@ -55,6 +54,7 @@ def left_tail(x: pl.Expr, maximum: float = 0) -> pl.Expr:
 def pasteurize(x: pl.Expr) -> pl.Expr:
     """Set to NaN if x is INF or if the underlying instrument is not in the Alpha universe"""
     # TODO: 不在票池中的的功能无法表示
+    # TODO: 与purify好像没啥区别
     return pl.when(x.is_infinite()).then(pl.Null).otherwise(x)
 
 
@@ -70,6 +70,7 @@ def sigmoid(x: pl.Expr) -> pl.Expr:
 
 def tail(x: pl.Expr, lower: float = 0, upper: float = 0, newval: float = 0) -> pl.Expr:
     """If (x > lower AND x < upper) return newval, else return x. Lower, upper, newval should be constants. """
+    # TODO 与clamp一样?
     return pl.when(lower < x < upper).then(newval).otherwise(x)
 
 

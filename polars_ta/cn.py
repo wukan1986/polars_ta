@@ -3,9 +3,9 @@
 """
 import polars as pl
 
-from polars_ta.talib.momentum import MACD_macdhist
-from polars_ta.talib.overlap import SMA
-from polars_ta.talib.volatility import TRANGE
+from polars_ta.ta.momentum import MACD_macdhist
+from polars_ta.ta.overlap import SMA
+from polars_ta.ta.volatility import TRANGE
 
 
 def ATR(high: pl.Expr, low: pl.Expr, close: pl.Expr, timeperiod: int = 14) -> pl.Expr:

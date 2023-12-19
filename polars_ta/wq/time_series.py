@@ -43,14 +43,14 @@ def ts_returns(x: pl.Expr, d: int = 1) -> pl.Expr:
     return x.pct_change(d)
 
 
-def ts_std_dev(x: pl.Expr, d: int = 5, ddof: int = 0) -> pl.Expr:
-    return x.rolling_std(d, ddof=ddof)
-
-
 def ts_scale(x: pl.Expr, d: int = 5) -> pl.Expr:
     a = ts_min(x, d)
     b = ts_max(x, d)
     return (x - a) / (b - a)
+
+
+def ts_std_dev(x: pl.Expr, d: int = 5, ddof: int = 0) -> pl.Expr:
+    return x.rolling_std(d, ddof=ddof)
 
 
 def ts_sum(x: pl.Expr, d: int = 30) -> pl.Expr:

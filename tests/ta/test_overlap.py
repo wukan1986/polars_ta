@@ -29,8 +29,8 @@ class TestDemoClass:
     def test_WMA(self):
         from polars_ta.ta.overlap import WMA
 
-        result1 = talib.WMA(self.close_np, timeperiod=3)
-        result2 = self.df_pl.select(WMA(pl.col("close"), timeperiod=3))
+        result1 = talib.WMA(self.close_np, timeperiod=15)
+        result2 = self.df_pl.select(WMA(pl.col("close"), timeperiod=15))
         result3 = result2['close'].to_numpy()
 
         assert np.allclose(result1, result3, equal_nan=True)
