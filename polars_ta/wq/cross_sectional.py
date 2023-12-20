@@ -50,7 +50,7 @@ def scale(x: pl.Expr, scale_=1, long_scale=1, short_scale=1) -> pl.Expr:
 
 def scale_down(x: pl.Expr, constant: float = 0) -> pl.Expr:
     """Scales all values in each day proportionately between 0 and 1 such that minimum value maps to 0 and maximum value maps to 1. Constant is the offset by which final result is subtracted."""
-    return standardize_minmax(x) - constant
+    return standardize_minmax(x)
 
 
 def truncate(x: pl.Expr, max_percent: float = 0.01) -> pl.Expr:

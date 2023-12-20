@@ -1,6 +1,8 @@
 import polars as pl
 
 
+# TODO 本文件返回bool时是否有必要转换成 0/1 ?
+
 def and_(*args):
     """Logical AND operator, returns true if both operands are true and returns false otherwise"""
     return pl.all_horizontal(*args)
@@ -8,7 +10,7 @@ def and_(*args):
 
 def equal(input1: pl.Expr, input2: pl.Expr) -> pl.Expr:
     """Returns true if both inputs are same and returns false otherwise"""
-    return input1==input2
+    return input1 == input2
 
 
 def if_else(input1: pl.Expr, input2: pl.Expr, input3: pl.Expr) -> pl.Expr:

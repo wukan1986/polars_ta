@@ -3,7 +3,7 @@ from math import ceil, floor
 import polars as pl
 
 from polars_ta.ta.statistic import STDDEV
-from polars_ta.wq.time_series import ts_mean
+from polars_ta.wq.time_series import ts_mean, ts_decay_linear
 
 
 def BBANDS_upperband(close: pl.Expr, timeperiod: int = 5, nbdevup: float = 2) -> pl.Expr:
@@ -78,7 +78,4 @@ def TRIMA(close: pl.Expr, timeperiod: int = 30) -> pl.Expr:
 
 
 def WMA(close: pl.Expr, timeperiod: int = 30) -> pl.Expr:
-    # divider = (timeperiod * (timeperiod + 1)) >> 1
-    # weights = pl.arange(1, timeperiod + 1, eager=True) / divider
-    weights = pl.arange(1, timeperiod + 1, eager=True)
-    return close.rolling_mean(timeperiod, weights=weights)
+    return ts_decay_linear(close, timeperiod)

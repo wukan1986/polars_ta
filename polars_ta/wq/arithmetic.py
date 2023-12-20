@@ -9,11 +9,11 @@ def add(*args, filter_=False):
     """Add all inputs (at least 2 inputs required). If filter = true, filter all input NaN to 0 before adding"""
     if filter_:
         # TODO 等官方修复此bug
+        # https://github.com/pola-rs/polars/issues/13113
         # return pl.sum_horizontal(*args)
-        exprs = [pl.lit(0)] + list(args)
-        return pl.reduce(function=lambda acc, x: acc + x.fill_null(0), exprs=exprs)
-    else:
-        return pl.reduce(function=lambda acc, x: acc + x, exprs=args)
+        args = [_.fill_null(0) for _ in args]
+
+    return pl.reduce(function=lambda acc, x: acc + x, exprs=args)
 
 
 def ceiling(x: pl.Expr) -> pl.Expr:
@@ -78,10 +78,9 @@ def min_(*args):
 def multiply(*args, filter_=False):
     """Multiply all inputs. At least 2 inputs are required. Filter sets the NaN values to 1"""
     if filter_:
-        exprs = [pl.lit(1)] + list(args)
-        return pl.reduce(function=lambda acc, x: acc * x.fill_null(1), exprs=exprs)
-    else:
-        return pl.reduce(function=lambda acc, x: acc * x, exprs=args)
+        args = [_.fill_null(1) for _ in args]
+
+    return pl.reduce(function=lambda acc, x: acc * x, exprs=args)
 
 
 def power(x: pl.Expr, y: pl.Expr) -> pl.Expr:
@@ -113,7 +112,7 @@ def round_down(x: pl.Expr, f: int = 1) -> pl.Expr:
 
 
 def s_log_1p(x: pl.Expr) -> pl.Expr:
-    return (1 + x.abs()).log() * x.sign()
+    return (x.abs() + 1).log() * x.sign()
 
 
 def sign(x: pl.Expr) -> pl.Expr:
@@ -138,7 +137,6 @@ def sqrt(x: pl.Expr) -> pl.Expr:
 def subtract(*args, filter_=False):
     """x-y. If filter = true, filter all input NaN to 0 before subtracting"""
     if filter_:
-        exprs = [pl.lit(0)] + list(args)
-        return pl.reduce(function=lambda acc, x: acc - x.fill_null(0), exprs=exprs)
-    else:
-        return pl.reduce(function=lambda acc, x: acc - x, exprs=args)
+        args = [_.fill_null(0) for _ in args]
+
+    return pl.reduce(function=lambda acc, x: acc - x, exprs=args)
