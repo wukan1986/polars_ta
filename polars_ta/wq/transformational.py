@@ -36,7 +36,7 @@ def clamp(x: pl.Expr, lower: float = 0, upper: float = 0, inverse: bool = False,
         return x.clip(lower, upper)
 
 
-def filter(x, h="1, 2, 3, 4", t="0.5"):
+def filter_(x, h="1, 2, 3, 4", t="0.5"):
     """Used to filter the value and allows to create filters like linear or exponential decay."""
     raise
 
