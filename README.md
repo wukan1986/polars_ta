@@ -2,11 +2,16 @@
 
 基于`polars`的算子库。实现量化投研中常用的技术指标、数据处理等函数。对于不易翻译成`Expr`的库（如：`TA-Lib`）也提供了函数式调用的封装
 
+## 安装
+
+> pip install -i https://pypi.org/simple --upgrade polars_ta # 官方源
+> pip install -i https://pypi.tuna.tsinghua.edu.cn/simple --upgrade polars_ta # 国内镜像源
+
 ## 设计原则
 
 1. 调用方法由`成员函数`换成`独立函数`
 2. 输入数据使用`Expr`，少用`Series`
-3. 函数命名优先向`TA-Lib`靠拢，然后向`WorldQuant`靠拢，最后才仿国内通达信等表达式
+3. 函数命名优先向`WorldQuant`靠拢，然后向`TA-Lib`靠拢，最后才仿国内通达信等表达式
 4. 计算速度优先，标准化优先。与其它系统结果不一致时需示明区别
 
 ## 指标区别
@@ -65,7 +70,7 @@
 
 ## 参考
 
-- https://github.com/pola-rs
+- https://github.com/pola-rs/polars
 - https://github.com/TA-Lib/ta-lib
 - https://github.com/twopirllc/pandas-ta
 - https://github.com/bukosabino/ta

@@ -29,6 +29,7 @@ def one_side(x: pl.Expr, is_long: bool = True) -> pl.Expr:
 def rank(x: pl.Expr, rate: int = 2, pct: bool = True) -> pl.Expr:
     """Ranks the input among all the instruments and returns an equally distributed number between 0.0 and 1.0. For precise sort, use the rate as 0."""
     if pct:
+        # TODO 等待count的变更
         return x.rank() / (x.count() - x.null_count())
     else:
         return x.rank()

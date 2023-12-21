@@ -4,13 +4,15 @@ import polars as pl
 from polars_ta.utils.pandas_ import roll_rank, roll_kurt
 
 
+# TODO rolling_map比较慢，少用. 如ts_arg_max、ts_product等
+
 def ts_arg_max(x: pl.Expr, d: int = 5) -> pl.Expr:
     # WorldQuant中最大值为今天返回0，为昨天返回1
-    return d - 1 - x.rolling_map(np.nanargmax, d)
+    return d - 1 - x.rolling_map(np.argmax, d)
 
 
 def ts_arg_min(x: pl.Expr, d: int = 5) -> pl.Expr:
-    return d - 1 - x.rolling_map(np.nanargmax, d)
+    return d - 1 - x.rolling_map(np.argmax, d)
 
 
 def ts_co_kurtosis(x: pl.Expr, y: pl.Expr, d: int = 5, ddof: int = 1) -> pl.Expr:
@@ -32,12 +34,14 @@ def ts_covariance(x: pl.Expr, y: pl.Expr, d: int = 5, ddof: int = 1) -> pl.Expr:
 
 
 def ts_decay_exp_window(x: pl.Expr, d: int = 30, factor: float = 1.0) -> pl.Expr:
+    # TODO weights not yet supported on array with null values
     y = pl.arange(d - 1, -1, step=-1, eager=False)
     weights = pl.repeat(factor, d, eager=True).pow(y)
     return x.rolling_mean(d, weights=weights)
 
 
 def ts_decay_linear(x: pl.Expr, d: int = 30, dense: bool = False) -> pl.Expr:
+    # TODO weights not yet supported on array with null values
     weights = pl.arange(1, d + 1, eager=True)
     return x.rolling_mean(d, weights=weights)
 
@@ -81,6 +85,10 @@ def ts_min(x: pl.Expr, d: int = 30) -> pl.Expr:
 
 def ts_min_diff(x: pl.Expr, d: int = 30) -> pl.Expr:
     return x - ts_min(x, d)
+
+
+def ts_product(x: pl.Expr, d: int = 5) -> pl.Expr:
+    return x.rolling_map(np.nanprod, d)
 
 
 def ts_rank(x: pl.Expr, d: int = 5, constant=0) -> pl.Expr:

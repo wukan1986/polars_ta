@@ -19,9 +19,13 @@ classifiers = [
 dependencies = [
     "polars",
     "numpy",
-    "TA-Lib",
 ]
 dynamic = ["version"]
+
+[project.optional-dependencies]
+talib = [
+    "TA-Lib",
+]
 
 [tool.setuptools]
 packages = ["polars_ta"]
