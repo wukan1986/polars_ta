@@ -4,12 +4,6 @@
 import polars as pl
 
 from polars_ta.ta.momentum import MACD_macdhist
-from polars_ta.ta.overlap import SMA
-from polars_ta.ta.volatility import TRANGE
-
-
-def ATR(high: pl.Expr, low: pl.Expr, close: pl.Expr, timeperiod: int = 14) -> pl.Expr:
-    return SMA(TRANGE(high, low, close), timeperiod)
 
 
 def MACD(close: pl.Expr, fastperiod: int = 12, slowperiod: int = 26, signalperiod: int = 9) -> pl.Expr:

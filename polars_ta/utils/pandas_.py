@@ -1,9 +1,10 @@
 from functools import lru_cache
 
 import numpy as np
-import pandas as pd
 import polars as pl
 from numba import jit
+from pandas._libs.window.aggregations import roll_kurt as _roll_kurt
+from pandas._libs.window.aggregations import roll_rank as _roll_rank
 
 
 @lru_cache
@@ -30,7 +31,7 @@ def roll_rank(x: pl.Series, d: int, pct: bool = True, method: str = 'average', a
               
     O(N log(window)) implementation using skip list
     """
-    ret = pd._libs.window.aggregations.roll_rank(x.to_numpy(), start, end, d, pct, method, ascending)
+    ret = _roll_rank(x.to_numpy(), start, end, d, pct, method, ascending)
     return pl.Series(ret, nan_to_null=True)
 
 
@@ -42,5 +43,5 @@ def roll_kurt(x, d):
     def roll_kurt(ndarray[float64_t] values, ndarray[int64_t] start,
               ndarray[int64_t] end, int64_t minp) -> np.ndarray:
     """
-    ret = pd._libs.window.aggregations.roll_kurt(x.to_numpy(), start, end, d)
+    ret = _roll_kurt(x.to_numpy(), start, end, d)
     return pl.Series(ret, nan_to_null=True)

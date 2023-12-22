@@ -38,12 +38,20 @@ def MOM(close: pl.Expr, timeperiod: int = 10) -> pl.Expr:
     return ts_delta(close, timeperiod)
 
 
-def ROCP(close: pl.Expr, timeperiod: int = 10) -> pl.Expr:
+def ROCR(close: pl.Expr, timeperiod: int = 10) -> pl.Expr:
     return close / close.shift(timeperiod)
 
 
-def ROCR(close: pl.Expr, timeperiod: int = 10) -> pl.Expr:
+def ROCR100(close: pl.Expr, timeperiod: int = 10) -> pl.Expr:
+    return ROCR(close, timeperiod) * 100
+
+
+def ROCP(close: pl.Expr, timeperiod: int = 10) -> pl.Expr:
     return ts_returns(close, timeperiod)
+
+
+def ROC(close: pl.Expr, timeperiod: int = 10) -> pl.Expr:
+    return ROCP(close, timeperiod) * 100
 
 
 def STOCHF_fastd(high: pl.Expr, low: pl.Expr, close: pl.Expr, fastk_period: int = 5, fastd_period: int = 3) -> pl.Expr:

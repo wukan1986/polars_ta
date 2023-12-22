@@ -28,6 +28,15 @@ def ts_corr(x: pl.Expr, y: pl.Expr, d: int = 5, ddof: int = 1) -> pl.Expr:
     return pl.rolling_corr(x, y, window_size=d, ddof=ddof)
 
 
+def ts_count(x: pl.Expr, d: int = 30) -> pl.Expr:
+    return x.cast(pl.Int32).rolling_sum(d)
+
+
+def ts_count_nans(x: pl.Expr, d: int = 5) -> pl.Expr:
+    # null与nan到底用哪一个？
+    return x.is_null().rolling_sum(d)
+
+
 def ts_covariance(x: pl.Expr, y: pl.Expr, d: int = 5, ddof: int = 1) -> pl.Expr:
     # x、y不区分先后
     return pl.rolling_cov(x, y, window_size=d, ddof=ddof)
@@ -127,3 +136,5 @@ def ts_weighted_delay(x: pl.Expr, k: float = 0.5) -> pl.Expr:
 
 def ts_zscore(x: pl.Expr, d: int = 5) -> pl.Expr:
     return (x - ts_mean(x, d)) / ts_std_dev(x, d)
+
+# ------------------------

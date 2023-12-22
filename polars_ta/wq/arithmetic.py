@@ -70,9 +70,18 @@ def max_(*args):
     return pl.max_horizontal(args)
 
 
+def mean(*args) -> pl.Expr:
+    # TODO 还需要修正
+    return pl.sum_horizontal(*args) / len(args)
+
+
 def min_(*args):
     """Maximum value of all inputs. At least 2 inputs are required."""
     return pl.min_horizontal(args)
+
+
+def mod(x: pl.Expr, y: pl.Expr) -> pl.Expr:
+    return x % y
 
 
 def multiply(*args, filter_=False):
@@ -98,9 +107,9 @@ def reverse(x: pl.Expr) -> pl.Expr:
     return -x
 
 
-def round_(x: pl.Expr) -> pl.Expr:
+def round_(x: pl.Expr, decimals: int = 0) -> pl.Expr:
     """Round input to closest integer."""
-    return x.round()
+    return x.round(decimals)
 
 
 def round_down(x: pl.Expr, f: int = 1) -> pl.Expr:
@@ -134,9 +143,14 @@ def sqrt(x: pl.Expr) -> pl.Expr:
     return x.sqrt()
 
 
-def subtract(*args, filter_=False):
+def subtract(*args, filter_=False) -> pl.Expr:
     """x-y. If filter = true, filter all input NaN to 0 before subtracting"""
     if filter_:
         args = [_.fill_null(0) for _ in args]
 
     return pl.reduce(function=lambda acc, x: acc - x, exprs=args)
+
+
+def truncate(x: pl.Expr) -> pl.Expr:
+    """向零取整"""
+    return x.cast(pl.Int64)

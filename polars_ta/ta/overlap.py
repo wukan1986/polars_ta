@@ -44,7 +44,7 @@ def MIDPRICE(high: pl.Expr, low: pl.Expr, timeperiod: int = 14) -> pl.Expr:
 
 
 def RMA(close: pl.Expr, timeperiod: int = 30) -> pl.Expr:
-    """TA-Lib没有明确的提供此算法，这里只是为了调用方便而提供
+    """TA-Lib没有明确的提供此算法，这里只是为了调用方便而放在此处
 
     References
     ----------
