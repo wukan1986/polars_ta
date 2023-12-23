@@ -1,6 +1,6 @@
 import polars as pl
 
-TA_EPSILON = 1e-14
+from polars_ta import TA_EPSILON
 
 
 # https://github.com/TA-Lib/ta-lib/blob/main/src/ta_func/ta_utility.h#L327
@@ -54,7 +54,6 @@ def efficiency_ratio(open_: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr
     displacement = real_body(open_, high, low, close)
     distance = 2 * high_low_range(open_, high, low, close) - displacement
     return displacement / (distance + TA_EPSILON)
-
 
 # def candle_range(open_: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr) -> pl.Expr:
 #     return real_body(open_, high, low, close)

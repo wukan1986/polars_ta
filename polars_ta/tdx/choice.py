@@ -13,4 +13,8 @@ def IFN(x: pl.Expr, a: pl.Expr, b: pl.Expr) -> pl.Expr:
     return if_else(x.cast(pl.Boolean), b, a)
 
 
+def VALUEWHEN(cond: pl.Expr, x: pl.Expr) -> pl.Expr:
+    return pl.when(cond).then(x).otherwise(pl.Null).fill_null(strategy="forward")
+
+
 IFF = IF

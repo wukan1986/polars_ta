@@ -12,7 +12,7 @@ from polars_ta.wq.arithmetic import max_ as MAX
 from polars_ta.wq.arithmetic import min_ as MIN
 from polars_ta.wq.arithmetic import mod as MOD
 from polars_ta.wq.arithmetic import power as POW
-from polars_ta.wq.arithmetic import reverse as REVERSE
+from polars_ta.wq.arithmetic import reverse as REVERSE  # TODO 到底放哪位置
 from polars_ta.wq.arithmetic import round_ as _round
 from polars_ta.wq.arithmetic import sign as SIGN
 from polars_ta.wq.arithmetic import sqrt as SQRT

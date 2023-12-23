@@ -24,14 +24,13 @@ def bucket(x: pl.Expr,
     """Convert float values into indexes for user-specified buckets. Bucket is useful for creating group values, which can be passed to group operators as input."""
     # TODO 未完成
     raise
-    return x.cut()
 
 
 def clamp(x: pl.Expr, lower: float = 0, upper: float = 0, inverse: bool = False, mask=pl.Null) -> pl.Expr:
     """Limits input value between lower and upper bound in inverse = false mode (which is default). Alternatively, when inverse = true, values between bounds are replaced with mask, while values outside bounds are left as is."""
     if inverse:
         # mask is one of: 'nearest_bound', 'mean', 'NAN' or any floating point number
-        return pl.when(lower < x < upper).then(mask).otherwise(x)
+        return pl.when((lower < x) & (x < upper)).then(mask).otherwise(x)
     else:
         return x.clip(lower, upper)
 
@@ -71,7 +70,7 @@ def sigmoid(x: pl.Expr) -> pl.Expr:
 def tail(x: pl.Expr, lower: float = 0, upper: float = 0, newval: float = 0) -> pl.Expr:
     """If (x > lower AND x < upper) return newval, else return x. Lower, upper, newval should be constants. """
     # TODO 与clamp一样?
-    return pl.when(lower < x < upper).then(newval).otherwise(x)
+    return pl.when((lower < x) & (x < upper)).then(newval).otherwise(x)
 
 
 def tanh(x: pl.Expr) -> pl.Expr:

@@ -136,5 +136,3 @@ def ts_weighted_delay(x: pl.Expr, k: float = 0.5) -> pl.Expr:
 
 def ts_zscore(x: pl.Expr, d: int = 5) -> pl.Expr:
     return (x - ts_mean(x, d)) / ts_std_dev(x, d)
-
-# ------------------------
