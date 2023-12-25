@@ -5,20 +5,22 @@
 ## 安装
 
 > pip install -i https://pypi.org/simple --upgrade polars_ta # 官方源
+
 > pip install -i https://pypi.tuna.tsinghua.edu.cn/simple --upgrade polars_ta # 国内镜像源
 
 ## 设计原则
 
-1. 调用方法由`成员函数`换成`独立函数`
-2. 输入数据使用`Expr`，少用`Series`
-3. 函数命名优先向`WorldQuant`靠拢，然后向`TA-Lib`靠拢，最后才仿国内通达信等表达式
-4. 计算速度优先，标准化优先。与其它系统结果不一致时需示明区别
+1. 调用方法由`成员函数`换成`独立函数`。输入输出使用`Expr`，避免使用`Series`
+2. `talib`的函数名与参数与原版`TA-Lib`完全一致
+3. 优先实现`wq`公式，它仿`WorldQuant Alpha`公式，与官网尽量保持一致。如果部分功能实现在此更合适将放在此处
+4. 其次实现`ta`公式，它相当于`TA-Lib`更原生支持`polars`的版本，优先从`wq`中导入更名
+5. 最后实现`tdx`公式，它也是优先从`wq`和`ta`中导入
 
 ## 指标区别
 
 ### EMA指标
 
-1. EMA(CLOSE, 10)，`talib.set_compatibility(0)`，此为默认设置
+1. EMA(CLOSE, 10)，`talib.set_compatibility(0)`，此为默认设置，等价于`EXPMEMA`
     - 第一个有效值为`talib.SMA(CLOSE, 10)`
 2. EMA(CLOSE, 10)，`talib.set_compatibility(1)`
     - 第一个有效值为`CLOSE`
