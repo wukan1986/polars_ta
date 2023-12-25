@@ -1,6 +1,8 @@
 import polars as pl
 
 
+# arccos等函数与tanh放在transformational.py而不是arithmetic.py下可能是把它们看成是激活函数
+
 def arc_cos(x: pl.Expr) -> pl.Expr:
     """If -1 <= x <= 1: arccos(x); else NaN"""
     return x.arccos()

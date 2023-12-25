@@ -42,3 +42,8 @@ def NOT(x: pl.Expr) -> pl.Expr:
 
 def UPNDAY(close: pl.Expr, timeperiod: int) -> pl.Expr:
     return NDAY(close, close.shift(), timeperiod)
+
+
+# 东方财富中有此两函数
+ALL = EVERY
+ANY = EXIST

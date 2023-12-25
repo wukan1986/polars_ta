@@ -20,6 +20,14 @@ def ceiling(x: pl.Expr) -> pl.Expr:
     return x.ceil()
 
 
+def cos(x: pl.Expr) -> pl.Expr:
+    return x.cos()
+
+
+def cosh(x: pl.Expr) -> pl.Expr:
+    return x.cosh()
+
+
 def densify(x: pl.Expr) -> pl.Expr:
     raise
 
@@ -139,6 +147,14 @@ def signed_power(x: pl.Expr, y: pl.Expr) -> pl.Expr:
     return x.abs().pow(y) * x.sign()
 
 
+def sin(x: pl.Expr) -> pl.Expr:
+    return x.sin()
+
+
+def sinh(x: pl.Expr) -> pl.Expr:
+    return x.sinh()
+
+
 def sqrt(x: pl.Expr) -> pl.Expr:
     return x.sqrt()
 
@@ -149,6 +165,10 @@ def subtract(*args, filter_=False) -> pl.Expr:
         args = [_.fill_null(0) for _ in args]
 
     return pl.reduce(function=lambda acc, x: acc - x, exprs=args)
+
+
+def tan(x: pl.Expr) -> pl.Expr:
+    return x.tan()
 
 
 def truncate(x: pl.Expr) -> pl.Expr:

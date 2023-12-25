@@ -1,10 +1,8 @@
 import polars as pl
 
-from polars_ta.wq.time_series import ts_corr as RELATE
-from polars_ta.wq.time_series import ts_covariance as COVAR
+from polars_ta.wq.time_series import ts_corr as RELATE  # noqa
+from polars_ta.wq.time_series import ts_covariance as COVAR  # noqa
 from polars_ta.wq.time_series import ts_std_dev
-
-_ = RELATE, COVAR
 
 
 def _avedev(x: pl.Series) -> pl.Series:

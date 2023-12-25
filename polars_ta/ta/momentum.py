@@ -1,7 +1,25 @@
 import polars as pl
 
-from polars_ta.ta.overlap import SMA, EMA
-from polars_ta.wq.time_series import ts_delta, ts_returns
+from polars_ta.ta.overlap import EMA
+from polars_ta.ta.overlap import SMA
+from polars_ta.wq.time_series import ts_delta
+from polars_ta.wq.time_series import ts_returns
+
+
+def ADX(high: pl.Expr, low: pl.Expr, close: pl.Expr, timeperiod: int = 14) -> pl.Expr:
+    raise
+
+
+def ADXR(high: pl.Expr, low: pl.Expr, close: pl.Expr, timeperiod: int = 14) -> pl.Expr:
+    raise
+
+
+def APO(close: pl.Expr, fastperiod: int = 12, slowperiod: int = 26, matype: int = 0) -> pl.Expr:
+    raise
+
+
+def AROON(high: pl.Expr, low: pl.Expr, timeperiod: int = 14) -> pl.Expr:
+    raise
 
 
 def MACD_macd(close: pl.Expr, fastperiod: int = 12, slowperiod: int = 26) -> pl.Expr:

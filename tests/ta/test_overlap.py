@@ -41,8 +41,8 @@ class TestDemoClass:
         # https://github.com/TA-Lib/ta-lib-python/blob/master/talib/_ta_lib.pxd#L28
         talib.set_compatibility(1)
 
-        result1 = talib.EMA(self.close_np, timeperiod=3)
-        result2 = self.df_pl.select(EMA(pl.col("close"), timeperiod=3))
+        result1 = talib.EMA(self.close_np, timeperiod=5)
+        result2 = self.df_pl.select(EMA(pl.col("close"), timeperiod=5))
         result3 = result2['close'].to_numpy()
 
         assert np.allclose(result1, result3, equal_nan=True)

@@ -1,7 +1,8 @@
 import numpy as np
 import polars as pl
 
-from polars_ta.utils.pandas_ import roll_rank, roll_kurt
+from polars_ta.utils.pandas_ import roll_kurt
+from polars_ta.utils.pandas_ import roll_rank
 
 
 # TODO rolling_map比较慢，少用. 如ts_arg_max、ts_product等

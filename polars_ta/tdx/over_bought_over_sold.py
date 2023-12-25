@@ -1,12 +1,10 @@
 import polars as pl
 
-from polars_ta.ta.momentum import WILLR as WR
-from polars_ta.ta.price import MEDPRICE
-from polars_ta.ta.price import TYPPRICE
-from polars_ta.tdx.reference import MA
-from polars_ta.tdx.reference import TR
-
-_ = WR, TYPPRICE, MEDPRICE
+from polars_ta.ta.momentum import WILLR as WR  # noqa
+from polars_ta.ta.price import MEDPRICE  # noqa
+from polars_ta.ta.price import TYPPRICE  # noqa
+from polars_ta.tdx.reference import MA  # noqa
+from polars_ta.tdx.reference import TR  # noqa
 
 
 def ATR(high: pl.Expr, low: pl.Expr, close: pl.Expr, timeperiod: int = 14) -> pl.Expr:

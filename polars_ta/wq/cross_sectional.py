@@ -1,7 +1,12 @@
 import polars as pl
 
-from polars_ta.wq.preprocess import standardize_zscore, standardize_minmax, winsorize_3sigma, neutralize_demean
+from polars_ta.wq.preprocess import neutralize_demean
+from polars_ta.wq.preprocess import standardize_minmax
+from polars_ta.wq.preprocess import standardize_zscore
+from polars_ta.wq.preprocess import winsorize_3sigma
 
+
+# 函数名都没有加`cs_`前缀，使用时需留心
 
 def normalize(x: pl.Expr, use_std: bool = False, limit: float = 0.0) -> pl.Expr:
     """Calculates the mean value of all valid alpha values for a certain date, then subtracts that mean from each element."""

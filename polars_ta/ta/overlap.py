@@ -3,7 +3,8 @@ from math import ceil, floor
 import polars as pl
 
 from polars_ta.ta.statistic import STDDEV
-from polars_ta.wq.time_series import ts_mean, ts_decay_linear
+from polars_ta.wq.time_series import ts_decay_linear
+from polars_ta.wq.time_series import ts_mean
 
 
 def BBANDS_upperband(close: pl.Expr, timeperiod: int = 5, nbdevup: float = 2) -> pl.Expr:
@@ -35,6 +36,10 @@ def EMA(close: pl.Expr, timeperiod: int = 30) -> pl.Expr:
     return close.ewm_mean(span=timeperiod, adjust=False, min_periods=timeperiod)
 
 
+def KAMA(close: pl.Expr, timeperiod: int = 30) -> pl.Expr:
+    raise
+
+
 def MIDPOINT(close: pl.Expr, timeperiod: int = 14) -> pl.Expr:
     return (close.rolling_max(timeperiod) + close.rolling_min(timeperiod)) / 2
 
@@ -49,6 +54,7 @@ def RMA(close: pl.Expr, timeperiod: int = 30) -> pl.Expr:
     References
     ----------
     https://pola-rs.github.io/polars/py-polars/html/reference/expressions/api/polars.Expr.ewm_mean.html#polars.Expr.ewm_mean
+    https://github.com/twopirllc/pandas-ta/blob/main/pandas_ta/overlap/rma.py
 
     """
     return close.ewm_mean(alpha=1 / timeperiod, adjust=False, min_periods=timeperiod)
