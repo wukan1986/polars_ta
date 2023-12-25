@@ -4,9 +4,20 @@
 
 ## 安装
 
-> pip install -i https://pypi.org/simple --upgrade polars_ta # 官方源
+### 在线安装（由于项目还在Alpha阶段，发布不及时）
 
-> pip install -i https://pypi.tuna.tsinghua.edu.cn/simple --upgrade polars_ta # 国内镜像源
+```commandline
+pip install -i https://pypi.org/simple --upgrade polars_ta  # 官方源
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple --upgrade polars_ta  # 国内镜像源
+```
+
+### 源码安装(二次开发)
+
+```commandline
+git clone --depth=1 https://github.com/wukan1986/polars_ta.git
+cd polars_ta
+pip install -e .
+```
 
 ## 设计原则
 
