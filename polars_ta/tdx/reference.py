@@ -26,7 +26,7 @@ def BARSLAST(condition: pl.Expr) -> pl.Expr:
 def BARSLASTCOUNT(condition: pl.Expr) -> pl.Expr:
     """BARSLASTCOUNT(X),统计连续满足条件的周期数"""
     a = condition.cast(pl.Int32).cum_sum()
-    b = pl.when(~condition.cast(pl.Boolean)).then(a).otherwise(None).forward_fill()
+    b = pl.when(condition.cast(pl.Boolean)).then(None).otherwise(a).forward_fill().fill_null(0)
     return a - b
 
 
@@ -38,8 +38,10 @@ def BARSSINCE(condition: pl.Expr) -> pl.Expr:
 
 
 def _bars_since_n(x: pl.Series) -> pl.Series:
-    pl.arg_where()
-    return len(x) - 1 - x.cast(pl.Boolean).arg_true()[0]
+    a = x.cast(pl.Boolean).arg_true()
+    # 返回的值可能为空，所以需要判断一下
+    b = a[0] if len(a) > 0 else float('nan')
+    return len(x) - 1 - b
 
 
 def BARSSINCEN(condition: pl.Expr, timeperiod: int = 30) -> pl.Expr:
@@ -76,6 +78,24 @@ def EXPMEMA(close: pl.Expr, timeperiod: int = 30) -> pl.Expr:
     return x.ewm_mean(span=timeperiod, adjust=False, min_periods=1)
 
 
+def _hod(x: pl.Series):
+    return x.rank(descending=True)[-1]
+
+
+def HOD(close: pl.Expr, timeperiod: int = 30) -> pl.Expr:
+    """HOD(X,N):求当前X数据是N周期内的第几个高值,N=0则从第一个有效值开始"""
+    return close.rolling_map(_hod, timeperiod)
+
+
+def _lod(x: pl.Series):
+    return x.rank(descending=False)[-1]
+
+
+def LOD(close: pl.Expr, timeperiod: int = 30) -> pl.Expr:
+    """LOD(X,N):求当前X数据是N周期内的第几个低值"""
+    return close.rolling_map(_lod, timeperiod)
+
+
 def MEMA(close: pl.Expr, timeperiod: int = 30) -> pl.Expr:
     """MEMA(X,N):X的N日平滑移动平均,如Y=(X+Y'*(N-1))/N
  MEMA(X,N)相当于SMA(X,N,1)"""
@@ -98,4 +118,8 @@ def SUMIF(condition: pl.Expr, close: pl.Expr, timeperiod: int = 30) -> pl.Expr:
 
 def TMA(close: pl.Expr, timeperiod: int = 30) -> pl.Expr:
     """TMA(X,A,B),A和B必须小于1,算法	Y=(A*Y'+B*X),其中Y'表示上一周期Y值.初值为X"""
+    raise
+
+
+def FILTER(close: pl.Expr, timeperiod: int = 30) -> pl.Expr:
     raise
