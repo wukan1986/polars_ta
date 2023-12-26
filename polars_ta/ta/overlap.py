@@ -2,6 +2,8 @@ from math import ceil, floor
 
 import polars as pl
 
+from polars_ta.ta.operators import MAX
+from polars_ta.ta.operators import MIN
 from polars_ta.ta.statistic import STDDEV
 from polars_ta.wq.time_series import ts_decay_linear
 from polars_ta.wq.time_series import ts_mean
@@ -15,7 +17,7 @@ def BBANDS_upperband(close: pl.Expr, timeperiod: int = 5, nbdevup: float = 2) ->
     1. 想替换中线算法时，参考此代码新建一个函数
     2. 想生成下轨时，nbdevup用负数
     """
-    return SMA(close, timeperiod) + STDDEV(close, timeperiod, ddof=0) * nbdevup
+    return SMA(close, timeperiod) + STDDEV(close, timeperiod, nbdevup)
 
 
 def DEMA(close: pl.Expr, timeperiod: int = 30) -> pl.Expr:
@@ -41,11 +43,11 @@ def KAMA(close: pl.Expr, timeperiod: int = 30) -> pl.Expr:
 
 
 def MIDPOINT(close: pl.Expr, timeperiod: int = 14) -> pl.Expr:
-    return (close.rolling_max(timeperiod) + close.rolling_min(timeperiod)) / 2
+    return (MAX(close, timeperiod) + MIN(close, timeperiod)) / 2
 
 
 def MIDPRICE(high: pl.Expr, low: pl.Expr, timeperiod: int = 14) -> pl.Expr:
-    return (high.rolling_max(timeperiod) + low.rolling_min(timeperiod)) / 2
+    return (MAX(high, timeperiod) + MIN(low, timeperiod)) / 2
 
 
 def RMA(close: pl.Expr, timeperiod: int = 30) -> pl.Expr:

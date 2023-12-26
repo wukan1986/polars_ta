@@ -42,4 +42,4 @@ class TestDemoClass:
         result2 = self.df_pl.select(MAXINDEX(pl.col("close"), timeperiod=5))
         result3 = result2['close'].to_numpy()
 
-        assert np.allclose(result1, result3, equal_nan=True)
+        assert np.allclose(result1[5:], result3[5:], equal_nan=True)

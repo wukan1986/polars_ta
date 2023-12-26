@@ -25,3 +25,24 @@ class TestDemoClass:
         result3 = result2['close'].to_numpy()
 
         assert np.allclose(result1, result3, equal_nan=True)
+
+    def test_BARSLAST(self):
+        from polars_ta.tdx.reference import BARSLAST
+
+        df = pl.DataFrame({'A': [0, 1, 0, 0, 1, 1]})
+        result2 = df.select(BARSLAST(pl.col('A')))
+        print(result2)
+
+    def test_BARSLASTCOUNT(self):
+        from polars_ta.tdx.reference import BARSLASTCOUNT
+
+        df = pl.DataFrame({'A': [0, 1, 0, 0, 1, 1]})
+        result2 = df.select(BARSLASTCOUNT(pl.col('A')))
+        print(result2)
+
+    def test_BARSSINCEN(self):
+        from polars_ta.tdx.reference import BARSSINCEN
+
+        df = pl.DataFrame({'A': [0, 1, 0, 0, 1, 1, 1, 1]})
+        result2 = df.select(BARSSINCEN(pl.col('A'), 3))
+        print(result2)

@@ -107,7 +107,7 @@ def power(x: pl.Expr, y: pl.Expr) -> pl.Expr:
 
 def purify(x: pl.Expr) -> pl.Expr:
     """Clear infinities (+inf, -inf) by replacing with NaN."""
-    return pl.when(x.is_infinite()).then(pl.Null).otherwise(x)
+    return pl.when(x.is_infinite()).then(None).otherwise(x)
 
 
 def reverse(x: pl.Expr) -> pl.Expr:

@@ -47,11 +47,7 @@ def scale(x: pl.Expr, scale_=1, long_scale=1, short_scale=1) -> pl.Expr:
         S = x.clip(upper_bound=0)  # 全负数，和还是负数
         return L / L.sum() * long_scale - S / S.sum() * short_scale
     else:
-        if scale_ == 1:
-            # 返回的是表达式，还未开始计算，少一步是否可以加速？
-            return x / x.abs().sum()
-        else:
-            return x / x.abs().sum() * scale_
+        return x / x.abs().sum() * scale_
 
 
 def scale_down(x: pl.Expr, constant: float = 0) -> pl.Expr:

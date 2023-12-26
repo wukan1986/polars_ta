@@ -1,3 +1,5 @@
+import time
+
 import numpy as np
 import polars as pl
 from pandas.testing import assert_frame_equal, assert_series_equal
@@ -64,15 +66,6 @@ class TestDemoClass:
 
         assert_series_equal(result1, result2.to_series(0).to_pandas(), check_names=False)
 
-    # def test_ts_co_kurtosis(self):
-    #     from polars_ta.wq.time_series import ts_covariance
-    #
-    #     result1 = self.df_pd["high"].rolling(10).kurt(self.df_pd["low"])
-    #     print(result1)
-    #     # result2 = self.df_pl.select(ts_covariance(pl.col("high"), pl.col("low"), d=5))
-    #     #
-    #     # assert_series_equal(result1, result2.to_series(0).to_pandas(), check_names=False)
-
     def test_ts_decay_exp_window(self):
         from polars_ta.wq.time_series import ts_decay_exp_window
 
@@ -97,17 +90,13 @@ class TestDemoClass:
         result1 = df.select(ts_weighted_delay(pl.col('A'), k=0.25))
         print(result1)
 
-    # def test_ts_covariance(self):
-    #     df_pl = pl.DataFrame({'A': [4, 6, 5, 10], 'B': [7, 5, 3, 1]})
-    #     df_pd: pd.DataFrame = df_pl.to_pandas()
-    #
-    #     # print(df_pl.corr())
-    #     # print(df_pd.cov())
-    #
-    #     print(self.df_pl.select(pl.rolling_cov('high', 'close', window_size=10, ddof=1)))
-    #     print(self.df_pl.select(pl.rolling_cov('close', 'high', window_size=10, ddof=1)))
-    #     # print(df_pd['A'].rolling(4).cov(df_pd['B']))
-    #     print(df_pd['B'].rolling(4).skew(df_pd['A']))
-    #     print(df_pd['B'].rolling(4).kurt(df_pd['A']))
-    #     df_pl['A'].skew()
-    #     df_pl['A'].kurtosis()
+    def test_ts_arg_min(self):
+        from polars_ta.wq.time_series import ts_arg_min
+
+        t1 = time.perf_counter()
+        for i in range(10000):
+            result2 = self.df_pl.with_columns(
+                a1=ts_arg_min(pl.col('high'), 10),
+            )
+        t2 = time.perf_counter()
+        print(t2 - t1)

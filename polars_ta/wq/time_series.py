@@ -7,13 +7,21 @@ from polars_ta.utils.pandas_ import roll_rank
 
 # TODO rolling_map比较慢，少用. 如ts_arg_max、ts_product等
 
+def _arg_max(x: pl.Series):
+    return len(x) - 1 - x.arg_max()
+
+
 def ts_arg_max(x: pl.Expr, d: int = 5) -> pl.Expr:
     # WorldQuant中最大值为今天返回0，为昨天返回1
-    return d - 1 - x.rolling_map(np.argmax, d)
+    return x.rolling_map(_arg_max, d)
+
+
+def _arg_min(x: pl.Series):
+    return len(x) - 1 - x.arg_min()
 
 
 def ts_arg_min(x: pl.Expr, d: int = 5) -> pl.Expr:
-    return d - 1 - x.rolling_map(np.argmax, d)
+    return x.rolling_map(_arg_min, d)
 
 
 def ts_co_kurtosis(x: pl.Expr, y: pl.Expr, d: int = 5, ddof: int = 1) -> pl.Expr:

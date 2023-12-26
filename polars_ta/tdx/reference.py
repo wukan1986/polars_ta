@@ -16,6 +16,37 @@ from polars_ta.wq.time_series import ts_product as MULAR  # noqa
 from polars_ta.wq.time_series import ts_sum as SUM  # noqa
 
 
+def BARSLAST(condition: pl.Expr) -> pl.Expr:
+    """BARSLAST(X),上一次X不为0到现在的天数"""
+    a = condition.cum_count()
+    b = pl.when(condition.cast(pl.Boolean)).then(a).otherwise(None).forward_fill()
+    return a - b
+
+
+def BARSLASTCOUNT(condition: pl.Expr) -> pl.Expr:
+    """BARSLASTCOUNT(X),统计连续满足条件的周期数"""
+    a = condition.cast(pl.Int32).cum_sum()
+    b = pl.when(~condition.cast(pl.Boolean)).then(a).otherwise(None).forward_fill()
+    return a - b
+
+
+def BARSSINCE(condition: pl.Expr) -> pl.Expr:
+    """BARSSINCE(X):第一次X不为0到现在的天数"""
+    a = condition.cum_count()
+    b = condition.cast(pl.Boolean).arg_true().first()
+    return a - b
+
+
+def _bars_since_n(x: pl.Series) -> pl.Series:
+    pl.arg_where()
+    return len(x) - 1 - x.cast(pl.Boolean).arg_true()[0]
+
+
+def BARSSINCEN(condition: pl.Expr, timeperiod: int = 30) -> pl.Expr:
+    """BARSSINCEN(X,N):N周期内第一次X不为0到现在的天数"""
+    return condition.rolling_map(_bars_since_n, timeperiod)
+
+
 def DMA(close: pl.Expr, alpha: float = 0.5) -> pl.Expr:
     """DMA(X,A),求X的动态移动平均.
 算法:Y=A*X+(1-A)*Y',其中Y'表示上一周期Y值,A必须大于0且小于1.A支持变量"""
@@ -59,6 +90,10 @@ def RANGE(a: pl.Expr, b: pl.Expr, c: pl.Expr) -> pl.Expr:
 def SMA(X: pl.Expr, N: int, M: int = 1) -> pl.Expr:
     """用法:SMA(X,N,M),X的N日移动平均,M为权重,若Y=SMA(X,N,M)则Y=(X*M+Y'*(N-M))/N"""
     return X.ewm_mean(alpha=M / N, adjust=False, min_periods=1)
+
+
+def SUMIF(condition: pl.Expr, close: pl.Expr, timeperiod: int = 30) -> pl.Expr:
+    return SUM(condition.cast(pl.Int32) * close, timeperiod)
 
 
 def TMA(close: pl.Expr, timeperiod: int = 30) -> pl.Expr:
