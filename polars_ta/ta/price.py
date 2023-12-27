@@ -6,11 +6,11 @@ def AVGPRICE(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr) -> pl.E
 
 
 def MEDPRICE(high: pl.Expr, low: pl.Expr) -> pl.Expr:
-    return (high + low) / 4
+    return (high + low) / 2
 
 
 def TYPPRICE(high: pl.Expr, low: pl.Expr, close: pl.Expr) -> pl.Expr:
-    return (high + low + close) / 4
+    return (high + low + close) / 3
 
 
 def WCLPRICE(high: pl.Expr, low: pl.Expr, close: pl.Expr) -> pl.Expr:

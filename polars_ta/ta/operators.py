@@ -16,6 +16,13 @@ def DIV(high: pl.Expr, low: pl.Expr) -> pl.Expr:
 
 
 def MAX(close: pl.Expr, timeperiod: int = 30) -> pl.Expr:
+    """
+
+    Notes
+    -----
+    时序上窗口最大，不要与多列最大搞混
+
+    """
     return ts_max(close, timeperiod)
 
 

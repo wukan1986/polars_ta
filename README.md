@@ -11,7 +11,7 @@ pip install -i https://pypi.org/simple --upgrade polars_ta  # 官方源
 pip install -i https://pypi.tuna.tsinghua.edu.cn/simple --upgrade polars_ta  # 国内镜像源
 ```
 
-### 源码安装(二次开发)
+### 源码安装(可二次开发)
 
 ```commandline
 git clone --depth=1 https://github.com/wukan1986/polars_ta.git
@@ -24,7 +24,7 @@ pip install -e .
 1. 调用方法由`成员函数`换成`独立函数`。输入输出使用`Expr`，避免使用`Series`
 2. `talib`的函数名与参数与原版`TA-Lib`完全一致
 3. 优先实现`wq`公式，它仿`WorldQuant Alpha`公式，与官网尽量保持一致。如果部分功能实现在此更合适将放在此处
-4. 其次实现`ta`公式，它相当于`TA-Lib`更原生支持`polars`的版本，优先从`wq`中导入更名
+4. 其次实现`ta`公式，它相当于`TA-Lib`的`polars`风格的版本。优先从`wq`中导入更名
 5. 最后实现`tdx`公式，它也是优先从`wq`和`ta`中导入
 
 ## 指标区别
@@ -58,6 +58,13 @@ pip install -e .
 ### 移动求和
 
 `ADX`等一类的指标第一个有效值算法为`SUM`，而不是`SMA`，之后使用`ema_mean(alpha=1/N)`。此类暂不实现
+
+### MAX/MIN等指标
+
+1. 在`wq`中，`max_/min_`横向算子，`ts_max/ts_min`时序指标
+2. 在`talib`中, `MAX/MIN`时序指标，没有横向算子
+3. 在`ta`中，由于要模仿`talib`，所以有`MAX/MIN`时序指标，也没有横向算子
+4. 在`tdx`中，`MAX/MIN`横向算子，`HHV/LLV`时序指标
 
 ## TA-Lib封装的演化
 

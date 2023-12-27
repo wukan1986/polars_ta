@@ -1,8 +1,10 @@
 import polars as pl
 
 from polars_ta.ta.overlap import EMA as _ema
-from polars_ta.ta.overlap import SMA as MA  # noqa
+from polars_ta.ta.overlap import SMA as MA
 from polars_ta.ta.volatility import TRANGE as TR  # noqa
+from polars_ta.wq.arithmetic import max_ as MAX  # noqa
+from polars_ta.wq.arithmetic import min_ as MIN  # noqa
 from polars_ta.wq.cross_sectional import rank as RANK  # noqa
 from polars_ta.wq.time_series import ts_arg_max as HHVBARS  # noqa
 from polars_ta.wq.time_series import ts_arg_min as LLVBARS  # noqa
@@ -13,7 +15,7 @@ from polars_ta.wq.time_series import ts_delta as DIFF  # noqa
 from polars_ta.wq.time_series import ts_max as HHV  # noqa
 from polars_ta.wq.time_series import ts_min as LLV  # noqa
 from polars_ta.wq.time_series import ts_product as MULAR  # noqa
-from polars_ta.wq.time_series import ts_sum as SUM  # noqa
+from polars_ta.wq.time_series import ts_sum as SUM
 
 
 def BARSLAST(condition: pl.Expr) -> pl.Expr:
@@ -110,6 +112,10 @@ def RANGE(a: pl.Expr, b: pl.Expr, c: pl.Expr) -> pl.Expr:
 def SMA(X: pl.Expr, N: int, M: int = 1) -> pl.Expr:
     """用法:SMA(X,N,M),X的N日移动平均,M为权重,若Y=SMA(X,N,M)则Y=(X*M+Y'*(N-M))/N"""
     return X.ewm_mean(alpha=M / N, adjust=False, min_periods=1)
+
+
+def SUM_0(close: pl.Expr) -> pl.Expr:
+    return close.cum_sum()
 
 
 def SUMIF(condition: pl.Expr, close: pl.Expr, timeperiod: int = 30) -> pl.Expr:

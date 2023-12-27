@@ -1,5 +1,7 @@
 import polars as pl
 
+from polars_ta.ta.operators import MAX
+from polars_ta.ta.operators import MIN
 from polars_ta.ta.overlap import EMA
 from polars_ta.ta.overlap import SMA
 from polars_ta.wq.time_series import ts_delta
@@ -73,18 +75,21 @@ def ROC(close: pl.Expr, timeperiod: int = 10) -> pl.Expr:
 
 
 def STOCHF_fastd(high: pl.Expr, low: pl.Expr, close: pl.Expr, fastk_period: int = 5, fastd_period: int = 3) -> pl.Expr:
-    return SMA(STOCHF_fastk(high, low, close, fastk_period), fastd_period)
+    return SMA(RSV(high, low, close, fastk_period), fastd_period)
 
 
-def STOCHF_fastk(high: pl.Expr, low: pl.Expr, close: pl.Expr, fastk_period: int = 5) -> pl.Expr:
+def RSV(high: pl.Expr, low: pl.Expr, close: pl.Expr, fastk_period: int = 5) -> pl.Expr:
     """
 
     Notes
     -----
-    talib.STOCHF版相当于多乘了100
+    又名STOCHF_fastk, talib.STOCHF版相当于多乘了100，与WILLR指标又很像
 
     """
-    return (close - low.rolling_min(fastk_period)) / (high.rolling_max(fastk_period) - low.rolling_min(fastk_period))
+    a = MAX(high, fastk_period)
+    b = MIN(low, fastk_period)
+
+    return (close - b) / (a - b)
 
 
 def TRIX(close: pl.Expr, timeperiod: int = 30) -> pl.Expr:
@@ -107,4 +112,7 @@ def WILLR(high: pl.Expr, low: pl.Expr, close: pl.Expr, timeperiod: int = 14) -> 
     https://school.stockcharts.com/doku.php?id=technical_indicators:williams_r
 
     """
-    return (high.rolling_max(timeperiod) - close) / (high.rolling_max(timeperiod) - low.rolling_min(timeperiod))
+    a = MAX(high, timeperiod)
+    b = MIN(low, timeperiod)
+
+    return (a - close) / (a - b)
