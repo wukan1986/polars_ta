@@ -94,4 +94,5 @@ pip install -e .
 - https://github.com/TA-Lib/ta-lib
 - https://github.com/twopirllc/pandas-ta
 - https://github.com/bukosabino/ta
+- https://github.com/wukan1986/ta_cn
 
