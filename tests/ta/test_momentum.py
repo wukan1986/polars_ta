@@ -10,8 +10,8 @@ class TestDemoClass:
     df_pl = None
 
     def setup_class(self):
-        self.high_np = np.arange(100, dtype=float) + np.random.rand(100)
-        self.low_np = np.arange(100, dtype=float) - np.random.rand(100)
+        self.high_np = 0 + np.random.rand(100)
+        self.low_np = 0 - np.random.rand(100)
         self.close_np = np.arange(100, dtype=float)
 
         self.df_pl = pl.DataFrame([self.high_np, self.low_np, self.close_np],
@@ -83,3 +83,17 @@ class TestDemoClass:
         # print(result3)
 
         assert np.allclose(result1, result3, equal_nan=True)
+
+    def test_AROON(self):
+        timeperiod = 10
+
+        from polars_ta.ta.momentum import AROON_aroonup
+
+        _, result1 = talib.AROON(self.high_np, self.low_np, timeperiod=timeperiod)
+        result2 = self.df_pl.select(AROON_aroonup(pl.col("high"), pl.col("low"), timeperiod=timeperiod))
+        result3 = result2['high'].to_numpy() * 100
+        print()
+        print(result1)
+        print(result3)
+
+        assert np.allclose(result1[timeperiod:], result3[timeperiod:], equal_nan=True)

@@ -8,7 +8,15 @@ from polars_ta.utils.pandas_ import roll_rank
 # TODO rolling_map比较慢，少用. 如ts_arg_max、ts_product等
 
 def _arg_max(x: pl.Series):
-    return len(x) - 1 - x.arg_max()
+    """
+    Notes
+    -----
+    等polars推出rolling_arg_max(reverse=True)这个问题能好转
+
+    """
+    # return x[::-1].arg_max()
+    # return x.reverse().arg_max() # 正确，但太慢
+    return len(x) - 1 - x.arg_max()  # 有多个最大值相同时，靠前的值会被记录下来，导致结果偏大
 
 
 def ts_arg_max(x: pl.Expr, d: int = 5) -> pl.Expr:

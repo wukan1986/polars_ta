@@ -8,10 +8,6 @@ from polars_ta.wq.time_series import ts_delta
 from polars_ta.wq.time_series import ts_returns
 
 
-def ADX(high: pl.Expr, low: pl.Expr, close: pl.Expr, timeperiod: int = 14) -> pl.Expr:
-    raise
-
-
 def ADXR(high: pl.Expr, low: pl.Expr, close: pl.Expr, timeperiod: int = 14) -> pl.Expr:
     raise
 
@@ -20,8 +16,24 @@ def APO(close: pl.Expr, fastperiod: int = 12, slowperiod: int = 26, matype: int 
     raise
 
 
-def AROON(high: pl.Expr, low: pl.Expr, timeperiod: int = 14) -> pl.Expr:
-    raise
+def AROON_aroondown(high: pl.Expr, low: pl.Expr, timeperiod: int = 14) -> pl.Expr:
+    """
+    下轨:(N-LLVBARS(H,N))/N*100,COLORGREEN;
+    """
+    return (low.rolling_map(lambda x: x.arg_min(), timeperiod) + 1) / timeperiod
+
+
+def AROON_aroonup(high: pl.Expr, low: pl.Expr, timeperiod: int = 14) -> pl.Expr:
+    """
+    上轨:(N-HHVBARS(H,N))/N*100,COLORRED;
+
+    Notes
+    -----
+    arg_max没有逆序，导致出现两个及以上最高点时，结果偏大
+
+    """
+    # return (timeperiod - ts_arg_max(high, timeperiod)) / timeperiod
+    return (high.rolling_map(lambda x: x.arg_max(), timeperiod) + 1) / timeperiod
 
 
 def MACD_macd(close: pl.Expr, fastperiod: int = 12, slowperiod: int = 26) -> pl.Expr:
