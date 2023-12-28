@@ -28,7 +28,17 @@ talib = [
 ]
 
 [tool.setuptools]
-packages = ["polars_ta"]
+packages = [
+    "polars_ta",
+    "polars_ta.candles",
+    "polars_ta.imports",
+    "polars_ta.performance",
+    "polars_ta.ta",
+    "polars_ta.talib",
+    "polars_ta.tdx",
+    "polars_ta.utils",
+    "polars_ta.wq",
+]
 
 [tool.setuptools.dynamic]
 version = { attr = "polars_ta._version.__version__" }

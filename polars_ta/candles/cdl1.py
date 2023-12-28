@@ -1,51 +1,52 @@
-import polars as pl
+from polars import Expr
+from polars import max_horizontal, min_horizontal
 
 from polars_ta import TA_EPSILON
 
 
 # https://github.com/TA-Lib/ta-lib/blob/main/src/ta_func/ta_utility.h#L327
 
-def real_body(open_: pl.Expr, close: pl.Expr) -> pl.Expr:
+def real_body(open_: Expr, close: Expr) -> Expr:
     """实体"""
     return (close - open_).abs()
 
 
-def upper_shadow(open_: pl.Expr, high: pl.Expr, close: pl.Expr) -> pl.Expr:
+def upper_shadow(open_: Expr, high: Expr, close: Expr) -> Expr:
     """上影"""
-    return high - pl.max_horizontal(open_, close)
+    return high - max_horizontal(open_, close)
 
 
-def lower_shadow(open_: pl.Expr, low: pl.Expr, close: pl.Expr) -> pl.Expr:
+def lower_shadow(open_: Expr, low: Expr, close: Expr) -> Expr:
     """下影"""
-    return pl.min_horizontal(open_, close) - low
+    return min_horizontal(open_, close) - low
 
 
-def high_low_range(high: pl.Expr, low: pl.Expr) -> pl.Expr:
+def high_low_range(high: Expr, low: Expr) -> Expr:
     """总长"""
     return high - low
 
 
-def candle_color(open_: pl.Expr, close: pl.Expr) -> pl.Expr:
+def candle_color(open_: Expr, close: Expr) -> Expr:
     """K线颜色"""
     return close >= open_
 
 
-def upper_body(open_: pl.Expr, close: pl.Expr) -> pl.Expr:
+def upper_body(open_: Expr, close: Expr) -> Expr:
     """实体上沿"""
-    return pl.max_horizontal(open_, close)
+    return max_horizontal(open_, close)
 
 
-def lower_body(open_: pl.Expr, close: pl.Expr) -> pl.Expr:
+def lower_body(open_: Expr, close: Expr) -> Expr:
     """实体下沿"""
-    return pl.min_horizontal(open_, close)
+    return min_horizontal(open_, close)
 
 
-def shadows(open_: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr) -> pl.Expr:
+def shadows(open_: Expr, high: Expr, low: Expr, close: Expr) -> Expr:
     """阴影"""
     return high_low_range(high, low) - real_body(open_, close)
 
 
-def efficiency_ratio(open_: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr) -> pl.Expr:
+def efficiency_ratio(open_: Expr, high: Expr, low: Expr, close: Expr) -> Expr:
     """K线内的市场效率。两个总长减去一个实体长就是路程
 
     比较粗略的计算市场效率的方法。丢失了部分路程信息，所以结果会偏大
@@ -54,12 +55,12 @@ def efficiency_ratio(open_: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr
     distance = 2 * high_low_range(high, low) - displacement
     return displacement / (distance + TA_EPSILON)
 
-# def candle_range(open_: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr) -> pl.Expr:
+# def candle_range(open_: Expr, high: Expr, low: Expr, close: Expr) -> Expr:
 #     return real_body(open_, high, low, close)
 #     return high_low_range(open_, high, low, close)
 #     return shadows(open_, high, low, close)
 #
 #
-# def candle_average(open_: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr) -> pl.Expr:
+# def candle_average(open_: Expr, high: Expr, low: Expr, close: Expr) -> Expr:
 #     """平均值"""
 #     return high_low_range(open_, high, low, close)

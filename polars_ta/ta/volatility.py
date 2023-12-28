@@ -1,14 +1,14 @@
-import polars as pl
+from polars import Expr, max_horizontal
 
 from polars_ta.ta.overlap import RMA
 
 
-def ATR(high: pl.Expr, low: pl.Expr, close: pl.Expr, timeperiod: int = 14) -> pl.Expr:
+def ATR(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:
     """"""
     return RMA(TRANGE(high, low, close), timeperiod)
 
 
-def NATR(high: pl.Expr, low: pl.Expr, close: pl.Expr, timeperiod: int = 14) -> pl.Expr:
+def NATR(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:
     """
 
     Notes
@@ -19,7 +19,7 @@ def NATR(high: pl.Expr, low: pl.Expr, close: pl.Expr, timeperiod: int = 14) -> p
     return ATR(high, low, close, timeperiod) / close
 
 
-def TRANGE(high: pl.Expr, low: pl.Expr, close: pl.Expr) -> pl.Expr:
+def TRANGE(high: Expr, low: Expr, close: Expr) -> Expr:
     """
 
     Notes
@@ -31,4 +31,4 @@ def TRANGE(high: pl.Expr, low: pl.Expr, close: pl.Expr) -> pl.Expr:
     tr1 = high - low
     tr2 = (high - prev_close).abs()
     tr3 = (low - prev_close).abs()
-    return pl.max_horizontal(tr1, tr2, tr3)
+    return max_horizontal(tr1, tr2, tr3)

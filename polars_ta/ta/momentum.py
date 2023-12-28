@@ -1,4 +1,4 @@
-import polars as pl
+from polars import Expr
 
 from polars_ta.ta.operators import MAX
 from polars_ta.ta.operators import MIN
@@ -8,22 +8,22 @@ from polars_ta.wq.time_series import ts_delta
 from polars_ta.wq.time_series import ts_returns
 
 
-def ADXR(high: pl.Expr, low: pl.Expr, close: pl.Expr, timeperiod: int = 14) -> pl.Expr:
+def ADXR(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:
     raise
 
 
-def APO(close: pl.Expr, fastperiod: int = 12, slowperiod: int = 26, matype: int = 0) -> pl.Expr:
+def APO(close: Expr, fastperiod: int = 12, slowperiod: int = 26, matype: int = 0) -> Expr:
     raise
 
 
-def AROON_aroondown(high: pl.Expr, low: pl.Expr, timeperiod: int = 14) -> pl.Expr:
+def AROON_aroondown(high: Expr, low: Expr, timeperiod: int = 14) -> Expr:
     """
     下轨:(N-LLVBARS(H,N))/N*100,COLORGREEN;
     """
     return (low.rolling_map(lambda x: x.arg_min(), timeperiod) + 1) / timeperiod
 
 
-def AROON_aroonup(high: pl.Expr, low: pl.Expr, timeperiod: int = 14) -> pl.Expr:
+def AROON_aroonup(high: Expr, low: Expr, timeperiod: int = 14) -> Expr:
     """
     上轨:(N-HHVBARS(H,N))/N*100,COLORRED;
 
@@ -36,7 +36,7 @@ def AROON_aroonup(high: pl.Expr, low: pl.Expr, timeperiod: int = 14) -> pl.Expr:
     return (high.rolling_map(lambda x: x.arg_max(), timeperiod) + 1) / timeperiod
 
 
-def MACD_macd(close: pl.Expr, fastperiod: int = 12, slowperiod: int = 26) -> pl.Expr:
+def MACD_macd(close: Expr, fastperiod: int = 12, slowperiod: int = 26) -> Expr:
     """
 
     Notes
@@ -47,7 +47,7 @@ def MACD_macd(close: pl.Expr, fastperiod: int = 12, slowperiod: int = 26) -> pl.
     return EMA(close, fastperiod) - EMA(close, slowperiod)
 
 
-def MACD_macdhist(close: pl.Expr, fastperiod: int = 12, slowperiod: int = 26, signalperiod: int = 9) -> pl.Expr:
+def MACD_macdhist(close: Expr, fastperiod: int = 12, slowperiod: int = 26, signalperiod: int = 9) -> Expr:
     """
 
     Notes
@@ -60,37 +60,37 @@ def MACD_macdhist(close: pl.Expr, fastperiod: int = 12, slowperiod: int = 26, si
     return macd - signal
 
 
-def MACD_macdsignal(close: pl.Expr, fastperiod: int = 12, slowperiod: int = 26, signalperiod: int = 9) -> pl.Expr:
+def MACD_macdsignal(close: Expr, fastperiod: int = 12, slowperiod: int = 26, signalperiod: int = 9) -> Expr:
     macd = MACD_macd(close, fastperiod, slowperiod)
     signal = EMA(macd, signalperiod)
     return signal
 
 
-def MOM(close: pl.Expr, timeperiod: int = 10) -> pl.Expr:
+def MOM(close: Expr, timeperiod: int = 10) -> Expr:
     return ts_delta(close, timeperiod)
 
 
-def ROCR(close: pl.Expr, timeperiod: int = 10) -> pl.Expr:
+def ROCR(close: Expr, timeperiod: int = 10) -> Expr:
     return close / close.shift(timeperiod)
 
 
-def ROCR100(close: pl.Expr, timeperiod: int = 10) -> pl.Expr:
+def ROCR100(close: Expr, timeperiod: int = 10) -> Expr:
     return ROCR(close, timeperiod) * 100
 
 
-def ROCP(close: pl.Expr, timeperiod: int = 10) -> pl.Expr:
+def ROCP(close: Expr, timeperiod: int = 10) -> Expr:
     return ts_returns(close, timeperiod)
 
 
-def ROC(close: pl.Expr, timeperiod: int = 10) -> pl.Expr:
+def ROC(close: Expr, timeperiod: int = 10) -> Expr:
     return ROCP(close, timeperiod) * 100
 
 
-def STOCHF_fastd(high: pl.Expr, low: pl.Expr, close: pl.Expr, fastk_period: int = 5, fastd_period: int = 3) -> pl.Expr:
+def STOCHF_fastd(high: Expr, low: Expr, close: Expr, fastk_period: int = 5, fastd_period: int = 3) -> Expr:
     return SMA(RSV(high, low, close, fastk_period), fastd_period)
 
 
-def RSV(high: pl.Expr, low: pl.Expr, close: pl.Expr, fastk_period: int = 5) -> pl.Expr:
+def RSV(high: Expr, low: Expr, close: Expr, fastk_period: int = 5) -> Expr:
     """
 
     Notes
@@ -104,14 +104,14 @@ def RSV(high: pl.Expr, low: pl.Expr, close: pl.Expr, fastk_period: int = 5) -> p
     return (close - b) / (a - b)
 
 
-def TRIX(close: pl.Expr, timeperiod: int = 30) -> pl.Expr:
+def TRIX(close: Expr, timeperiod: int = 30) -> Expr:
     EMA1 = EMA(close, timeperiod)
     EMA2 = EMA(EMA1, timeperiod)
     EMA3 = EMA(EMA2, timeperiod)
     return ROCP(EMA3, 1)
 
 
-def WILLR(high: pl.Expr, low: pl.Expr, close: pl.Expr, timeperiod: int = 14) -> pl.Expr:
+def WILLR(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:
     """
 
     Notes

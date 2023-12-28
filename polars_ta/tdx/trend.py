@@ -1,4 +1,4 @@
-import polars as pl
+from polars import Expr
 
 from polars_ta.tdx.arithmetic import ABS
 from polars_ta.tdx.choice import IF
@@ -8,7 +8,7 @@ from polars_ta.tdx.reference import SUM
 from polars_ta.tdx.reference import TR
 
 
-def DPO(CLOSE: pl.Expr, N: int = 20) -> pl.Expr:
+def DPO(CLOSE: Expr, N: int = 20) -> Expr:
     """
     DPO:CLOSE-REF(MA(CLOSE,N),N/2+1);
     MADPO:MA(DPO,M);
@@ -17,7 +17,7 @@ def DPO(CLOSE: pl.Expr, N: int = 20) -> pl.Expr:
     return CLOSE - REF(MA(CLOSE, N), N // 2 + 1)
 
 
-def EMV(HIGH: pl.Expr, LOW: pl.Expr, VOL: pl.Expr, N: int = 14) -> pl.Expr:
+def EMV(HIGH: Expr, LOW: Expr, VOL: Expr, N: int = 14) -> Expr:
     """
     VOLUME:=MA(VOL,N)/VOL;
     MID:=100*(HIGH+LOW-REF(HIGH+LOW,1))/(HIGH+LOW);
@@ -32,7 +32,7 @@ def EMV(HIGH: pl.Expr, LOW: pl.Expr, VOL: pl.Expr, N: int = 14) -> pl.Expr:
     return MA(MID * VOLUME * SUB / MA(SUB, N), N)
 
 
-def PLUS_DM(HIGH: pl.Expr, LOW: pl.Expr, N: int = 14) -> pl.Expr:
+def PLUS_DM(HIGH: Expr, LOW: Expr, N: int = 14) -> Expr:
     """
     MTR:=SUM(MAX(MAX(HIGH-LOW,ABS(HIGH-REF(CLOSE,1))),ABS(REF(CLOSE,1)-LOW)),N);
     HD :=HIGH-REF(HIGH,1);
@@ -46,14 +46,14 @@ def PLUS_DM(HIGH: pl.Expr, LOW: pl.Expr, N: int = 14) -> pl.Expr:
     return DMP
 
 
-def MINUS_DM(HIGH: pl.Expr, LOW: pl.Expr, N: int = 14) -> pl.Expr:
+def MINUS_DM(HIGH: Expr, LOW: Expr, N: int = 14) -> Expr:
     HD = HIGH - REF(HIGH, 1)
     LD = REF(LOW, 1) - LOW
     DMM = SUM(IF((LD > 0) & (LD > HD), LD, 0), N)
     return DMM
 
 
-def PLUS_DI(HIGH: pl.Expr, LOW: pl.Expr, CLOSE: pl.Expr, N: int = 14) -> pl.Expr:
+def PLUS_DI(HIGH: Expr, LOW: Expr, CLOSE: Expr, N: int = 14) -> Expr:
     """
     MTR:=SUM(MAX(MAX(HIGH-LOW,ABS(HIGH-REF(CLOSE,1))),ABS(REF(CLOSE,1)-LOW)),N);
     HD :=HIGH-REF(HIGH,1);
@@ -69,14 +69,14 @@ def PLUS_DI(HIGH: pl.Expr, LOW: pl.Expr, CLOSE: pl.Expr, N: int = 14) -> pl.Expr
     return PDI  # * 100
 
 
-def MINUS_DI(HIGH: pl.Expr, LOW: pl.Expr, CLOSE: pl.Expr, N: int = 14) -> pl.Expr:
+def MINUS_DI(HIGH: Expr, LOW: Expr, CLOSE: Expr, N: int = 14) -> Expr:
     MTR = SUM(TR(HIGH, LOW, CLOSE), N)
     DMM = MINUS_DM(HIGH, LOW, N)
     MDI = DMM / MTR
     return MDI  # * 100
 
 
-def ADX(HIGH: pl.Expr, LOW: pl.Expr, CLOSE: pl.Expr, N: int = 14, M: int = 6) -> pl.Expr:
+def ADX(HIGH: Expr, LOW: Expr, CLOSE: Expr, N: int = 14, M: int = 6) -> Expr:
     """
     MTR:=SUM(MAX(MAX(HIGH-LOW,ABS(HIGH-REF(CLOSE,1))),ABS(REF(CLOSE,1)-LOW)),N);
     HD :=HIGH-REF(HIGH,1);
@@ -98,7 +98,7 @@ def ADX(HIGH: pl.Expr, LOW: pl.Expr, CLOSE: pl.Expr, N: int = 14, M: int = 6) ->
     return MA(ABS(MDI - PDI) / (MDI + PDI), M)  # * 100
 
 
-def ADXR(HIGH: pl.Expr, LOW: pl.Expr, CLOSE: pl.Expr, N: int = 14, M: int = 6) -> pl.Expr:
+def ADXR(HIGH: Expr, LOW: Expr, CLOSE: Expr, N: int = 14, M: int = 6) -> Expr:
     adx = ADX(HIGH, LOW, CLOSE, N, M)
     adxr = (adx + REF(adx, M)) / 2
     return adxr

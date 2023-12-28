@@ -1,4 +1,4 @@
-import polars as pl
+from polars import Expr
 
 from polars_ta.ta.momentum import RSV
 from polars_ta.ta.price import TYPPRICE
@@ -14,7 +14,7 @@ from polars_ta.tdx.reference import TR
 from polars_ta.tdx.statistic import AVEDEV
 
 
-def ATR(high: pl.Expr, low: pl.Expr, close: pl.Expr, timeperiod: int = 14) -> pl.Expr:
+def ATR(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:
     """
 
     Notes
@@ -25,7 +25,7 @@ def ATR(high: pl.Expr, low: pl.Expr, close: pl.Expr, timeperiod: int = 14) -> pl
     return MA(TR(high, low, close), timeperiod)
 
 
-def BIAS(CLOSE: pl.Expr, N: int = 6) -> pl.Expr:
+def BIAS(CLOSE: Expr, N: int = 6) -> Expr:
     """
     BIAS1 :(CLOSE-MA(CLOSE,N1))/MA(CLOSE,N1)*100;
     BIAS2 :(CLOSE-MA(CLOSE,N2))/MA(CLOSE,N2)*100;
@@ -35,7 +35,7 @@ def BIAS(CLOSE: pl.Expr, N: int = 6) -> pl.Expr:
     return CLOSE / MA(CLOSE, N) - 1  # * 100
 
 
-def CCI(HIGH: pl.Expr, LOW: pl.Expr, CLOSE: pl.Expr, N: int = 14) -> pl.Expr:
+def CCI(HIGH: Expr, LOW: Expr, CLOSE: Expr, N: int = 14) -> Expr:
     """
     TYP:=(HIGH+LOW+CLOSE)/3;
     CCI:(TYP-MA(TYP,N))*1000/(15*AVEDEV(TYP,N));
@@ -49,7 +49,7 @@ def CCI(HIGH: pl.Expr, LOW: pl.Expr, CLOSE: pl.Expr, N: int = 14) -> pl.Expr:
     return (TYP - MA(TYP, N)) / (0.015 * AVEDEV(TYP, N))
 
 
-def KDJ(HIGH: pl.Expr, LOW: pl.Expr, CLOSE: pl.Expr, N: int = 9, M1: int = 3, M2: int = 3) -> pl.Expr:
+def KDJ(HIGH: Expr, LOW: Expr, CLOSE: Expr, N: int = 9, M1: int = 3, M2: int = 3) -> Expr:
     """
     RSV:=(CLOSE-LLV(LOW,N))/(HHV(HIGH,N)-LLV(LOW,N))*100;
     K:SMA(RSV,M1,1);
@@ -65,7 +65,7 @@ def KDJ(HIGH: pl.Expr, LOW: pl.Expr, CLOSE: pl.Expr, N: int = 9, M1: int = 3, M2
     return j
 
 
-def MTM(CLOSE: pl.Expr, N: int = 12) -> pl.Expr:
+def MTM(CLOSE: Expr, N: int = 12) -> Expr:
     """
     MTM:CLOSE-REF(CLOSE,MIN(BARSCOUNT(C),N));
     MTMMA:MA(MTM,M);
@@ -74,7 +74,7 @@ def MTM(CLOSE: pl.Expr, N: int = 12) -> pl.Expr:
     return DIFF(CLOSE, N)
 
 
-def RSI(CLOSE: pl.Expr, N: int = 6) -> pl.Expr:
+def RSI(CLOSE: Expr, N: int = 6) -> Expr:
     """
     LC:=REF(CLOSE,1);
     RSI1:SMA(MAX(CLOSE-LC,0),N1,1)/SMA(ABS(CLOSE-LC),N1,1)*100;
@@ -86,7 +86,7 @@ def RSI(CLOSE: pl.Expr, N: int = 6) -> pl.Expr:
     return SMA(MAX(DIF, 0), N, 1) / SMA(ABS(DIF), N, 1)  # * 100
 
 
-def MFI(CLOSE: pl.Expr, HIGH: pl.Expr, LOW: pl.Expr, VOL: pl.Expr, N: int = 14) -> pl.Expr:
+def MFI(CLOSE: Expr, HIGH: Expr, LOW: Expr, VOL: Expr, N: int = 14) -> Expr:
     """
 
     TYP := (HIGH + LOW + CLOSE)/3;

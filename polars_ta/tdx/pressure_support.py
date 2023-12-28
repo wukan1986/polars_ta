@@ -1,10 +1,10 @@
-import polars as pl
+from polars import Expr
 
 from polars_ta.tdx.reference import MA
 from polars_ta.tdx.statistic import STDP
 
 
-def BOLL(close: pl.Expr, M: int = 20, N: int = 2) -> pl.Expr:
+def BOLL(close: Expr, M: int = 20, N: int = 2) -> Expr:
     """
     BOLL:MA(CLOSE,M);
     UB:BOLL+2*STD(CLOSE,M);

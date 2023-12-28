@@ -1,4 +1,4 @@
-import polars as pl
+from polars import Expr
 
 from polars_ta.wq.arithmetic import log_diff
 from polars_ta.wq.time_series import ts_returns
@@ -9,7 +9,7 @@ log_return = log_diff
 percent_return = ts_returns
 
 
-def cum_return(close: pl.Expr) -> pl.Expr:
+def cum_return(close: Expr) -> Expr:
     """累计收益"""
 
     return close / close.drop_nulls().first()

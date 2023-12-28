@@ -12,8 +12,9 @@ func(expr, ..., skip_nan=False, output_idx=None, schema=None, schema_format='{}'
 
 from functools import wraps
 
-import polars as pl
 import talib as _talib
+from polars import Expr
+from polars import struct
 from talib import abstract as _abstract
 
 from polars_ta.utils.helper import TaLibHelper
@@ -49,13 +50,13 @@ def ta_func(func, func_name, input_names, output_names,
     -------
 
     """
-    exprs = [arg for arg in args if isinstance(arg, pl.Expr)]
-    param = [arg for arg in args if not isinstance(arg, pl.Expr)]
+    exprs = [arg for arg in args if isinstance(arg, Expr)]
+    param = [arg for arg in args if not isinstance(arg, Expr)]
 
     if len(exprs) == 1:
         ef = getattr(exprs[0].ta, func_name)
     else:
-        ef = getattr(pl.struct(*exprs).ta, func_name)
+        ef = getattr(struct(*exprs).ta, func_name)
 
     return ef(*param,
               skip_nan=skip_nan, output_idx=output_idx, schema=schema, schema_format=schema_format, nan_to_null=nan_to_null,

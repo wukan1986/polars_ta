@@ -1,7 +1,9 @@
-import polars as pl
+from polars import Expr
+from polars import reduce, max_horizontal, sum_horizontal, min_horizontal, Int64
+from polars import when
 
 
-def abs_(x: pl.Expr) -> pl.Expr:
+def abs_(x: Expr) -> Expr:
     return x.abs()
 
 
@@ -10,85 +12,85 @@ def add(*args, filter_=False):
     if filter_:
         # TODO 等官方修复此bug
         # https://github.com/pola-rs/polars/issues/13113
-        # return pl.sum_horizontal(*args)
+        # return sum_horizontal(*args)
         args = [_.fill_null(0) for _ in args]
 
-    return pl.reduce(function=lambda acc, x: acc + x, exprs=args)
+    return reduce(function=lambda acc, x: acc + x, exprs=args)
 
 
-def ceiling(x: pl.Expr) -> pl.Expr:
+def ceiling(x: Expr) -> Expr:
     return x.ceil()
 
 
-def cos(x: pl.Expr) -> pl.Expr:
+def cos(x: Expr) -> Expr:
     return x.cos()
 
 
-def cosh(x: pl.Expr) -> pl.Expr:
+def cosh(x: Expr) -> Expr:
     return x.cosh()
 
 
-def densify(x: pl.Expr) -> pl.Expr:
+def densify(x: Expr) -> Expr:
     raise
 
 
-def divide(x: pl.Expr, y: pl.Expr) -> pl.Expr:
+def divide(x: Expr, y: Expr) -> Expr:
     return x / y
 
 
-def exp(x: pl.Expr) -> pl.Expr:
+def exp(x: Expr) -> Expr:
     return x.exp()
 
 
-def floor(x: pl.Expr) -> pl.Expr:
+def floor(x: Expr) -> Expr:
     return x.floor()
 
 
-def fraction(x: pl.Expr) -> pl.Expr:
+def fraction(x: Expr) -> Expr:
     """This operator removes the whole number part and returns the remaining fraction part with sign."""
     # return sign(x) * (abs(x) - floor(abs(x)))
     # return x.sign() * (x.abs() % 1)
     return x % 1
 
 
-def inverse(x: pl.Expr) -> pl.Expr:
+def inverse(x: Expr) -> Expr:
     """1 / x"""
     return 1 / x
 
 
-def log(x: pl.Expr) -> pl.Expr:
+def log(x: Expr) -> Expr:
     return x.log()
 
 
-def log10(x: pl.Expr) -> pl.Expr:
+def log10(x: Expr) -> Expr:
     return x.log10()
 
 
-def log1p(x: pl.Expr) -> pl.Expr:
+def log1p(x: Expr) -> Expr:
     return x.log1p()
 
 
-def log_diff(x: pl.Expr, d: int = 1) -> pl.Expr:
+def log_diff(x: Expr, d: int = 1) -> Expr:
     """Returns log(current value of input or x[t] ) - log(previous value of input or x[t-1])."""
     return x.log().diff(d)
 
 
 def max_(*args):
     """Maximum value of all inputs. At least 2 inputs are required."""
-    return pl.max_horizontal(args)
+    return max_horizontal(args)
 
 
-def mean(*args) -> pl.Expr:
+def mean(*args) -> Expr:
     # TODO 还需要修正
-    return pl.sum_horizontal(*args) / len(args)
+    return sum_horizontal(*args) / len(args)
 
 
 def min_(*args):
     """Maximum value of all inputs. At least 2 inputs are required."""
-    return pl.min_horizontal(args)
+    return min_horizontal(args)
 
 
-def mod(x: pl.Expr, y: pl.Expr) -> pl.Expr:
+def mod(x: Expr, y: Expr) -> Expr:
     return x % y
 
 
@@ -97,30 +99,30 @@ def multiply(*args, filter_=False):
     if filter_:
         args = [_.fill_null(1) for _ in args]
 
-    return pl.reduce(function=lambda acc, x: acc * x, exprs=args)
+    return reduce(function=lambda acc, x: acc * x, exprs=args)
 
 
-def power(x: pl.Expr, y: pl.Expr) -> pl.Expr:
+def power(x: Expr, y: Expr) -> Expr:
     """x ^ y"""
     return x.pow(y)
 
 
-def purify(x: pl.Expr) -> pl.Expr:
+def purify(x: Expr) -> Expr:
     """Clear infinities (+inf, -inf) by replacing with NaN."""
-    return pl.when(x.is_infinite()).then(None).otherwise(x)
+    return when(x.is_infinite()).then(None).otherwise(x)
 
 
-def reverse(x: pl.Expr) -> pl.Expr:
+def reverse(x: Expr) -> Expr:
     """- x"""
     return -x
 
 
-def round_(x: pl.Expr, decimals: int = 0) -> pl.Expr:
+def round_(x: Expr, decimals: int = 0) -> Expr:
     """Round input to closest integer."""
     return x.round(decimals)
 
 
-def round_down(x: pl.Expr, f: int = 1) -> pl.Expr:
+def round_down(x: Expr, f: int = 1) -> Expr:
     """Round input to greatest multiple of f less than input;"""
     if f == 1:
         return x // 1
@@ -128,15 +130,15 @@ def round_down(x: pl.Expr, f: int = 1) -> pl.Expr:
         return x // f * f
 
 
-def s_log_1p(x: pl.Expr) -> pl.Expr:
+def s_log_1p(x: Expr) -> Expr:
     return (x.abs() + 1).log() * x.sign()
 
 
-def sign(x: pl.Expr) -> pl.Expr:
+def sign(x: Expr) -> Expr:
     return x.sign()
 
 
-def signed_power(x: pl.Expr, y: pl.Expr) -> pl.Expr:
+def signed_power(x: Expr, y: Expr) -> Expr:
     """x raised to the power of y such that final result preserves sign of x."""
     if isinstance(y, (int, float)):
         if y == 1:
@@ -147,30 +149,30 @@ def signed_power(x: pl.Expr, y: pl.Expr) -> pl.Expr:
     return x.abs().pow(y) * x.sign()
 
 
-def sin(x: pl.Expr) -> pl.Expr:
+def sin(x: Expr) -> Expr:
     return x.sin()
 
 
-def sinh(x: pl.Expr) -> pl.Expr:
+def sinh(x: Expr) -> Expr:
     return x.sinh()
 
 
-def sqrt(x: pl.Expr) -> pl.Expr:
+def sqrt(x: Expr) -> Expr:
     return x.sqrt()
 
 
-def subtract(*args, filter_=False) -> pl.Expr:
+def subtract(*args, filter_=False) -> Expr:
     """x-y. If filter = true, filter all input NaN to 0 before subtracting"""
     if filter_:
         args = [_.fill_null(0) for _ in args]
 
-    return pl.reduce(function=lambda acc, x: acc - x, exprs=args)
+    return reduce(function=lambda acc, x: acc - x, exprs=args)
 
 
-def tan(x: pl.Expr) -> pl.Expr:
+def tan(x: Expr) -> Expr:
     return x.tan()
 
 
-def truncate(x: pl.Expr) -> pl.Expr:
+def truncate(x: Expr) -> Expr:
     """向零取整"""
-    return x.cast(pl.Int64)
+    return x.cast(Int64)

@@ -21,7 +21,8 @@ nan_to_null: bool
 其它参数按**位置参数**和**命名参数**输入皆可
 """
 import numpy as np
-import polars as pl
+from polars import Expr, Float64, DataFrame, api
+from polars import Series, Struct
 
 
 def func_wrap_mn(func, cols,
@@ -44,18 +45,18 @@ def func_wrap_mn(func, cols,
 
     Returns
     -------
-    pl.Series
+    Series
 
     """
-    if cols.dtype.base_type() == pl.Struct:
-        # pl.struct(['A', 'B']).ta.AROON
+    if cols.dtype.base_type() == Struct:
+        # struct(['A', 'B']).ta.AROON
         _cols = [cols.struct[field] for field in cols.dtype.to_schema()]
     else:
-        # pl.col('A').ta.BBANDS
+        # col('A').ta.BBANDS
         _cols = [cols]
 
     if skip_nan:
-        _cols = [c.cast(pl.Float64).to_numpy() for c in _cols]
+        _cols = [c.cast(Float64).to_numpy() for c in _cols]
         _cols = np.vstack(_cols)
 
         # move nan to head
@@ -75,27 +76,26 @@ def func_wrap_mn(func, cols,
 
     if isinstance(result, tuple):
         if output_idx is None:
-            # pl.struct(['A').ta.BBANDS
+            # struct(['A').ta.BBANDS
             # you need alias outside, finally unnest
             if schema is None:
                 schema = [f'column_{i}' for i in range(len(result))]
 
             schema = [schema_format.format(name) for name in schema]
             # nan_to_null 对struct中的nan无效
-            return pl.DataFrame(result, schema=schema, nan_to_null=nan_to_null).to_struct('')
+            return DataFrame(result, schema=schema, nan_to_null=nan_to_null).to_struct('')
         # output only one column
         if 0 <= output_idx < len(result):
-            return pl.Series(result[output_idx], nan_to_null=nan_to_null)
-    elif not isinstance(result, pl.Series):
-        # pl.col('A').bn.move_rank
-        return pl.Series(result, nan_to_null=nan_to_null)
+            return Series(result[output_idx], nan_to_null=nan_to_null)
+    elif not isinstance(result, Series):
+        # col('A').bn.move_rank
+        return Series(result, nan_to_null=nan_to_null)
     else:
-        # pl.col('A').ta.COS
+        # col('A').ta.COS
         if nan_to_null:
             return result.fill_nan(None)
         else:
             return result
-
 
 
 def func_wrap_11(func, cols,
@@ -106,7 +106,7 @@ def func_wrap_11(func, cols,
     _cols = cols
 
     if skip_nan:
-        _cols = _cols.cast(pl.Float64).to_numpy()
+        _cols = _cols.cast(Float64).to_numpy()
 
         # move nan to head
         idx1 = (~np.isnan(_cols)).argsort(kind='stable')
@@ -120,17 +120,17 @@ def func_wrap_11(func, cols,
     else:
         result = func(_cols, *args, **kwargs)
 
-    if isinstance(result, pl.Series):
+    if isinstance(result, Series):
         if nan_to_null:
             return result.fill_nan(None)
         else:
             return result
     else:
-        return pl.Series(result, nan_to_null=nan_to_null)
+        return Series(result, nan_to_null=nan_to_null)
 
 
 class FuncHelper:
-    def __init__(self, expr: pl.Expr, lib=None, wrap=None) -> None:
+    def __init__(self, expr: Expr, lib=None, wrap=None) -> None:
         """初始化
 
         Parameters
@@ -147,7 +147,7 @@ class FuncHelper:
         object.__setattr__(self, '_wrap', wrap)
 
     def __getattribute__(self, name: str):
-        _expr: pl.Expr = object.__getattribute__(self, '_expr')
+        _expr: Expr = object.__getattribute__(self, '_expr')
         _lib = object.__getattribute__(self, '_lib')
         _wrap = object.__getattribute__(self, '_wrap')
         _func = getattr(_lib, name)
@@ -162,15 +162,15 @@ class FuncHelper:
         )
 
 
-@pl.api.register_expr_namespace('ta')
+@api.register_expr_namespace('ta')
 class TaLibHelper(FuncHelper):
-    def __init__(self, expr: pl.Expr) -> None:
+    def __init__(self, expr: Expr) -> None:
         import talib as ta
         super().__init__(expr, ta, func_wrap_mn)
 
 
-@pl.api.register_expr_namespace('bn')
+@api.register_expr_namespace('bn')
 class BottleneckHelper(FuncHelper):
-    def __init__(self, expr: pl.Expr) -> None:
+    def __init__(self, expr: Expr) -> None:
         import bottleneck as bn
         super().__init__(expr, bn, func_wrap_11)

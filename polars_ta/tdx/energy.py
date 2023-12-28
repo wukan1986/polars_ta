@@ -1,4 +1,4 @@
-import polars as pl
+from polars import Expr
 
 from polars_ta.ta.price import MEDPRICE
 from polars_ta.tdx.reference import COUNT
@@ -8,7 +8,7 @@ from polars_ta.tdx.reference import REF
 from polars_ta.tdx.reference import SUM
 
 
-def BRAR_AR(OPEN: pl.Expr, HIGH: pl.Expr, LOW: pl.Expr, CLOSE: pl.Expr, N: int = 26) -> pl.Expr:
+def BRAR_AR(OPEN: Expr, HIGH: Expr, LOW: Expr, CLOSE: Expr, N: int = 26) -> Expr:
     """
     BR:SUM(MAX(0,HIGH-REF(CLOSE,1)),N)/SUM(MAX(0,REF(CLOSE,1)-LOW),N)*100;
     AR:SUM(HIGH-OPEN,N)/SUM(OPEN-LOW,N)*100;
@@ -19,7 +19,7 @@ def BRAR_AR(OPEN: pl.Expr, HIGH: pl.Expr, LOW: pl.Expr, CLOSE: pl.Expr, N: int =
     return AR
 
 
-def BRAR_BR(OPEN: pl.Expr, HIGH: pl.Expr, LOW: pl.Expr, CLOSE: pl.Expr, N: int = 26) -> pl.Expr:
+def BRAR_BR(OPEN: Expr, HIGH: Expr, LOW: Expr, CLOSE: Expr, N: int = 26) -> Expr:
     """
     BR:SUM(MAX(0,HIGH-REF(CLOSE,1)),N)/SUM(MAX(0,REF(CLOSE,1)-LOW),N)*100;
     AR:SUM(HIGH-OPEN,N)/SUM(OPEN-LOW,N)*100;
@@ -30,7 +30,7 @@ def BRAR_BR(OPEN: pl.Expr, HIGH: pl.Expr, LOW: pl.Expr, CLOSE: pl.Expr, N: int =
     return BR
 
 
-def CR(HIGH: pl.Expr, LOW: pl.Expr, N: int = 26) -> pl.Expr:
+def CR(HIGH: Expr, LOW: Expr, N: int = 26) -> Expr:
     """
     MID:=REF(HIGH+LOW,1)/2;
     CR:SUM(MAX(0,HIGH-MID),N)/SUM(MAX(0,MID-LOW),N)*100;
@@ -44,7 +44,7 @@ def CR(HIGH: pl.Expr, LOW: pl.Expr, N: int = 26) -> pl.Expr:
     return SUM(MAX(0, HIGH - MID), N) / SUM(MAX(0, MID - LOW), N)  # *100
 
 
-def PSY(CLOSE: pl.Expr, N: int = 12) -> pl.Expr:
+def PSY(CLOSE: Expr, N: int = 12) -> Expr:
     """
     PSY:COUNT(CLOSE>REF(CLOSE,1),N)/N*100;
     PSYMA:MA(PSY,M);
@@ -53,7 +53,7 @@ def PSY(CLOSE: pl.Expr, N: int = 12) -> pl.Expr:
     return COUNT(CLOSE > REF(CLOSE, 1), N) / N
 
 
-def MASS(HIGH: pl.Expr, LOW: pl.Expr, N1: int = 9, N2: int = 25) -> pl.Expr:
+def MASS(HIGH: Expr, LOW: Expr, N1: int = 9, N2: int = 25) -> Expr:
     """
     MASS:SUM(MA(HIGH-LOW,N1)/MA(MA(HIGH-LOW,N1),N1),N2);
     MAMASS:MA(MASS,M);

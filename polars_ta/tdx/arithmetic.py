@@ -1,4 +1,4 @@
-import polars as pl
+from polars import Expr
 
 from polars_ta.wq.arithmetic import abs_ as ABS  # noqa
 from polars_ta.wq.arithmetic import add as ADD  # noqa
@@ -28,17 +28,17 @@ from polars_ta.wq.transformational import arc_tan as ATAN  # noqa
 SGN = SIGN
 
 
-def ROUND(x: pl.Expr) -> pl.Expr:
+def ROUND(x: Expr) -> Expr:
     """Round input to closest integer."""
     return _round(x, 0)
 
 
-def ROUND2(x: pl.Expr, decimals: int = 0) -> pl.Expr:
+def ROUND2(x: Expr, decimals: int = 0) -> Expr:
     """Round input to closest integer."""
     return _round(x, decimals)
 
 
-def BETWEEN(a: pl.Expr, b: pl.Expr, c: pl.Expr) -> pl.Expr:
+def BETWEEN(a: Expr, b: Expr, c: Expr) -> Expr:
     """BETWEEN(A,B,C)表示A处于B和C之间时返回1(B<=A<=C或C<=A<=B),否则返回0"""
     x1 = (b <= a) & (a <= c)
     x2 = (c <= a) & (a <= b)

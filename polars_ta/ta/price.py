@@ -1,17 +1,17 @@
-import polars as pl
+from polars import Expr
 
 
-def AVGPRICE(open: pl.Expr, high: pl.Expr, low: pl.Expr, close: pl.Expr) -> pl.Expr:
+def AVGPRICE(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:
     return (open + high + low + close) / 4
 
 
-def MEDPRICE(high: pl.Expr, low: pl.Expr) -> pl.Expr:
+def MEDPRICE(high: Expr, low: Expr) -> Expr:
     return (high + low) / 2
 
 
-def TYPPRICE(high: pl.Expr, low: pl.Expr, close: pl.Expr) -> pl.Expr:
+def TYPPRICE(high: Expr, low: Expr, close: Expr) -> Expr:
     return (high + low + close) / 3
 
 
-def WCLPRICE(high: pl.Expr, low: pl.Expr, close: pl.Expr) -> pl.Expr:
+def WCLPRICE(high: Expr, low: Expr, close: Expr) -> Expr:
     return (high + low + close * 2) / 4

@@ -1,10 +1,10 @@
 from functools import lru_cache
 
 import numpy as np
-import polars as pl
 from numba import jit
 from pandas._libs.window.aggregations import roll_kurt as _roll_kurt
 from pandas._libs.window.aggregations import roll_rank as _roll_rank
+from polars import Series
 
 
 @lru_cache
@@ -20,7 +20,7 @@ def get_window_bounds(
     return start, end
 
 
-def roll_rank(x: pl.Series, d: int, pct: bool = True, method: str = 'average', ascending: bool = True):
+def roll_rank(x: Series, d: int, pct: bool = True, method: str = 'average', ascending: bool = True):
     start, end = get_window_bounds(len(x), d)
     """
     https://github.com/pandas-dev/pandas/blob/main/pandas/_libs/window/aggregations.pyx#L1281
@@ -32,7 +32,7 @@ def roll_rank(x: pl.Series, d: int, pct: bool = True, method: str = 'average', a
     O(N log(window)) implementation using skip list
     """
     ret = _roll_rank(x.to_numpy(), start, end, d, pct, method, ascending)
-    return pl.Series(ret, nan_to_null=True)
+    return Series(ret, nan_to_null=True)
 
 
 def roll_kurt(x, d):
@@ -44,4 +44,4 @@ def roll_kurt(x, d):
               ndarray[int64_t] end, int64_t minp) -> np.ndarray:
     """
     ret = _roll_kurt(x.to_numpy(), start, end, d)
-    return pl.Series(ret, nan_to_null=True)
+    return Series(ret, nan_to_null=True)

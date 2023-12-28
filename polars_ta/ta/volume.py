@@ -1,16 +1,16 @@
-import polars as pl
+from polars import Expr
 
 
-def AD(high: pl.Expr, low: pl.Expr, close: pl.Expr, volume: pl.Expr) -> pl.Expr:
+def AD(high: Expr, low: Expr, close: Expr, volume: Expr) -> Expr:
     """"""
     raise
 
 
-def ADOSC(high: pl.Expr, low: pl.Expr, close: pl.Expr, volume: pl.Expr, fastperiod: int = 3, slowperiod: int = 10) -> pl.Expr:
+def ADOSC(high: Expr, low: Expr, close: Expr, volume: Expr, fastperiod: int = 3, slowperiod: int = 10) -> Expr:
     """"""
     raise
 
 
-def OBV(close: pl.Expr, volume: pl.Expr) -> pl.Expr:
+def OBV(close: Expr, volume: Expr) -> Expr:
     """"""
     raise

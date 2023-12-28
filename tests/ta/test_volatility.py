@@ -22,7 +22,7 @@ class TestDemoClass:
 
         result1 = talib.TRANGE(self.high_np, self.low_np, self.close_np)
         result2 = self.df_pl.select(TRANGE(pl.col("high"), pl.col("low"), pl.col("close")))
-        result3 = result2['max'].to_numpy()
+        result3 = result2['high'].to_numpy()
         # print()
         # print(result1)
         # print(result3)
@@ -37,7 +37,7 @@ class TestDemoClass:
         from polars_ta.ta.volatility import ATR
         result1 = talib.ATR(self.high_np, self.low_np, self.close_np, timeperiod=5)
         result2 = self.df_pl.select(ATR(pl.col("high"), pl.col("low"), pl.col("close"), timeperiod=5))
-        result3 = result2['max'].to_numpy()
+        result3 = result2['high'].to_numpy()
         # print()
         # print(result1)
         # print(result3)

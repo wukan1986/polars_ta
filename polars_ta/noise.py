@@ -9,10 +9,10 @@ https://zhuanlan.zhihu.com/p/544744582
 
 """
 import numpy as np
-import polars as pl
+from polars import Expr
 
 
-def efficiency_ratio(close: pl.Expr, timeperiod: int = 14) -> pl.Expr:
+def efficiency_ratio(close: Expr, timeperiod: int = 14) -> Expr:
     """效率系数。值越大，噪音越小。最大值为1，最小值为0
 
     本质上是位移除以路程
@@ -22,7 +22,7 @@ def efficiency_ratio(close: pl.Expr, timeperiod: int = 14) -> pl.Expr:
     return t1 / t2
 
 
-def price_density(high: pl.Expr, low: pl.Expr, timeperiod: int = 14) -> pl.Expr:
+def price_density(high: Expr, low: Expr, timeperiod: int = 14) -> Expr:
     """价格密度。值越大，噪音越大
 
     如果K线高低相连，上涨为1，下跌也为1
@@ -33,7 +33,7 @@ def price_density(high: pl.Expr, low: pl.Expr, timeperiod: int = 14) -> pl.Expr:
     return t1 / t2
 
 
-def fractal_dimension(high: pl.Expr, low: pl.Expr, close: pl.Expr, timeperiod: int = 14) -> pl.Expr:
+def fractal_dimension(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:
     """分形维度。值越大，噪音越大"""
     n1 = (1 / timeperiod) ** 2
     n2 = np.log(2)

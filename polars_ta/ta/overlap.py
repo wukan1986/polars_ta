@@ -1,6 +1,6 @@
 from math import ceil, floor
 
-import polars as pl
+from polars import Expr
 
 from polars_ta.ta.operators import MAX
 from polars_ta.ta.operators import MIN
@@ -9,7 +9,7 @@ from polars_ta.wq.time_series import ts_decay_linear
 from polars_ta.wq.time_series import ts_mean
 
 
-def BBANDS_upperband(close: pl.Expr, timeperiod: int = 5, nbdevup: float = 2) -> pl.Expr:
+def BBANDS_upperband(close: Expr, timeperiod: int = 5, nbdevup: float = 2) -> Expr:
     """布林线上轨
 
     Notes
@@ -20,13 +20,13 @@ def BBANDS_upperband(close: pl.Expr, timeperiod: int = 5, nbdevup: float = 2) ->
     return SMA(close, timeperiod) + STDDEV(close, timeperiod, nbdevup)
 
 
-def DEMA(close: pl.Expr, timeperiod: int = 30) -> pl.Expr:
+def DEMA(close: Expr, timeperiod: int = 30) -> Expr:
     EMA1 = EMA(close, timeperiod)
     EMA2 = EMA(EMA1, timeperiod)
     return EMA1 * 2 - EMA2
 
 
-def EMA(close: pl.Expr, timeperiod: int = 30) -> pl.Expr:
+def EMA(close: Expr, timeperiod: int = 30) -> Expr:
     """
 
     References
@@ -38,19 +38,19 @@ def EMA(close: pl.Expr, timeperiod: int = 30) -> pl.Expr:
     return close.ewm_mean(span=timeperiod, adjust=False, min_periods=timeperiod)
 
 
-def KAMA(close: pl.Expr, timeperiod: int = 30) -> pl.Expr:
+def KAMA(close: Expr, timeperiod: int = 30) -> Expr:
     raise
 
 
-def MIDPOINT(close: pl.Expr, timeperiod: int = 14) -> pl.Expr:
+def MIDPOINT(close: Expr, timeperiod: int = 14) -> Expr:
     return (MAX(close, timeperiod) + MIN(close, timeperiod)) / 2
 
 
-def MIDPRICE(high: pl.Expr, low: pl.Expr, timeperiod: int = 14) -> pl.Expr:
+def MIDPRICE(high: Expr, low: Expr, timeperiod: int = 14) -> Expr:
     return (MAX(high, timeperiod) + MIN(low, timeperiod)) / 2
 
 
-def RMA(close: pl.Expr, timeperiod: int = 30) -> pl.Expr:
+def RMA(close: Expr, timeperiod: int = 30) -> Expr:
     """TA-Lib没有明确的提供此算法，这里只是为了调用方便而放在此处
 
     References
@@ -62,11 +62,11 @@ def RMA(close: pl.Expr, timeperiod: int = 30) -> pl.Expr:
     return close.ewm_mean(alpha=1 / timeperiod, adjust=False, min_periods=timeperiod)
 
 
-def SMA(close: pl.Expr, timeperiod: int = 30) -> pl.Expr:
+def SMA(close: Expr, timeperiod: int = 30) -> Expr:
     return ts_mean(close, timeperiod)
 
 
-def TEMA(close: pl.Expr, timeperiod: int = 30) -> pl.Expr:
+def TEMA(close: Expr, timeperiod: int = 30) -> Expr:
     """
 
     Notes
@@ -80,10 +80,10 @@ def TEMA(close: pl.Expr, timeperiod: int = 30) -> pl.Expr:
     return (EMA1 - EMA2) * 3 + EMA3
 
 
-def TRIMA(close: pl.Expr, timeperiod: int = 30) -> pl.Expr:
+def TRIMA(close: Expr, timeperiod: int = 30) -> Expr:
     SMA1 = SMA(close, ceil(timeperiod / 2))
     return SMA(SMA1, floor(timeperiod / 2) + 1)
 
 
-def WMA(close: pl.Expr, timeperiod: int = 30) -> pl.Expr:
+def WMA(close: Expr, timeperiod: int = 30) -> Expr:
     return ts_decay_linear(close, timeperiod)
