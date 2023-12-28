@@ -65,15 +65,15 @@ def PLUS_DI(HIGH: pl.Expr, LOW: pl.Expr, CLOSE: pl.Expr, N: int = 14) -> pl.Expr
     """
     MTR = SUM(TR(HIGH, LOW, CLOSE), N)
     DMP = PLUS_DM(HIGH, LOW, N)
-    PDI = DMP * 100 / MTR
-    return PDI
+    PDI = DMP / MTR
+    return PDI  # * 100
 
 
 def MINUS_DI(HIGH: pl.Expr, LOW: pl.Expr, CLOSE: pl.Expr, N: int = 14) -> pl.Expr:
     MTR = SUM(TR(HIGH, LOW, CLOSE), N)
     DMM = MINUS_DM(HIGH, LOW, N)
-    MDI = DMM * 100 / MTR
-    return MDI
+    MDI = DMM / MTR
+    return MDI  # * 100
 
 
 def ADX(HIGH: pl.Expr, LOW: pl.Expr, CLOSE: pl.Expr, N: int = 14, M: int = 6) -> pl.Expr:
