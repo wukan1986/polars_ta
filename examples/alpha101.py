@@ -9,7 +9,7 @@ ADV5, ADV10, ADV15, ADV20, ADV30, ADV40, ADV50, ADV60, ADV81, ADV120, ADV150, AD
     pl.col('ADV81'), pl.col('ADV120'), pl.col('ADV150'), pl.col('ADV180'),)
 SECTOR, INDUSTRY, SUBINDUSTRY, = pl.col('SECTOR'), pl.col('INDUSTRY'), pl.col('SUBINDUSTRY'),
 
-# 列因子才可以直拉调用，而ts_、cs_和gp_等公式需要套用group_by，请使用expr_codegen项目
+# 列因子才可以直接调用，而ts_、cs_和gp_等公式需要套用group_by，请使用expr_codegen项目
 alpha_041 = (((HIGH * LOW) ** 0.5) - VWAP)
 alpha_054 = ((-1 * ((LOW - CLOSE) * (OPEN ** 5))) / ((LOW - HIGH) * (CLOSE ** 5)))
 alpha_101 = ((CLOSE - OPEN) / ((HIGH - LOW) + 0.001))

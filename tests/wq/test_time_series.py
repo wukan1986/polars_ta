@@ -92,11 +92,20 @@ class TestDemoClass:
 
     def test_ts_arg_min(self):
         from polars_ta.wq.time_series import ts_arg_min
+        from polars_ta.wq.time_series import ts_arg_max
 
         t1 = time.perf_counter()
         for i in range(10000):
             result2 = self.df_pl.with_columns(
                 a1=ts_arg_min(pl.col('high'), 10),
+            )
+        t2 = time.perf_counter()
+        print(t2 - t1)
+
+        t1 = time.perf_counter()
+        for i in range(10000):
+            result2 = self.df_pl.with_columns(
+                a1=ts_arg_max(pl.col('high'), 10),
             )
         t2 = time.perf_counter()
         print(t2 - t1)
