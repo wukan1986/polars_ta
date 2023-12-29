@@ -19,6 +19,31 @@ cd polars_ta
 pip install -e .
 ```
 
+## 使用方法
+参考`examples`目录即可，例如：
+```python
+# 导入wq公式
+from polars_ta.wq import *
+
+# 如果需要在`expr_codegen`中使用，需要有`ts_`等前权，这里导入提供了前缀
+from polars_ta.prefix.tdx import *
+# from polars_ta.tdx import *
+
+
+# 演示生成大量指标
+df = df.with_columns([
+    # 从wq中导入指标
+    *[ts_returns(CLOSE, i).alias(f'ROCP_{i:03d}') for i in (1, 3, 5, 10, 20, 60, 120)],
+    *[ts_mean(CLOSE, i).alias(f'SMA_{i:03d}') for i in (5, 10, 20, 60, 120)],
+    *[ts_std_dev(CLOSE, i).alias(f'STD_{i:03d}') for i in (5, 10, 20, 60, 120)],
+    *[ts_max(HIGH, i).alias(f'HHV_{i:03d}') for i in (5, 10, 20, 60, 120)],
+    *[ts_min(LOW, i).alias(f'LLV_{i:03d}') for i in (5, 10, 20, 60, 120)],
+
+    # 从tdx中导入指标
+    *[ts_RSI(CLOSE, i).alias(f'RSI_{i:03d}') for i in (6, 12, 24)],
+])
+```
+
 ## 设计原则
 
 1. 调用方法由`成员函数`换成`独立函数`。输入输出使用`Expr`，避免使用`Series`
