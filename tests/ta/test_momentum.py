@@ -31,7 +31,7 @@ class TestDemoClass:
         from polars_ta.ta.momentum import RSV
 
         result1, _ = talib.STOCHF(self.high_np, self.low_np, self.close_np, fastk_period=5, fastd_period=1, fastd_matype=0)
-        result2 = self.df_pl.select(RSV(pl.col("high"), pl.col("low"), pl.col("close"), fastk_period=5))
+        result2 = self.df_pl.select(RSV(pl.col("high"), pl.col("low"), pl.col("close"), timeperiod=5))
         # !!! 注意，与talib版的区别
         result3 = result2['close'].to_numpy() * 100
         # print()

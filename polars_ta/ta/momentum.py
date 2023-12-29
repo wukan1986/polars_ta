@@ -90,7 +90,7 @@ def STOCHF_fastd(high: Expr, low: Expr, close: Expr, fastk_period: int = 5, fast
     return SMA(RSV(high, low, close, fastk_period), fastd_period)
 
 
-def RSV(high: Expr, low: Expr, close: Expr, fastk_period: int = 5) -> Expr:
+def RSV(high: Expr, low: Expr, close: Expr, timeperiod: int = 5) -> Expr:
     """
 
     Notes
@@ -98,8 +98,8 @@ def RSV(high: Expr, low: Expr, close: Expr, fastk_period: int = 5) -> Expr:
     又名STOCHF_fastk, talib.STOCHF版相当于多乘了100，与WILLR指标又很像
 
     """
-    a = MAX(high, fastk_period)
-    b = MIN(low, fastk_period)
+    a = MAX(high, timeperiod)
+    b = MIN(low, timeperiod)
 
     return (close - b) / (a - b)
 

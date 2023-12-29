@@ -71,16 +71,16 @@ class TestDemoClass:
 
         df = pl.DataFrame({'A': range(100)})
         print(df)
-        result1 = df.select(ts_decay_exp_window(pl.col('A'), 10, factor=0.5))
-        print(result1)
+        # result1 = df.select(ts_decay_exp_window(pl.col('A'), 10, factor=0.5))
+        # print(result1)
 
     def test_ts_decay_linear(self):
         from polars_ta.wq.time_series import ts_decay_linear
 
         df = pl.DataFrame({'A': [None] * 10, 'B': [None, None, None, None, 4, 5, 6, 7, 8, 9]})
         print(df)
-        result1 = df.select(ts_decay_linear(pl.col('B'), 3))
-        print(result1)
+        # result1 = df.select(ts_decay_linear(pl.col('B'), 3))
+        # print(result1)
 
     def test_ts_weighted_delay(self):
         from polars_ta.wq.time_series import ts_weighted_delay

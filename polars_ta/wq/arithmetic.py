@@ -18,6 +18,21 @@ def add(*args, filter_=False):
     return reduce(function=lambda acc, x: acc + x, exprs=args)
 
 
+def arc_cos(x: Expr) -> Expr:
+    """If -1 <= x <= 1: arccos(x); else NaN"""
+    return x.arccos()
+
+
+def arc_sin(x: Expr) -> Expr:
+    """If -1 <= x <= 1: arcsin(x); else NaN"""
+    return x.arcsin()
+
+
+def arc_tan(x: Expr) -> Expr:
+    """This operator does inverse tangent of input. """
+    return x.arctan()
+
+
 def ceiling(x: Expr) -> Expr:
     return x.ceil()
 
@@ -68,11 +83,6 @@ def log10(x: Expr) -> Expr:
 
 def log1p(x: Expr) -> Expr:
     return x.log1p()
-
-
-def log_diff(x: Expr, d: int = 1) -> Expr:
-    """Returns log(current value of input or x[t] ) - log(previous value of input or x[t-1])."""
-    return x.log().diff(d)
 
 
 def max_(*args):
@@ -171,6 +181,11 @@ def subtract(*args, filter_=False) -> Expr:
 
 def tan(x: Expr) -> Expr:
     return x.tan()
+
+
+def tanh(x: Expr) -> Expr:
+    """Hyperbolic tangent of x"""
+    return x.tanh()
 
 
 def truncate(x: Expr) -> Expr:

@@ -14,7 +14,7 @@ from polars_ta.tdx.reference import TR
 from polars_ta.tdx.statistic import AVEDEV
 
 
-def ATR(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:
+def ATR(HIGH: Expr, LOW: Expr, CLOSE: Expr, N: int = 14) -> Expr:
     """
 
     Notes
@@ -22,7 +22,7 @@ def ATR(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:
     与talib.ATR不同
 
     """
-    return MA(TR(high, low, close), timeperiod)
+    return MA(TR(HIGH, LOW, CLOSE), N)
 
 
 def BIAS(CLOSE: Expr, N: int = 6) -> Expr:

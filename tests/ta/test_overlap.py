@@ -21,7 +21,7 @@ class TestDemoClass:
         from polars_ta.ta.overlap import SMA
 
         result1 = talib.SMA(self.close_np, timeperiod=3)
-        result2 = self.df_pl.select(SMA(pl.col("close"), timeperiod=3))
+        result2 = self.df_pl.select(SMA(pl.col("close"), d=3))
         result3 = result2['close'].to_numpy()
 
         assert np.allclose(result1, result3, equal_nan=True)
@@ -30,7 +30,7 @@ class TestDemoClass:
         from polars_ta.ta.overlap import WMA
 
         result1 = talib.WMA(self.close_np, timeperiod=15)
-        result2 = self.df_pl.select(WMA(pl.col("close"), timeperiod=15))
+        result2 = self.df_pl.select(WMA(pl.col("close"), d=15))
         result3 = result2['close'].to_numpy()
 
         assert np.allclose(result1, result3, equal_nan=True)

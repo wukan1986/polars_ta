@@ -31,8 +31,8 @@ talib = [
 packages = [
     "polars_ta",
     "polars_ta.candles",
-    "polars_ta.imports",
     "polars_ta.performance",
+    "polars_ta.prefix",
     "polars_ta.ta",
     "polars_ta.talib",
     "polars_ta.tdx",

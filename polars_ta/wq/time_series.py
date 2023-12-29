@@ -89,6 +89,11 @@ def ts_kurtosis(x: Expr, d: int = 5) -> Expr:
     return x.map_batches(lambda a: roll_kurt(a, d))
 
 
+def ts_log_diff(x: Expr, d: int = 1) -> Expr:
+    """Returns log(current value of input or x[t] ) - log(previous value of input or x[t-1])."""
+    return x.log().diff(d)
+
+
 def ts_max(x: Expr, d: int = 30) -> Expr:
     return x.rolling_max(d)
 

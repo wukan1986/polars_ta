@@ -1,23 +1,6 @@
 from polars import Expr, when
 
 
-# arccos等函数与tanh放在transformational.py而不是arithmetic.py下可能是把它们看成是激活函数
-
-def arc_cos(x: Expr) -> Expr:
-    """If -1 <= x <= 1: arccos(x); else NaN"""
-    return x.arccos()
-
-
-def arc_sin(x: Expr) -> Expr:
-    """If -1 <= x <= 1: arcsin(x); else NaN"""
-    return x.arcsin()
-
-
-def arc_tan(x: Expr) -> Expr:
-    """This operator does inverse tangent of input. """
-    return x.arctan()
-
-
 def bucket(x: Expr,
            range="0, 1, 0.1",
            buckets="2,5,6,7,10",
@@ -73,8 +56,3 @@ def tail(x: Expr, lower: float = 0, upper: float = 0, newval: float = 0) -> Expr
     """If (x > lower AND x < upper) return newval, else return x. Lower, upper, newval should be constants. """
     # TODO 与clamp一样?
     return when((lower < x) & (x < upper)).then(newval).otherwise(x)
-
-
-def tanh(x: Expr) -> Expr:
-    """Hyperbolic tangent of x"""
-    return x.tanh()

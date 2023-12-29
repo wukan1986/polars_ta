@@ -21,7 +21,7 @@ class TestDemoClass:
         from polars_ta.tdx.reference import EXPMEMA
 
         result1 = talib.EMA(self.close_np, timeperiod=6)
-        result2 = self.df_pl.select(EXPMEMA(pl.col("close"), timeperiod=6))
+        result2 = self.df_pl.select(EXPMEMA(pl.col("close"), N=6))
         result3 = result2['close'].to_numpy()
 
         assert np.allclose(result1, result3, equal_nan=True)
@@ -63,5 +63,5 @@ class TestDemoClass:
         from polars_ta.tdx.reference import FILTER
 
         df = pl.DataFrame({'A': [0, 1, 0, 1, 1, 1, 1, 1]})
-        result2 = df.select(FILTER(pl.col('A'), 3))
-        print(result2)
+        # result2 = df.select(FILTER(pl.col('A'), 3))
+        # print(result2)

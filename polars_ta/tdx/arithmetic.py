@@ -2,6 +2,9 @@ from polars import Expr
 
 from polars_ta.wq.arithmetic import abs_ as ABS  # noqa
 from polars_ta.wq.arithmetic import add as ADD  # noqa
+from polars_ta.wq.arithmetic import arc_cos as ACOS  # noqa
+from polars_ta.wq.arithmetic import arc_sin as ASIN  # noqa
+from polars_ta.wq.arithmetic import arc_tan as ATAN  # noqa
 from polars_ta.wq.arithmetic import ceiling as CEILING  # noqa
 from polars_ta.wq.arithmetic import cos as COS  # noqa
 from polars_ta.wq.arithmetic import exp as EXP  # noqa
@@ -21,9 +24,6 @@ from polars_ta.wq.arithmetic import sqrt as SQRT  # noqa
 from polars_ta.wq.arithmetic import subtract as SUB  # noqa
 from polars_ta.wq.arithmetic import tan as TAN  # noqa
 from polars_ta.wq.arithmetic import truncate as INTPART  # noqa
-from polars_ta.wq.transformational import arc_cos as ACOS  # noqa
-from polars_ta.wq.transformational import arc_sin as ASIN  # noqa
-from polars_ta.wq.transformational import arc_tan as ATAN  # noqa
 
 SGN = SIGN
 

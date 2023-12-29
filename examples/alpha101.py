@@ -1,4 +1,7 @@
-from polars_ta.imports.expr import *
+import polars as pl
+
+from polars_ta.prefix.wq import *
+from polars_ta.prefix.tdx import *
 
 # 因子定义
 OPEN, HIGH, LOW, CLOSE, VOLUME, AMOUNT, = pl.col('OPEN'), pl.col('HIGH'), pl.col('LOW'), pl.col('CLOSE'), pl.col('VOLUME'), pl.col('AMOUNT'),
@@ -25,7 +28,20 @@ df = pl.DataFrame(
     }
 )
 
-# 计算
+# 演示生成大量指标
+df = df.with_columns([
+    # 从wq中导入指标
+    *[ts_returns(CLOSE, i).alias(f'ROCP_{i:03d}') for i in (1, 3, 5, 10, 20, 60, 120)],
+    *[ts_mean(CLOSE, i).alias(f'SMA_{i:03d}') for i in (5, 10, 20, 60, 120)],
+    *[ts_std_dev(CLOSE, i).alias(f'STD_{i:03d}') for i in (5, 10, 20, 60, 120)],
+    *[ts_max(HIGH, i).alias(f'HHV_{i:03d}') for i in (5, 10, 20, 60, 120)],
+    *[ts_min(LOW, i).alias(f'LLV_{i:03d}') for i in (5, 10, 20, 60, 120)],
+
+    # 从tdx中导入指标
+    *[ts_RSI(CLOSE, i).alias(f'RSI_{i:03d}') for i in (6, 12, 24)],
+])
+
+# 部分Alpha101计算
 df = df.with_columns(
     alpha_041=alpha_041,
     alpha_054=alpha_054,

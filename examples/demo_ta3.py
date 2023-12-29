@@ -3,6 +3,7 @@
 func(expr)
 
 """
+import polars as pl
 
 from polars_ta.talib import *
 

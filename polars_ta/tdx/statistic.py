@@ -3,7 +3,7 @@ from polars import Series
 
 from polars_ta.wq.time_series import ts_corr as RELATE  # noqa
 from polars_ta.wq.time_series import ts_covariance as COVAR  # noqa
-from polars_ta.wq.time_series import ts_std_dev
+from polars_ta.wq.time_series import ts_std_dev as _ts_std_dev
 
 
 def _avedev(x: Series) -> Series:
@@ -26,7 +26,7 @@ def SLOPE(close: Expr, timeperiod: int = 5) -> Expr:
 
 def STD(close: Expr, timeperiod: int = 5) -> Expr:
     """估算标准差"""
-    return ts_std_dev(close, timeperiod, 1)
+    return _ts_std_dev(close, timeperiod, 1)
 
 
 def STDDEV(close: Expr, timeperiod: int = 5) -> Expr:
@@ -36,7 +36,7 @@ def STDDEV(close: Expr, timeperiod: int = 5) -> Expr:
 
 def STDP(close: Expr, timeperiod: int = 5) -> Expr:
     """总体标准差"""
-    return ts_std_dev(close, timeperiod, 0)
+    return _ts_std_dev(close, timeperiod, 0)
 
 
 def VAR(close: Expr, timeperiod: int = 5) -> Expr:

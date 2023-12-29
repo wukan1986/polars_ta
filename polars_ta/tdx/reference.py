@@ -7,7 +7,6 @@ from polars_ta.ta.overlap import SMA as MA
 from polars_ta.ta.volatility import TRANGE as TR  # noqa
 from polars_ta.wq.arithmetic import max_ as MAX  # noqa
 from polars_ta.wq.arithmetic import min_ as MIN  # noqa
-from polars_ta.wq.cross_sectional import rank as RANK  # noqa
 from polars_ta.wq.time_series import ts_arg_max as HHVBARS  # noqa
 from polars_ta.wq.time_series import ts_arg_min as LLVBARS  # noqa
 from polars_ta.wq.time_series import ts_count as COUNT  # noqa
@@ -48,9 +47,9 @@ def _bars_since_n(x: Series) -> Series:
     return len(x) - 1 - b
 
 
-def BARSSINCEN(condition: Expr, timeperiod: int = 30) -> Expr:
+def BARSSINCEN(condition: Expr, N: int = 30) -> Expr:
     """BARSSINCEN(X,N):N周期内第一次X不为0到现在的天数"""
-    return condition.rolling_map(_bars_since_n, timeperiod)
+    return condition.rolling_map(_bars_since_n, N)
 
 
 def DMA(close: Expr, alpha: float = 0.5) -> Expr:
@@ -59,17 +58,17 @@ def DMA(close: Expr, alpha: float = 0.5) -> Expr:
     return close.ewm_mean(alpha=alpha, adjust=False, min_periods=1)
 
 
-def EMA(close: Expr, timeperiod: int = 30) -> Expr:
+def EMA(close: Expr, N: int = 30) -> Expr:
     """EMA(X,N):X的N日指数移动平均.算法:Y=(X*2+Y'*(N-1))/(N+1)
  EMA(X,N)相当于SMA(X,N+1,2),N支持变量"""
-    return _ema(close, timeperiod)
+    return _ema(close, N)
 
 
-def EXPMA(close: Expr, timeperiod: int = 30) -> Expr:
-    return _ema(close, timeperiod)
+def EXPMA(close: Expr, N: int = 30) -> Expr:
+    return _ema(close, N)
 
 
-def EXPMEMA(close: Expr, timeperiod: int = 30) -> Expr:
+def EXPMEMA(close: Expr, N: int = 30) -> Expr:
     """EXPMEMA(X,M),X的M日指数平滑移动平均。EXPMEMA同EMA(即EXPMA)的差别在于他的起始值为一平滑值
 
     Notes
@@ -77,30 +76,30 @@ def EXPMEMA(close: Expr, timeperiod: int = 30) -> Expr:
     等价于talib.EMA，由于比EMA慢，少用
 
     """
-    sma = MA(close, timeperiod)
-    x = when(close.cum_count() < timeperiod).then(sma).otherwise(close)
-    return x.ewm_mean(span=timeperiod, adjust=False, min_periods=1)
+    sma = MA(close, N)
+    x = when(close.cum_count() < N).then(sma).otherwise(close)
+    return x.ewm_mean(span=N, adjust=False, min_periods=1)
 
 
 def _hod(x: Series):
     return x.rank(descending=True)[-1]
 
 
-def HOD(close: Expr, timeperiod: int = 30) -> Expr:
+def HOD(close: Expr, N: int = 30) -> Expr:
     """HOD(X,N):求当前X数据是N周期内的第几个高值,N=0则从第一个有效值开始"""
-    return close.rolling_map(_hod, timeperiod)
+    return close.rolling_map(_hod, N)
 
 
 def _lod(x: Series):
     return x.rank(descending=False)[-1]
 
 
-def LOD(close: Expr, timeperiod: int = 30) -> Expr:
+def LOD(close: Expr, N: int = 30) -> Expr:
     """LOD(X,N):求当前X数据是N周期内的第几个低值"""
-    return close.rolling_map(_lod, timeperiod)
+    return close.rolling_map(_lod, N)
 
 
-def MEMA(close: Expr, timeperiod: int = 30) -> Expr:
+def MEMA(close: Expr, N: int = 30) -> Expr:
     """MEMA(X,N):X的N日平滑移动平均,如Y=(X+Y'*(N-1))/N
  MEMA(X,N)相当于SMA(X,N,1)"""
     raise
@@ -120,14 +119,14 @@ def SUM_0(close: Expr) -> Expr:
     return close.cum_sum()
 
 
-def SUMIF(condition: Expr, close: Expr, timeperiod: int = 30) -> Expr:
-    return SUM(condition.cast(Int32) * close, timeperiod)
+def SUMIF(condition: Expr, close: Expr, N: int = 30) -> Expr:
+    return SUM(condition.cast(Int32) * close, N)
 
 
-def TMA(close: Expr, timeperiod: int = 30) -> Expr:
+def TMA(close: Expr, N: int = 30) -> Expr:
     """TMA(X,A,B),A和B必须小于1,算法	Y=(A*Y'+B*X),其中Y'表示上一周期Y值.初值为X"""
     raise
 
 
-def FILTER(close: Expr, timeperiod: int = 30) -> Expr:
+def FILTER(close: Expr, N: int = 30) -> Expr:
     raise

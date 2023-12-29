@@ -5,8 +5,8 @@ from polars import Expr
 from polars_ta.ta.operators import MAX
 from polars_ta.ta.operators import MIN
 from polars_ta.ta.statistic import STDDEV
-from polars_ta.wq.time_series import ts_decay_linear
-from polars_ta.wq.time_series import ts_mean
+from polars_ta.wq.time_series import ts_decay_linear as WMA  # noqa
+from polars_ta.wq.time_series import ts_mean as SMA  # noqa
 
 
 def BBANDS_upperband(close: Expr, timeperiod: int = 5, nbdevup: float = 2) -> Expr:
@@ -62,10 +62,6 @@ def RMA(close: Expr, timeperiod: int = 30) -> Expr:
     return close.ewm_mean(alpha=1 / timeperiod, adjust=False, min_periods=timeperiod)
 
 
-def SMA(close: Expr, timeperiod: int = 30) -> Expr:
-    return ts_mean(close, timeperiod)
-
-
 def TEMA(close: Expr, timeperiod: int = 30) -> Expr:
     """
 
@@ -83,7 +79,3 @@ def TEMA(close: Expr, timeperiod: int = 30) -> Expr:
 def TRIMA(close: Expr, timeperiod: int = 30) -> Expr:
     SMA1 = SMA(close, ceil(timeperiod / 2))
     return SMA(SMA1, floor(timeperiod / 2) + 1)
-
-
-def WMA(close: Expr, timeperiod: int = 30) -> Expr:
-    return ts_decay_linear(close, timeperiod)
