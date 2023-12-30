@@ -21,7 +21,6 @@ def get_window_bounds(
         num_values: int = 0,
         window_size: int = 10,
 ) -> tuple[np.ndarray, np.ndarray]:
-    print(num_values, window_size)
     end = np.arange(1, num_values + 1, dtype=np.int64)
     start = end - window_size
     start = np.clip(start, 0, num_values)
