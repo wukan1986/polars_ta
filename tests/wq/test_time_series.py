@@ -18,6 +18,7 @@ class TestDemoClass:
 
         self.df_pl = pl.DataFrame([self.high_np, self.low_np, self.close_np],
                                   schema=["high", "low", "close"])
+        self.df_pl = self.df_pl.cast(pl.Float32)
         self.df_pl = self.df_pl.with_columns(pl.lit(None).alias("null"))
         self.df_pd = self.df_pl.to_pandas()
 
@@ -67,7 +68,6 @@ class TestDemoClass:
         assert_series_equal(result1, result2.to_series(0).to_pandas(), check_names=False)
 
     def test_ts_decay_exp_window(self):
-        from polars_ta.wq.time_series import ts_decay_exp_window
 
         df = pl.DataFrame({'A': range(100)})
         print(df)
@@ -75,7 +75,6 @@ class TestDemoClass:
         # print(result1)
 
     def test_ts_decay_linear(self):
-        from polars_ta.wq.time_series import ts_decay_linear
 
         df = pl.DataFrame({'A': [None] * 10, 'B': [None, None, None, None, 4, 5, 6, 7, 8, 9]})
         print(df)
