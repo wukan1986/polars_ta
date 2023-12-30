@@ -1,12 +1,11 @@
 from polars import Expr
 
+from polars_ta.ta.momentum import RSI  # noqa
 from polars_ta.ta.momentum import RSV
 from polars_ta.ta.price import TYPPRICE
-from polars_ta.tdx.arithmetic import ABS
 from polars_ta.tdx.choice import IF
 from polars_ta.tdx.reference import DIFF
 from polars_ta.tdx.reference import MA
-from polars_ta.tdx.reference import MAX
 from polars_ta.tdx.reference import REF
 from polars_ta.tdx.reference import SMA
 from polars_ta.tdx.reference import SUM
@@ -72,18 +71,6 @@ def MTM(CLOSE: Expr, N: int = 12) -> Expr:
     """
     # return CLOSE - REF(CLOSE, N)
     return DIFF(CLOSE, N)
-
-
-def RSI(CLOSE: Expr, N: int = 6) -> Expr:
-    """
-    LC:=REF(CLOSE,1);
-    RSI1:SMA(MAX(CLOSE-LC,0),N1,1)/SMA(ABS(CLOSE-LC),N1,1)*100;
-    RSI2:SMA(MAX(CLOSE-LC,0),N2,1)/SMA(ABS(CLOSE-LC),N2,1)*100;
-    RSI3:SMA(MAX(CLOSE-LC,0),N3,1)/SMA(ABS(CLOSE-LC),N3,1)*100;
-    """
-    LC = REF(CLOSE, 1)
-    DIF = CLOSE - LC
-    return SMA(MAX(DIF, 0), N, 1) / SMA(ABS(DIF), N, 1)  # * 100
 
 
 def MFI(CLOSE: Expr, HIGH: Expr, LOW: Expr, VOL: Expr, N: int = 14) -> Expr:

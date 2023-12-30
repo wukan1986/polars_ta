@@ -11,22 +11,27 @@ pip install -i https://pypi.org/simple --upgrade polars_ta  # 官方源
 pip install -i https://pypi.tuna.tsinghua.edu.cn/simple --upgrade polars_ta  # 国内镜像源
 ```
 
-### 二次开发
+### 源码安装
 
 ```commandline
 git clone --depth=1 https://github.com/wukan1986/polars_ta.git
 cd polars_ta
-pip install -e .
+python -m build
+cd dist
+pip install polars_ta-0.1.2-py3-none-any.whl
 ```
 
 ## 使用方法
+
 参考`examples`目录即可，例如：
+
 ```python
 # 导入wq公式
 from polars_ta.wq import *
 
 # 如果需要在`expr_codegen`中使用，需要有`ts_`等前权，这里导入提供了前缀
 from polars_ta.prefix.tdx import *
+
 # from polars_ta.tdx import *
 
 
@@ -77,6 +82,16 @@ df = df.with_columns([
     - 生成结果[\_\_init\_\_.py](polars_ta/talib/__init__.py)
     - 使用演示[demo_ta3.py](examples/demo_ta3.py)
     - 优点：即可以输入到遗传算法，`IDE`还有智能提示
+
+## 开发调试
+
+```commandline
+git clone --depth=1 https://github.com/wukan1986/polars_ta.git
+cd polars_ta
+pip install -e .
+```
+
+注意：如果你在`ta`或`tdx`中添加了新的函数，请再运行`tools`下的`prefix_ta.py`或`prefix_tdx.py`，用于生成对应的前缀文件。前缀文件方便在`expr_codegen`中使用
 
 ## 参考
 

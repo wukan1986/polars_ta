@@ -3,17 +3,18 @@ from polars import Expr
 from polars_ta.ta.operators import MAX
 from polars_ta.ta.operators import MIN
 from polars_ta.ta.overlap import EMA
+from polars_ta.ta.overlap import RMA
 from polars_ta.ta.overlap import SMA
+from polars_ta.wq.arithmetic import max_
 from polars_ta.wq.time_series import ts_delta
 from polars_ta.wq.time_series import ts_returns
 
 
-def ADXR(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:
-    raise
-
-
 def APO(close: Expr, fastperiod: int = 12, slowperiod: int = 26, matype: int = 0) -> Expr:
-    raise
+    if matype == 0:
+        return SMA(close, fastperiod) - SMA(close, slowperiod)
+    else:
+        return EMA(close, fastperiod) - EMA(close, slowperiod)
 
 
 def AROON_aroondown(high: Expr, low: Expr, timeperiod: int = 14) -> Expr:
@@ -70,6 +71,21 @@ def MOM(close: Expr, timeperiod: int = 10) -> Expr:
     return ts_delta(close, timeperiod)
 
 
+def PPO(close: Expr, fastperiod: int = 12, slowperiod: int = 26, matype: int = 0) -> Expr:
+    if matype == 0:
+        return SMA(close, fastperiod) / SMA(close, slowperiod) - 1
+    else:
+        return EMA(close, fastperiod) / EMA(close, slowperiod) - 1
+
+
+def ROC(close: Expr, timeperiod: int = 10) -> Expr:
+    return ROCP(close, timeperiod) * 100
+
+
+def ROCP(close: Expr, timeperiod: int = 10) -> Expr:
+    return ts_returns(close, timeperiod)
+
+
 def ROCR(close: Expr, timeperiod: int = 10) -> Expr:
     return close / close.shift(timeperiod)
 
@@ -78,16 +94,9 @@ def ROCR100(close: Expr, timeperiod: int = 10) -> Expr:
     return ROCR(close, timeperiod) * 100
 
 
-def ROCP(close: Expr, timeperiod: int = 10) -> Expr:
-    return ts_returns(close, timeperiod)
-
-
-def ROC(close: Expr, timeperiod: int = 10) -> Expr:
-    return ROCP(close, timeperiod) * 100
-
-
-def STOCHF_fastd(high: Expr, low: Expr, close: Expr, fastk_period: int = 5, fastd_period: int = 3) -> Expr:
-    return SMA(RSV(high, low, close, fastk_period), fastd_period)
+def RSI(close: Expr, timeperiod: int = 14) -> Expr:
+    dif = close.diff().fill_null(0)
+    return RMA(max_(dif, 0), timeperiod) / RMA(dif.abs(), timeperiod)  # * 100
 
 
 def RSV(high: Expr, low: Expr, close: Expr, timeperiod: int = 5) -> Expr:
@@ -102,6 +111,10 @@ def RSV(high: Expr, low: Expr, close: Expr, timeperiod: int = 5) -> Expr:
     b = MIN(low, timeperiod)
 
     return (close - b) / (a - b)
+
+
+def STOCHF_fastd(high: Expr, low: Expr, close: Expr, fastk_period: int = 5, fastd_period: int = 3) -> Expr:
+    return SMA(RSV(high, low, close, fastk_period), fastd_period)
 
 
 def TRIX(close: Expr, timeperiod: int = 30) -> Expr:

@@ -12,7 +12,7 @@ class TestDemoClass:
     def setup_class(self):
         self.high_np = 0 + np.random.rand(100)
         self.low_np = 0 - np.random.rand(100)
-        self.close_np = np.arange(100, dtype=float)
+        self.close_np = np.arange(100, dtype=float)+ np.random.rand(100)
 
         self.df_pl = pl.DataFrame([self.high_np, self.low_np, self.close_np],
                                   schema=["high", "low", "close"])
@@ -97,3 +97,16 @@ class TestDemoClass:
         print(result3)
 
         # assert np.allclose(result1[timeperiod:], result3[timeperiod:], equal_nan=True)
+
+    def test_RSI(self):
+        timeperiod = 10
+
+        from polars_ta.ta.momentum import RSI
+
+        result1 = talib.RSI(self.close_np, timeperiod=timeperiod)
+        result2 = self.df_pl.select(RSI(pl.col("close"), timeperiod=timeperiod))
+        result3 = result2['close'].to_numpy() * 100
+        # print()
+        # print(result1)
+        # print(result3)
+        assert np.allclose(result1[timeperiod:], result3[timeperiod:], equal_nan=True)

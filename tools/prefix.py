@@ -1,19 +1,54 @@
 import inspect
+from typing import List, Optional
 
 
-def codegen_import(module, prefix='ts_', include_modules=[], include_func=[], include_parameter=[]):
-    """通过反射，生成代码的小工具"""
+def codegen_import_as(module: str, prefix: str = 'ts_',
+                      include_modules: Optional[List[str]] = None,
+                      include_func: Optional[List[str]] = None,
+                      exclude_func: Optional[List[str]] = None,
+                      include_parameter: Optional[List[str]] = None):
+    """通过反射，生成代码的小工具
+
+    Parameters
+    ----------
+    module
+        模块全名
+    prefix
+        需要添加的前缀
+    include_modules
+        通过`from import`导入的函数也参与判断
+    include_func
+        指定的函数名不做检查，直接添加前缀
+    exclude_func
+        指定的函数名直接跳过不导入
+    include_parameter
+        出现了同名int参数，添加前缀
+
+    Notes
+    -----
+
+    """
+    if include_modules is None:
+        include_modules = [module]
+    else:
+        include_modules += [module]
+    if include_func is None:
+        include_func = []
+    if exclude_func is None:
+        exclude_func = []
+    if include_parameter is None:
+        include_parameter = []
+
     m = __import__(module, fromlist=['*'])
     funcs = inspect.getmembers(m, inspect.isfunction)
     funcs = [f for f in funcs if not f[0].startswith('_')]
     txts = []
     for name, func in funcs:
-        if len(include_modules) == 0:
-            if func.__module__ != module:
-                continue
-        else:
-            if func.__module__ not in include_modules:
-                continue
+        if func.__module__ not in include_modules:
+            continue
+        if name in exclude_func:
+            continue
+
         add_prefix = False
         if name.startswith(prefix):
             add_prefix = False
