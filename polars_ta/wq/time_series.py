@@ -1,29 +1,26 @@
-from polars import Expr, Int32, UInt16
+from polars import Expr, Int32, UInt16, map_batches
 from polars import arange, repeat
 from polars import rolling_corr, rolling_cov
 
-from polars_ta.utils.numba_ import batches_1
-from polars_ta.utils.pandas_ import roll_kurt
-from polars_ta.utils.pandas_ import roll_rank
-from polars_ta.wq._nb import nb_roll_argmax
-from polars_ta.wq._nb import nb_roll_argmin
-from polars_ta.wq._nb import nb_roll_prod
+from polars_ta.utils.numba_ import batches_1, batches_2, batches_3
+from polars_ta.utils.pandas_ import roll_kurt, roll_rank
+from polars_ta.wq._nb import roll_argmax, roll_argmin, roll_prod, roll_co_kurtosis, roll_co_skewness, roll_moment, roll_partial_corr, roll_triple_corr
 
 
 def ts_arg_max(x: Expr, d: int = 5) -> Expr:
-    return x.map_batches(lambda x1: batches_1(x1, d, nb_roll_argmax, dtype=UInt16))
+    return x.map_batches(lambda x1: batches_1(x1, d, roll_argmax, dtype=UInt16))
 
 
 def ts_arg_min(x: Expr, d: int = 5) -> Expr:
-    return x.map_batches(lambda x1: batches_1(x1, d, nb_roll_argmin, dtype=UInt16))
+    return x.map_batches(lambda x1: batches_1(x1, d, roll_argmin, dtype=UInt16))
 
 
-def ts_co_kurtosis(x: Expr, y: Expr, d: int = 5, ddof: int = 1) -> Expr:
-    raise
+def ts_co_kurtosis(x: Expr, y: Expr, d: int = 5, ddof: int = 0) -> Expr:
+    return map_batches([x, y], lambda x12: batches_2(x12, d, roll_co_kurtosis))
 
 
-def ts_co_skewness(x: Expr, y: Expr, d: int = 5, ddof: int = 1) -> Expr:
-    raise
+def ts_co_skewness(x: Expr, y: Expr, d: int = 5, ddof: int = 0) -> Expr:
+    return map_batches([x, y], lambda x12: batches_2(x12, d, roll_co_skewness))
 
 
 def ts_corr(x: Expr, y: Expr, d: int = 5, ddof: int = 1) -> Expr:
@@ -104,8 +101,33 @@ def ts_min_diff(x: Expr, d: int = 30) -> Expr:
     return x - ts_min(x, d)
 
 
+def ts_min_max_cps(x: Expr, d: int, f: float = 2) -> Expr:
+    """Returns (ts_min(x, d) + ts_max(x, d)) - f * x. If not specified, by default f = 2"""
+    return (ts_min(x, d) + ts_max(x, d)) - f * x
+
+
+def ts_min_max_diff(x: Expr, d: int, f: float = 0.5) -> Expr:
+    """Returns x - f * (ts_min(x, d) + ts_max(x, d)). If not specified, by default f = 0.5"""
+    return x - f * (ts_min(x, d) + ts_max(x, d))
+
+
+def ts_moment(x: Expr, d: int, k: int = 0) -> Expr:
+    """Returns K-th central moment of x for the past d days."""
+    return x.map_batches(lambda x1: batches_1(x1, d, roll_moment, k))
+
+
+def ts_partial_corr(x: Expr, y: Expr, z: Expr, d: int) -> Expr:
+    """Returns partial correlation of x, y, z for the past d days."""
+    return map_batches([x, y, z], lambda x123: batches_3(x123, d, roll_partial_corr))
+
+
+def ts_percentage(x: Expr, d: int, percentage: float = 0.5) -> Expr:
+    """Returns percentile value of x for the past d days."""
+    return x.rolling_quantile(percentage, window_size=d)
+
+
 def ts_product(x: Expr, d: int = 5) -> Expr:
-    return x.map_batches(lambda x1: batches_1(x1, d, nb_roll_prod))
+    return x.map_batches(lambda x1: batches_1(x1, d, roll_prod))
 
 
 def ts_rank(x: Expr, d: int = 5, constant=0) -> Expr:
@@ -136,6 +158,11 @@ def ts_std_dev(x: Expr, d: int = 5, ddof: int = 0) -> Expr:
 
 def ts_sum(x: Expr, d: int = 30) -> Expr:
     return x.rolling_sum(d)
+
+
+def ts_triple_corr(x: Expr, y: Expr, z: Expr, d: int) -> Expr:
+    """Returns triple correlation of x, y, z for the past d days."""
+    return map_batches([x, y, z], lambda x123: batches_3(x123, d, roll_triple_corr))
 
 
 def ts_weighted_delay(x: Expr, k: float = 0.5) -> Expr:

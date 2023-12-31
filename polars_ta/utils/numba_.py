@@ -16,6 +16,11 @@ def batches_2(x12: Series, windows: int, func2, *args, dtype=None) -> Series:
     return Series(func2(x1.to_numpy(), x2.to_numpy(), windows, *args), nan_to_null=True, dtype=dtype)
 
 
+def batches_3(x123: Series, windows: int, func3, *args, dtype=None) -> Series:
+    x1, x2, x3 = x123
+    return Series(func3(x1.to_numpy(), x2.to_numpy(), x3.to_numpy(), windows, *args), nan_to_null=True, dtype=dtype)
+
+
 @jit(nopython=True, nogil=True, cache=True)
 def nb_roll_sum(x1, window):
     """演示代码，请直接用 pl.col('A').rolling_sum(10).alias('a1')"""
