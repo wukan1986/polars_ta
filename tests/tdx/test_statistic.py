@@ -1,3 +1,5 @@
+import time
+
 import numpy as np
 import polars as pl
 
@@ -18,9 +20,29 @@ class TestDemoClass:
         self.df_pl = self.df_pl.with_columns(pl.lit(None).alias("null"))
 
     def test_AVEDEV(self):
-        from polars_ta.tdx.statistic import AVEDEV
+        from polars_ta.tdx._slow import AVEDEV as func_slow
+        from polars_ta.tdx.statistic import AVEDEV as func_fast
 
-        df = pl.DataFrame({'A': range(100)})
-        print(df)
-        result1 = self.df_pl.select(AVEDEV(pl.col('high'), 10))
-        print(result1)
+        xx = self.df_pl.with_columns(
+            a1=func_slow(pl.col('high'), 10),
+            a2=func_fast(pl.col('high'), 10),
+        )
+        print(xx)
+
+        t1 = time.perf_counter()
+        for i in range(1000):
+            result2 = self.df_pl.with_columns(
+                a1=func_slow(pl.col('high'), 10),
+            )
+        t2 = time.perf_counter()
+        print(t2 - t1)
+
+        t1 = time.perf_counter()
+        for i in range(1000):
+            result2 = self.df_pl.with_columns(
+                a1=func_fast(pl.col('high'), 10),
+            )
+        t2 = time.perf_counter()
+        print(t2 - t1)
+
+

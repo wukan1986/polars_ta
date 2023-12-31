@@ -1,35 +1,21 @@
-import numpy as np
-from polars import Expr, Series, rolling_corr, Int32, rolling_cov, arange, repeat
+from polars import Expr, Int32, UInt16
+from polars import arange, repeat
+from polars import rolling_corr, rolling_cov
 
+from polars_ta.utils.numba_ import batches_1
 from polars_ta.utils.pandas_ import roll_kurt
 from polars_ta.utils.pandas_ import roll_rank
-
-
-# TODO rolling_map比较慢，少用. 如ts_arg_max、ts_product等
-
-def _arg_max(x: Series):
-    """
-    Notes
-    -----
-    等polars推出rolling_arg_max(reverse=True)这个问题能好转
-
-    """
-    # return x[::-1].arg_max()
-    # return x.reverse().arg_max() # 正确，但太慢
-    return len(x) - 1 - x.arg_max()  # 有多个最大值相同时，靠前的值会被记录下来，导致结果偏大
+from polars_ta.wq._nb import nb_roll_argmax
+from polars_ta.wq._nb import nb_roll_argmin
+from polars_ta.wq._nb import nb_roll_prod
 
 
 def ts_arg_max(x: Expr, d: int = 5) -> Expr:
-    # WorldQuant中最大值为今天返回0，为昨天返回1
-    return x.rolling_map(_arg_max, d)
-
-
-def _arg_min(x: Series):
-    return len(x) - 1 - x.arg_min()
+    return x.map_batches(lambda x1: batches_1(x1, d, nb_roll_argmax, dtype=UInt16))
 
 
 def ts_arg_min(x: Expr, d: int = 5) -> Expr:
-    return x.rolling_map(_arg_min, d)
+    return x.map_batches(lambda x1: batches_1(x1, d, nb_roll_argmin, dtype=UInt16))
 
 
 def ts_co_kurtosis(x: Expr, y: Expr, d: int = 5, ddof: int = 1) -> Expr:
@@ -119,7 +105,7 @@ def ts_min_diff(x: Expr, d: int = 30) -> Expr:
 
 
 def ts_product(x: Expr, d: int = 5) -> Expr:
-    return x.rolling_map(np.nanprod, d)
+    return x.map_batches(lambda x1: batches_1(x1, d, nb_roll_prod))
 
 
 def ts_rank(x: Expr, d: int = 5, constant=0) -> Expr:

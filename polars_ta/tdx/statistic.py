@@ -1,19 +1,15 @@
 from polars import Expr
-from polars import Series
 
+from polars_ta.tdx._nb import nb_roll_avedev
+from polars_ta.utils.numba_ import batches_1
 from polars_ta.wq.time_series import ts_corr as RELATE  # noqa
 from polars_ta.wq.time_series import ts_covariance as COVAR  # noqa
 from polars_ta.wq.time_series import ts_std_dev as _ts_std_dev
 
 
-def _avedev(x: Series) -> Series:
-    # 可惜rolling_map后这里已经由Expr变成了Series
-    return (x - x.mean()).abs().mean()
-
-
 def AVEDEV(close: Expr, timeperiod: int = 5) -> Expr:
     """平均绝对偏差"""
-    return close.rolling_map(_avedev, timeperiod)
+    return close.map_batches(lambda x1: batches_1(x1, timeperiod, nb_roll_avedev))
 
 
 def DEVSQ(close: Expr, timeperiod: int = 5) -> Expr:

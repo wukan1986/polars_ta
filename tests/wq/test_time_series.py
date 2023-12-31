@@ -89,14 +89,20 @@ class TestDemoClass:
         result1 = df.select(ts_weighted_delay(pl.col('A'), k=0.25))
         print(result1)
 
-    def test_ts_arg_min(self):
-        from polars_ta.wq.time_series import ts_arg_min
-        from polars_ta.wq.time_series import ts_arg_max
+    def test_ts_arg_max(self):
+        from polars_ta.wq._slow import ts_arg_min as func_slow
+        from polars_ta.wq.time_series import ts_arg_min as func_fast
+
+        xx = self.df_pl.with_columns(
+            a1=func_slow(pl.col('high'), 10),
+            a2=func_fast(pl.col('high'), 10),
+        )
+        print(xx)
 
         t1 = time.perf_counter()
         for i in range(10000):
             result2 = self.df_pl.with_columns(
-                a1=ts_arg_min(pl.col('high'), 10),
+                a1=func_slow(pl.col('high'), 10),
             )
         t2 = time.perf_counter()
         print(t2 - t1)
@@ -104,7 +110,33 @@ class TestDemoClass:
         t1 = time.perf_counter()
         for i in range(10000):
             result2 = self.df_pl.with_columns(
-                a1=ts_arg_max(pl.col('high'), 10),
+                a1=func_fast(pl.col('high'), 10),
+            )
+        t2 = time.perf_counter()
+        print(t2 - t1)
+
+    def test_ts_product(self):
+        from polars_ta.wq._slow import ts_product as func_slow
+        from polars_ta.wq.time_series import ts_product as func_fast
+
+        xx = self.df_pl.with_columns(
+            a1=func_slow(pl.col('high'), 10),
+            a2=func_fast(pl.col('high'), 10),
+        )
+        print(xx)
+
+        t1 = time.perf_counter()
+        for i in range(10000):
+            result2 = self.df_pl.with_columns(
+                a1=func_slow(pl.col('high'), 10),
+            )
+        t2 = time.perf_counter()
+        print(t2 - t1)
+
+        t1 = time.perf_counter()
+        for i in range(10000):
+            result2 = self.df_pl.with_columns(
+                a1=func_fast(pl.col('high'), 10),
             )
         t2 = time.perf_counter()
         print(t2 - t1)
