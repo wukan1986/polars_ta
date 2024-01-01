@@ -6,7 +6,7 @@ from polars_ta.ta.overlap import EMA
 from polars_ta.ta.overlap import RMA
 from polars_ta.ta.overlap import SMA
 from polars_ta.wq.arithmetic import max_
-from polars_ta.wq.time_series import ts_delta
+from polars_ta.wq.time_series import ts_delta, ts_arg_max, ts_arg_min
 from polars_ta.wq.time_series import ts_returns
 
 
@@ -19,9 +19,9 @@ def APO(close: Expr, fastperiod: int = 12, slowperiod: int = 26, matype: int = 0
 
 def AROON_aroondown(high: Expr, low: Expr, timeperiod: int = 14) -> Expr:
     """
-    下轨:(N-LLVBARS(H,N))/N*100,COLORGREEN;
+    下轨:(N-LLVBARS(L,N))/N*100,COLORGREEN;
     """
-    return (low.rolling_map(lambda x: x.arg_min(), timeperiod) + 1) / timeperiod
+    return 1 - ts_arg_min(low, timeperiod, reverse=True) / timeperiod
 
 
 def AROON_aroonup(high: Expr, low: Expr, timeperiod: int = 14) -> Expr:
@@ -33,8 +33,7 @@ def AROON_aroonup(high: Expr, low: Expr, timeperiod: int = 14) -> Expr:
     arg_max没有逆序，导致出现两个及以上最高点时，结果偏大
 
     """
-    # return (timeperiod - ts_arg_max(high, timeperiod)) / timeperiod
-    return (high.rolling_map(lambda x: x.arg_max(), timeperiod) + 1) / timeperiod
+    return 1 - ts_arg_max(high, timeperiod, reverse=True) / timeperiod
 
 
 def MACD_macd(close: Expr, fastperiod: int = 12, slowperiod: int = 26) -> Expr:

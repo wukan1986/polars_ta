@@ -7,12 +7,12 @@ from polars_ta.utils.pandas_ import roll_kurt, roll_rank
 from polars_ta.wq._nb import roll_argmax, roll_argmin, roll_prod, roll_co_kurtosis, roll_co_skewness, roll_moment, roll_partial_corr, roll_triple_corr
 
 
-def ts_arg_max(x: Expr, d: int = 5) -> Expr:
-    return x.map_batches(lambda x1: batches_1(x1, d, roll_argmax, dtype=UInt16))
+def ts_arg_max(x: Expr, d: int = 5, reverse: bool = True) -> Expr:
+    return x.map_batches(lambda x1: batches_1(x1, d, roll_argmax, reverse, dtype=UInt16))
 
 
-def ts_arg_min(x: Expr, d: int = 5) -> Expr:
-    return x.map_batches(lambda x1: batches_1(x1, d, roll_argmin, dtype=UInt16))
+def ts_arg_min(x: Expr, d: int = 5, reverse: bool = True) -> Expr:
+    return x.map_batches(lambda x1: batches_1(x1, d, roll_argmin, reverse, dtype=UInt16))
 
 
 def ts_co_kurtosis(x: Expr, y: Expr, d: int = 5, ddof: int = 0) -> Expr:

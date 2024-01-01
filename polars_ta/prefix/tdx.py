@@ -60,6 +60,7 @@ from polars_ta.tdx.reference import BARSLAST as ts_BARSLAST  # noqa
 from polars_ta.tdx.reference import BARSLASTCOUNT as ts_BARSLASTCOUNT  # noqa
 from polars_ta.tdx.reference import BARSSINCE as ts_BARSSINCE  # noqa
 from polars_ta.tdx.reference import BARSSINCEN as ts_BARSSINCEN  # noqa
+from polars_ta.tdx.reference import CUMSUM as ts_CUMSUM  # noqa
 from polars_ta.tdx.reference import DMA as ts_DMA  # noqa
 from polars_ta.tdx.reference import EMA as ts_EMA  # noqa
 from polars_ta.tdx.reference import EXPMA as ts_EXPMA  # noqa
@@ -73,7 +74,6 @@ from polars_ta.tdx.reference import MIN  # noqa
 from polars_ta.tdx.reference import RANGE  # noqa
 from polars_ta.tdx.reference import SMA as ts_SMA  # noqa
 from polars_ta.tdx.reference import SUMIF as ts_SUMIF  # noqa
-from polars_ta.tdx.reference import SUM_0 as ts_SUM_0  # noqa
 from polars_ta.tdx.reference import TMA as ts_TMA  # noqa
 from polars_ta.tdx.reference import TR as ts_TR  # noqa
 from polars_ta.tdx.statistic import AVEDEV as ts_AVEDEV  # noqa

@@ -5,18 +5,22 @@ from numpy.lib.stride_tricks import sliding_window_view
 
 
 @jit(nopython=True, nogil=True, fastmath=True, cache=True)
-def roll_argmax(x1, window):
-    out = full(x1.shape, 0, dtype=int)
-    a1 = sliding_window_view(x1, window)[:, ::-1]  # 注意倒序
+def roll_argmax(x1, window, reverse):
+    out = full(x1.shape, np.nan, dtype=float)
+    a1 = sliding_window_view(x1, window)
+    if reverse:
+        a1 = a1[:, ::-1]
     for i, v1 in enumerate(a1):
         out[i + window - 1] = argmax(v1)
     return out
 
 
 @jit(nopython=True, nogil=True, fastmath=True, cache=True)
-def roll_argmin(x1, window):
-    out = full(x1.shape, 0, dtype=int)
-    a1 = sliding_window_view(x1, window)[:, ::-1]  # 注意倒序
+def roll_argmin(x1, window, reverse):
+    out = full(x1.shape, np.nan, dtype=float)
+    a1 = sliding_window_view(x1, window)
+    if reverse:
+        a1 = a1[:, ::-1]
     for i, v1 in enumerate(a1):
         out[i + window - 1] = argmin(v1)
     return out

@@ -3,7 +3,7 @@ from polars import Expr
 from polars_ta.tdx.choice import IF
 from polars_ta.tdx.reference import REF
 from polars_ta.tdx.reference import SUM
-from polars_ta.tdx.reference import SUM_0
+from polars_ta.tdx.reference import CUMSUM
 
 
 def OBV(CLOSE: Expr, VOL: Expr) -> Expr:
@@ -14,7 +14,7 @@ def OBV(CLOSE: Expr, VOL: Expr) -> Expr:
     """
     LC = REF(CLOSE, 1)
     VA = IF(CLOSE - LC, VOL, -VOL)
-    return SUM_0(IF(CLOSE == LC, 0, VA))
+    return CUMSUM(IF(CLOSE == LC, 0, VA))
 
 
 def VR(CLOSE: Expr, VOL: Expr, N: int = 26) -> Expr:

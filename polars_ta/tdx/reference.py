@@ -1,10 +1,13 @@
-from polars import Boolean, Int32, Series
+from polars import Boolean, Int32, UInt16
 from polars import Expr
 from polars import when
 
 from polars_ta.ta.overlap import EMA as _ema
 from polars_ta.ta.overlap import SMA as MA
 from polars_ta.ta.volatility import TRANGE as TR  # noqa
+from polars_ta.tdx._nb import roll_bars_since_n
+from polars_ta.utils.numba_ import batches_1
+from polars_ta.utils.pandas_ import roll_rank
 from polars_ta.wq.arithmetic import max_ as MAX  # noqa
 from polars_ta.wq.arithmetic import min_ as MIN  # noqa
 from polars_ta.wq.time_series import ts_arg_max as HHVBARS  # noqa
@@ -40,16 +43,14 @@ def BARSSINCE(condition: Expr) -> Expr:
     return a - b
 
 
-def _bars_since_n(x: Series) -> Series:
-    a = x.cast(Boolean).arg_true()
-    # 返回的值可能为空，所以需要判断一下
-    b = a[0] if len(a) > 0 else float('nan')
-    return len(x) - 1 - b
-
-
 def BARSSINCEN(condition: Expr, N: int = 30) -> Expr:
     """BARSSINCEN(X,N):N周期内第一次X不为0到现在的天数"""
-    return condition.rolling_map(_bars_since_n, N)
+    return condition.cast(Boolean).map_batches(lambda x1: batches_1(x1, N, roll_bars_since_n, dtype=UInt16))
+
+
+def CUMSUM(close: Expr) -> Expr:
+    """SUM(close, 0)"""
+    return close.cum_sum()
 
 
 def DMA(close: Expr, alpha: float = 0.5) -> Expr:
@@ -81,22 +82,14 @@ def EXPMEMA(close: Expr, N: int = 30) -> Expr:
     return x.ewm_mean(span=N, adjust=False, min_periods=1)
 
 
-def _hod(x: Series):
-    return x.rank(descending=True)[-1]
-
-
 def HOD(close: Expr, N: int = 30) -> Expr:
     """HOD(X,N):求当前X数据是N周期内的第几个高值,N=0则从第一个有效值开始"""
-    return close.rolling_map(_hod, N)
-
-
-def _lod(x: Series):
-    return x.rank(descending=False)[-1]
+    return close.map_batches(lambda a: roll_rank(a, N, pct=False, ascending=False))
 
 
 def LOD(close: Expr, N: int = 30) -> Expr:
     """LOD(X,N):求当前X数据是N周期内的第几个低值"""
-    return close.rolling_map(_lod, N)
+    return close.map_batches(lambda a: roll_rank(a, N, pct=False, ascending=True))
 
 
 def MEMA(close: Expr, N: int = 30) -> Expr:
@@ -113,10 +106,6 @@ def RANGE(a: Expr, b: Expr, c: Expr) -> Expr:
 def SMA(X: Expr, N: int, M: int = 1) -> Expr:
     """用法:SMA(X,N,M),X的N日移动平均,M为权重,若Y=SMA(X,N,M)则Y=(X*M+Y'*(N-M))/N"""
     return X.ewm_mean(alpha=M / N, adjust=False, min_periods=1)
-
-
-def SUM_0(close: Expr) -> Expr:
-    return close.cum_sum()
 
 
 def SUMIF(condition: Expr, close: Expr, N: int = 30) -> Expr:

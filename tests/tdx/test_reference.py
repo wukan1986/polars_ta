@@ -46,8 +46,8 @@ class TestDemoClass:
         from polars_ta.tdx.reference import BARSSINCEN
 
         df = pl.DataFrame({'A': [1, 1, 1, 1, 1, 1, 1, 1]})
-        df = pl.DataFrame({'A': [0, 0, 0, 0, 0, 0, 0, 0]})
-        result2 = df.select(BARSSINCEN(pl.col('A'), 3))
+        df = pl.DataFrame({'A': [0, 2, 1, 0, 0, 0, 0, 0]})
+        result2 = df.select(BARSSINCEN(pl.col('A'), 4))
         print(result2)
 
     def test_LOD(self):
