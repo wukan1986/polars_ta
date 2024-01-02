@@ -59,7 +59,11 @@ df = df.with_columns([
 
 ## 指标区别
 
-请参考[compare.md](compare.md)
+请参考[compare](compare.md)
+
+## 空值处理
+
+请参考[nan_to_null](nan_to_null.md)
 
 ## TA-Lib封装的演化
 
