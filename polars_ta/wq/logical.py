@@ -4,8 +4,9 @@ from polars import when
 
 # TODO 本文件返回bool时是否有必要转换成 0/1 ?
 
-def and_(*args):
+def and_(a: Expr, b: Expr, *args) -> Expr:
     """Logical AND operator, returns true if both operands are true and returns false otherwise"""
+    _args = [a, b] + list(args)
     return all_horizontal(*args)
 
 
@@ -49,6 +50,7 @@ def negate(input1: Expr) -> Expr:
     return ~input1
 
 
-def or_(*args):
+def or_(a: Expr, b: Expr, *args) -> Expr:
     """Logical OR operator returns true if either or both inputs are true and returns false otherwise"""
+    _args = [a, b] + list(args)
     return any_horizontal(*args)

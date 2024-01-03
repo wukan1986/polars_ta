@@ -7,15 +7,17 @@ def abs_(x: Expr) -> Expr:
     return x.abs()
 
 
-def add(*args, filter_=False):
+def add(a: Expr, b: Expr, *args, filter_: bool = False) -> Expr:
     """Add all inputs (at least 2 inputs required). If filter = true, filter all input NaN to 0 before adding"""
+    _args = [a, b] + list(args)
+
     if filter_:
         # TODO 等官方修复此bug
         # https://github.com/pola-rs/polars/issues/13113
         # return sum_horizontal(*args)
-        args = [_.fill_null(0) for _ in args]
+        _args = [_.fill_null(0) for _ in _args]
 
-    return reduce(function=lambda acc, x: acc + x, exprs=args)
+    return reduce(function=lambda acc, x: acc + x, exprs=_args)
 
 
 def arc_cos(x: Expr) -> Expr:
@@ -85,31 +87,34 @@ def log1p(x: Expr) -> Expr:
     return x.log1p()
 
 
-def max_(*args):
+def max_(a: Expr, b: Expr, *args) -> Expr:
     """Maximum value of all inputs. At least 2 inputs are required."""
-    return max_horizontal(args)
+    _args = [a, b] + list(args)
+    return max_horizontal(*_args)
 
 
-def mean(*args) -> Expr:
-    # TODO 还需要修正
-    return sum_horizontal(*args) / len(args)
+def mean(a: Expr, b: Expr, *args) -> Expr:
+    _args = [a, b] + list(args)
+    return sum_horizontal(*_args) / len(_args)
 
 
-def min_(*args):
+def min_(a: Expr, b: Expr, *args) -> Expr:
     """Maximum value of all inputs. At least 2 inputs are required."""
-    return min_horizontal(args)
+    _args = [a, b] + list(args)
+    return min_horizontal(*_args)
 
 
 def mod(x: Expr, y: Expr) -> Expr:
     return x % y
 
 
-def multiply(*args, filter_=False):
+def multiply(a: Expr, b: Expr, *args, filter_: bool = False) -> Expr:
     """Multiply all inputs. At least 2 inputs are required. Filter sets the NaN values to 1"""
+    _args = [a, b] + list(args)
     if filter_:
-        args = [_.fill_null(1) for _ in args]
+        _args = [_.fill_null(1) for _ in args]
 
-    return reduce(function=lambda acc, x: acc * x, exprs=args)
+    return reduce(function=lambda acc, x: acc * x, exprs=_args)
 
 
 def power(x: Expr, y: Expr) -> Expr:
@@ -171,12 +176,13 @@ def sqrt(x: Expr) -> Expr:
     return x.sqrt()
 
 
-def subtract(*args, filter_=False) -> Expr:
+def subtract(a: Expr, b: Expr, *args, filter_: bool = False) -> Expr:
     """x-y. If filter = true, filter all input NaN to 0 before subtracting"""
+    _args = [a, b] + list(args)
     if filter_:
-        args = [_.fill_null(0) for _ in args]
+        _args = [_.fill_null(0) for _ in _args]
 
-    return reduce(function=lambda acc, x: acc - x, exprs=args)
+    return reduce(function=lambda acc, x: acc - x, exprs=_args)
 
 
 def tan(x: Expr) -> Expr:

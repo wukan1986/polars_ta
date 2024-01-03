@@ -2,16 +2,16 @@ from polars import Expr, when
 
 
 def bucket(x: Expr,
-           range="0, 1, 0.1",
-           buckets="2,5,6,7,10",
-           skipBegin=False, skipEnd=False, skipBoth=False,
-           NANGroup=True) -> Expr:
+           range: str = "0, 1, 0.1",
+           buckets: str = "2,5,6,7,10",
+           skipBegin: bool = False, skipEnd: bool = False, skipBoth: bool = False,
+           NANGroup: bool = True) -> Expr:
     """Convert float values into indexes for user-specified buckets. Bucket is useful for creating group values, which can be passed to group operators as input."""
     # TODO 未完成
     raise
 
 
-def clamp(x: Expr, lower: float = 0, upper: float = 0, inverse: bool = False, mask=None) -> Expr:
+def clamp(x: Expr, lower: float = 0, upper: float = 0, inverse: bool = False, mask: float = None) -> Expr:
     """Limits input value between lower and upper bound in inverse = false mode (which is default). Alternatively, when inverse = true, values between bounds are replaced with mask, while values outside bounds are left as is."""
     if inverse:
         # mask is one of: 'nearest_bound', 'mean', 'NAN' or any floating point number
@@ -20,12 +20,12 @@ def clamp(x: Expr, lower: float = 0, upper: float = 0, inverse: bool = False, ma
         return x.clip(lower, upper)
 
 
-def filter_(x, h="1, 2, 3, 4", t="0.5"):
+def filter_(x: Expr, h: str = "1, 2, 3, 4", t: str = "0.5") -> Expr:
     """Used to filter the value and allows to create filters like linear or exponential decay."""
     raise
 
 
-def keep(x, f, period=5):
+def keep(x: Expr, f: float, period: int = 5) -> Expr:
     """This operator outputs value x when f changes and continues to do that for “period” days after f stopped changing. After “period” days since last change of f, NaN is output."""
     raise
 

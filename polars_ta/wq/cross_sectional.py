@@ -39,7 +39,7 @@ def cs_rank(x: Expr, rate: int = 2, pct: bool = True) -> Expr:
         return x.rank()
 
 
-def cs_scale(x: Expr, scale_=1, long_scale=1, short_scale=1) -> Expr:
+def cs_scale(x: Expr, scale_: float = 1, long_scale: float = 1, short_scale: float = 1) -> Expr:
     """Scales input to booksize. We can also scale the long positions and short positions to separate scales by mentioning additional parameters to the operator."""
     if long_scale != 1 or short_scale != 1:
         L = x.clip(lower_bound=0)  # 全正数
@@ -49,7 +49,7 @@ def cs_scale(x: Expr, scale_=1, long_scale=1, short_scale=1) -> Expr:
         return x / x.abs().sum() * scale_
 
 
-def cs_scale_down(x: Expr, constant: float = 0) -> Expr:
+def cs_scale_down(x: Expr) -> Expr:
     """Scales all values in each day proportionately between 0 and 1 such that minimum value maps to 0 and maximum value maps to 1. Constant is the offset by which final result is subtracted."""
     return standardize_minmax(x)
 

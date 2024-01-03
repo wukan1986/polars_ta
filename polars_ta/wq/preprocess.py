@@ -1,5 +1,3 @@
-from typing import Sequence
-
 import numpy as np
 from polars import Expr, Series
 
@@ -50,7 +48,7 @@ def neutralize_residual_simple(y: Expr, x: Expr) -> Expr:
     return y_demeaned - beta * x_demeaned
 
 
-def neutralize_residual_multiple(cols: Sequence[Series]) -> Series:
+def neutralize_residual_multiple(cols) -> Series:
     # https://stackoverflow.com/a/74906705/1894479
     # 比struct.unnest要快一些
     cols = [c.to_numpy() for c in cols]

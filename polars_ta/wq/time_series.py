@@ -130,7 +130,7 @@ def ts_product(x: Expr, d: int = 5) -> Expr:
     return x.map_batches(lambda x1: batches_1(x1, d, roll_prod))
 
 
-def ts_rank(x: Expr, d: int = 5, constant=0) -> Expr:
+def ts_rank(x: Expr, d: int = 5) -> Expr:
     # TODO 等待polars官方出rolling_rank，并支持pct
     # bottleneck长期无人维护，pydata/bottleneck#434 没有合并
     # pandas中已经用跳表实现了此功能，速度也不差
@@ -147,7 +147,7 @@ def ts_scale(x: Expr, d: int = 5) -> Expr:
     return (x - a) / (b - a)
 
 
-def ts_skewness(x: Expr, d: int = 5, bias=False) -> Expr:
+def ts_skewness(x: Expr, d: int = 5, bias: bool = False) -> Expr:
     # bias=False与pandas结果一样
     return x.rolling_skew(d, bias=bias)
 
