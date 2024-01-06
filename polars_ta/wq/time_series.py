@@ -2,25 +2,25 @@ from polars import Expr, Int32, UInt16, map_batches
 from polars import arange, repeat
 from polars import rolling_corr, rolling_cov
 
-from polars_ta.utils.numba_ import batches_1, batches_2, batches_3
+from polars_ta.utils.numba_ import batches_i1_o1, batches_i2_o1
 from polars_ta.utils.pandas_ import roll_kurt, roll_rank
 from polars_ta.wq._nb import roll_argmax, roll_argmin, roll_prod, roll_co_kurtosis, roll_co_skewness, roll_moment, roll_partial_corr, roll_triple_corr
 
 
 def ts_arg_max(x: Expr, d: int = 5, reverse: bool = True) -> Expr:
-    return x.map_batches(lambda x1: batches_1(x1, d, roll_argmax, reverse, dtype=UInt16))
+    return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy(), roll_argmax, d, reverse, dtype=UInt16))
 
 
 def ts_arg_min(x: Expr, d: int = 5, reverse: bool = True) -> Expr:
-    return x.map_batches(lambda x1: batches_1(x1, d, roll_argmin, reverse, dtype=UInt16))
+    return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy(), roll_argmin, d, reverse, dtype=UInt16))
 
 
 def ts_co_kurtosis(x: Expr, y: Expr, d: int = 5, ddof: int = 0) -> Expr:
-    return map_batches([x, y], lambda x12: batches_2(x12, d, roll_co_kurtosis))
+    return map_batches([x, y], lambda xx: batches_i2_o1([x1.to_numpy() for x1 in xx], roll_co_kurtosis, d))
 
 
 def ts_co_skewness(x: Expr, y: Expr, d: int = 5, ddof: int = 0) -> Expr:
-    return map_batches([x, y], lambda x12: batches_2(x12, d, roll_co_skewness))
+    return map_batches([x, y], lambda xx: batches_i2_o1([x1.to_numpy() for x1 in xx], roll_co_skewness, d))
 
 
 def ts_corr(x: Expr, y: Expr, d: int = 5, ddof: int = 1) -> Expr:
@@ -113,12 +113,12 @@ def ts_min_max_diff(x: Expr, d: int, f: float = 0.5) -> Expr:
 
 def ts_moment(x: Expr, d: int, k: int = 0) -> Expr:
     """Returns K-th central moment of x for the past d days."""
-    return x.map_batches(lambda x1: batches_1(x1, d, roll_moment, k))
+    return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy(), roll_moment, d, k))
 
 
 def ts_partial_corr(x: Expr, y: Expr, z: Expr, d: int) -> Expr:
     """Returns partial correlation of x, y, z for the past d days."""
-    return map_batches([x, y, z], lambda x123: batches_3(x123, d, roll_partial_corr))
+    return map_batches([x, y, z], lambda xx: batches_i2_o1([x1.to_numpy() for x1 in xx], roll_partial_corr, d))
 
 
 def ts_percentage(x: Expr, d: int, percentage: float = 0.5) -> Expr:
@@ -127,7 +127,7 @@ def ts_percentage(x: Expr, d: int, percentage: float = 0.5) -> Expr:
 
 
 def ts_product(x: Expr, d: int = 5) -> Expr:
-    return x.map_batches(lambda x1: batches_1(x1, d, roll_prod))
+    return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy(), roll_prod, d))
 
 
 def ts_rank(x: Expr, d: int = 5) -> Expr:
@@ -162,7 +162,7 @@ def ts_sum(x: Expr, d: int = 30) -> Expr:
 
 def ts_triple_corr(x: Expr, y: Expr, z: Expr, d: int) -> Expr:
     """Returns triple correlation of x, y, z for the past d days."""
-    return map_batches([x, y, z], lambda x123: batches_3(x123, d, roll_triple_corr))
+    return map_batches([x, y, z], lambda xx: batches_i2_o1([x1.to_numpy() for x1 in xx], roll_triple_corr, d))
 
 
 def ts_weighted_delay(x: Expr, k: float = 0.5) -> Expr:

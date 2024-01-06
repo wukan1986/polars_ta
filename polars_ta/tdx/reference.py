@@ -6,7 +6,7 @@ from polars_ta.ta.overlap import EMA as _ema
 from polars_ta.ta.overlap import SMA as MA
 from polars_ta.ta.volatility import TRANGE as TR  # noqa
 from polars_ta.tdx._nb import roll_bars_since_n
-from polars_ta.utils.numba_ import batches_1
+from polars_ta.utils.numba_ import batches_i1_o1
 from polars_ta.utils.pandas_ import roll_rank
 from polars_ta.wq.arithmetic import max_ as MAX  # noqa
 from polars_ta.wq.arithmetic import min_ as MIN  # noqa
@@ -45,7 +45,7 @@ def BARSSINCE(condition: Expr) -> Expr:
 
 def BARSSINCEN(condition: Expr, N: int = 30) -> Expr:
     """BARSSINCEN(X,N):N周期内第一次X不为0到现在的天数"""
-    return condition.cast(Boolean).map_batches(lambda x1: batches_1(x1, N, roll_bars_since_n, dtype=UInt16))
+    return condition.cast(Boolean).map_batches(lambda x1: batches_i1_o1(x1.to_numpy(), roll_bars_since_n, N, dtype=UInt16))
 
 
 def CUMSUM(close: Expr) -> Expr:

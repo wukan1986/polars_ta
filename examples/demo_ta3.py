@@ -20,17 +20,14 @@ df = df.with_columns([
     COS(pl.col('A')).alias('COS'),
     #
     # 多输入一输出
-    ATR(pl.col('A'), pl.col('B'), pl.col('C'), 2, nan_to_null=True).alias('ATR2'),
+    ATR(pl.col('A'), pl.col('B'), pl.col('C'), 2).alias('ATR2'),
     #
     # 一输入多输出，可通过prefix为多输出添加前缀
-    BBANDS(pl.col('A'), timeperiod=2, skip_nan=True, schema_format='bbands_{}').alias('BBANDS'),
+    BBANDS(pl.col('A'), timeperiod=2, ret_idx=1).alias('BBANDS'),
 
     # 多输入多输出。可通过schema直接添加
-    AROON('A', 'B', timeperiod=2, skip_nan=True, schema=('aroondown', 'aroonup'), nan_to_null=True).alias('AROON'),
+    AROON('A', 'B', timeperiod=2).alias('AROON'),
 
 ])
 
-print(df)
-
-df = df.unnest('BBANDS', 'AROON')
 print(df)

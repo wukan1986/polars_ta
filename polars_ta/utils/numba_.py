@@ -1,24 +1,32 @@
 """
 本文件是使用numba实现rolling的函数，演示用
 """
+from typing import List
+
 import numpy as np
 from numba import jit
 from numpy.lib.stride_tricks import sliding_window_view
 from polars import Series, Expr, map_batches
 
-
-def batches_1(x1: Series, windows: int, func1, *args, dtype=None) -> Series:
-    return Series(func1(x1.to_numpy(), windows, *args), nan_to_null=True, dtype=dtype)
-
-
-def batches_2(x12: Series, windows: int, func2, *args, dtype=None) -> Series:
-    x1, x2 = x12
-    return Series(func2(x1.to_numpy(), x2.to_numpy(), windows, *args), nan_to_null=True, dtype=dtype)
+"""
+Series.to_numpy的操作在调用之前做，这样可控一些
+"""
 
 
-def batches_3(x123: Series, windows: int, func3, *args, dtype=None) -> Series:
-    x1, x2, x3 = x123
-    return Series(func3(x1.to_numpy(), x2.to_numpy(), x3.to_numpy(), windows, *args), nan_to_null=True, dtype=dtype)
+def batches_i1_o1(x1: np.ndarray, func, *args, dtype=None) -> Series:
+    return Series(func(x1, *args), nan_to_null=True, dtype=dtype)
+
+
+def batches_i2_o1(xx: List[np.ndarray], func, *args, dtype=None) -> Series:
+    return Series(func(*xx, *args), nan_to_null=True, dtype=dtype)
+
+
+def batches_i1_o2(x1: np.ndarray, func, *args, dtype=None, ret_idx: int = 0) -> Series:
+    return Series(func(x1, *args)[ret_idx], nan_to_null=True, dtype=dtype)
+
+
+def batches_i2_o2(xx: List[np.ndarray], func, *args, dtype=None, ret_idx: int = 0) -> Series:
+    return Series(func(*xx, *args)[ret_idx], nan_to_null=True, dtype=dtype)
 
 
 @jit(nopython=True, nogil=True, cache=True)
@@ -43,8 +51,8 @@ def nb_roll_cov(x1, x2, window):
 
 
 def roll_sum(x: Expr, n: int) -> Expr:
-    return x.map_batches(lambda x1: batches_1(x1, n, nb_roll_sum))
+    return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy(), nb_roll_sum, n))
 
 
 def roll_cov(a: Expr, b: Expr, n: int) -> Expr:
-    return map_batches([a, b], lambda x12: batches_2(x12, n, nb_roll_cov))
+    return map_batches([a, b], lambda xx: batches_i2_o1([x1.to_numpy() for x1 in xx], nb_roll_cov, n))
