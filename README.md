@@ -26,36 +26,33 @@ pip install polars_ta-0.1.2-py3-none-any.whl
 参考`examples`目录即可，例如：
 
 ```python
-# 导入wq公式
-from polars_ta.wq import *
-
 # 如果需要在`expr_codegen`中使用，需要有`ts_`等前权，这里导入提供了前缀
 from polars_ta.prefix.tdx import *
-
-# from polars_ta.tdx import *
-
+# 导入wq公式
+from polars_ta.prefix.wq import *
 
 # 演示生成大量指标
 df = df.with_columns([
-    # 从wq中导入指标
-    *[ts_returns(CLOSE, i).alias(f'ROCP_{i:03d}') for i in (1, 3, 5, 10, 20, 60, 120)],
-    *[ts_mean(CLOSE, i).alias(f'SMA_{i:03d}') for i in (5, 10, 20, 60, 120)],
-    *[ts_std_dev(CLOSE, i).alias(f'STD_{i:03d}') for i in (5, 10, 20, 60, 120)],
-    *[ts_max(HIGH, i).alias(f'HHV_{i:03d}') for i in (5, 10, 20, 60, 120)],
-    *[ts_min(LOW, i).alias(f'LLV_{i:03d}') for i in (5, 10, 20, 60, 120)],
+   # 从wq中导入指标
+   *[ts_returns(CLOSE, i).alias(f'ROCP_{i:03d}') for i in (1, 3, 5, 10, 20, 60, 120)],
+   *[ts_mean(CLOSE, i).alias(f'SMA_{i:03d}') for i in (5, 10, 20, 60, 120)],
+   *[ts_std_dev(CLOSE, i).alias(f'STD_{i:03d}') for i in (5, 10, 20, 60, 120)],
+   *[ts_max(HIGH, i).alias(f'HHV_{i:03d}') for i in (5, 10, 20, 60, 120)],
+   *[ts_min(LOW, i).alias(f'LLV_{i:03d}') for i in (5, 10, 20, 60, 120)],
 
-    # 从tdx中导入指标
-    *[ts_RSI(CLOSE, i).alias(f'RSI_{i:03d}') for i in (6, 12, 24)],
+   # 从tdx中导入指标
+   *[ts_RSI(CLOSE, i).alias(f'RSI_{i:03d}') for i in (6, 12, 24)],
 ])
 ```
 
 ## 设计原则
 
 1. 调用方法由`成员函数`换成`独立函数`。输入输出使用`Expr`，避免使用`Series`
-2. `talib`的函数名与参数与原版`TA-Lib`完全一致
-3. 优先实现`wq`公式，它仿`WorldQuant Alpha`公式，与官网尽量保持一致。如果部分功能实现在此更合适将放在此处
-4. 其次实现`ta`公式，它相当于`TA-Lib`的`polars`风格的版本。优先从`wq`中导入更名
-5. 最后实现`tdx`公式，它也是优先从`wq`和`ta`中导入
+2. 优先实现`wq`公式，它仿`WorldQuant Alpha`公式，与官网尽量保持一致。如果部分功能实现在此更合适将放在此处
+3. 其次实现`ta`公式，它相当于`TA-Lib`的`polars`风格的版本。优先从`wq`中导入更名
+4. 最后实现`tdx`公式，它也是优先从`wq`和`ta`中导入
+5. `talib`的函数名与参数与原版`TA-Lib`完全一致
+6. 如果出现了命名冲突，建议调用优先级为`wq`、`ta`、`tdx`、`talib`。因为优先级越高，实现方案越接近于`Expr`
 
 ## 指标区别
 
@@ -82,7 +79,7 @@ df = df.with_columns([
     - 优点：可以输入到遗传算法
     - 不足：`__getattribute__`动态方法调用非常灵活，但失去了`IDE`智能提示
 4. 代码自动生成。
-    - 实现代码[codegen_talib.py](tools/codegen_talib.py)
+    - 实现代码[codegen_talib2.py](tools/codegen_talib2.py)
     - 生成结果[\_\_init\_\_.py](polars_ta/talib/__init__.py)
     - 使用演示[demo_ta3.py](examples/demo_ta3.py)
     - 优点：即可以输入到遗传算法，`IDE`还有智能提示
