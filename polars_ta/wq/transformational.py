@@ -1,14 +1,12 @@
-from polars import Expr, when
+import pandas as pd
+from polars import Expr, when, Series
 
 
-def bucket(x: Expr,
-           range: str = "0, 1, 0.1",
-           buckets: str = "2,5,6,7,10",
-           skipBegin: bool = False, skipEnd: bool = False, skipBoth: bool = False,
-           NANGroup: bool = True) -> Expr:
+def cs_bucket(x: Expr,
+              q: int = 10) -> Expr:
     """Convert float values into indexes for user-specified buckets. Bucket is useful for creating group values, which can be passed to group operators as input."""
-    # TODO 未完成
-    raise
+    # TODO 等官方提供原生功能
+    return x.map_batches(lambda x1: Series(pd.qcut(x1, q, labels=False), nan_to_null=True))
 
 
 def clamp(x: Expr, lower: float = 0, upper: float = 0, inverse: bool = False, mask: float = None) -> Expr:
