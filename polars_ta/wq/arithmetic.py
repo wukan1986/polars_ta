@@ -1,10 +1,14 @@
-from polars import Expr
+import numpy as np
+from polars import Expr, Series
 from polars import reduce, max_horizontal, sum_horizontal, min_horizontal, Int64
 from polars import when
 
 
 def abs_(x: Expr) -> Expr:
-    return x.abs()
+    if isinstance(x, (Expr, Series)):
+        return x.abs()
+    else:
+        return np.abs(x)
 
 
 def add(a: Expr, b: Expr, *args, filter_: bool = False) -> Expr:
@@ -76,7 +80,10 @@ def inverse(x: Expr) -> Expr:
 
 
 def log(x: Expr) -> Expr:
-    return x.log()
+    if isinstance(x, (Expr, Series)):
+        return x.log()
+    else:
+        return np.log(x)
 
 
 def log10(x: Expr) -> Expr:
@@ -150,7 +157,10 @@ def s_log_1p(x: Expr) -> Expr:
 
 
 def sign(x: Expr) -> Expr:
-    return x.sign()
+    if isinstance(x, (Expr, Series)):
+        return x.sign()
+    else:
+        return np.sign(x)
 
 
 def signed_power(x: Expr, y: Expr) -> Expr:
