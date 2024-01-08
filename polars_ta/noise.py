@@ -12,7 +12,7 @@ import numpy as np
 from polars import Expr
 
 
-def efficiency_ratio(close: Expr, timeperiod: int = 14) -> Expr:
+def ts_efficiency_ratio(close: Expr, timeperiod: int = 14) -> Expr:
     """效率系数。值越大，噪音越小。最大值为1，最小值为0
 
     本质上是位移除以路程
@@ -22,7 +22,7 @@ def efficiency_ratio(close: Expr, timeperiod: int = 14) -> Expr:
     return t1 / t2
 
 
-def price_density(high: Expr, low: Expr, timeperiod: int = 14) -> Expr:
+def ts_price_density(high: Expr, low: Expr, timeperiod: int = 14) -> Expr:
     """价格密度。值越大，噪音越大
 
     如果K线高低相连，上涨为1，下跌也为1
@@ -33,7 +33,7 @@ def price_density(high: Expr, low: Expr, timeperiod: int = 14) -> Expr:
     return t1 / t2
 
 
-def fractal_dimension(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:
+def ts_fractal_dimension(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:
     """分形维度。值越大，噪音越大"""
     n1 = (1 / timeperiod) ** 2
     n2 = np.log(2)

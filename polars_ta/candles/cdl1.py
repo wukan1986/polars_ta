@@ -45,7 +45,7 @@ def shadows(open_: Expr, high: Expr, low: Expr, close: Expr) -> Expr:
     return high_low_range(open_, high, low, close) - real_body(open_, high, low, close)
 
 
-def candle_efficiency_ratio(open_: Expr, high: Expr, low: Expr, close: Expr) -> Expr:
+def efficiency_ratio(open_: Expr, high: Expr, low: Expr, close: Expr) -> Expr:
     """K线内的市场效率。两个总长减去一个实体长就是路程
 
     比较粗略的计算市场效率的方法。丢失了部分路程信息，所以结果会偏大
