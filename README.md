@@ -33,15 +33,15 @@ from polars_ta.prefix.wq import *
 
 # 演示生成大量指标
 df = df.with_columns([
-   # 从wq中导入指标
-   *[ts_returns(CLOSE, i).alias(f'ROCP_{i:03d}') for i in (1, 3, 5, 10, 20, 60, 120)],
-   *[ts_mean(CLOSE, i).alias(f'SMA_{i:03d}') for i in (5, 10, 20, 60, 120)],
-   *[ts_std_dev(CLOSE, i).alias(f'STD_{i:03d}') for i in (5, 10, 20, 60, 120)],
-   *[ts_max(HIGH, i).alias(f'HHV_{i:03d}') for i in (5, 10, 20, 60, 120)],
-   *[ts_min(LOW, i).alias(f'LLV_{i:03d}') for i in (5, 10, 20, 60, 120)],
+    # 从wq中导入指标
+    *[ts_returns(CLOSE, i).alias(f'ROCP_{i:03d}') for i in (1, 3, 5, 10, 20, 60, 120)],
+    *[ts_mean(CLOSE, i).alias(f'SMA_{i:03d}') for i in (5, 10, 20, 60, 120)],
+    *[ts_std_dev(CLOSE, i).alias(f'STD_{i:03d}') for i in (5, 10, 20, 60, 120)],
+    *[ts_max(HIGH, i).alias(f'HHV_{i:03d}') for i in (5, 10, 20, 60, 120)],
+    *[ts_min(LOW, i).alias(f'LLV_{i:03d}') for i in (5, 10, 20, 60, 120)],
 
-   # 从tdx中导入指标
-   *[ts_RSI(CLOSE, i).alias(f'RSI_{i:03d}') for i in (6, 12, 24)],
+    # 从tdx中导入指标
+    *[ts_RSI(CLOSE, i).alias(f'RSI_{i:03d}') for i in (6, 12, 24)],
 ])
 ```
 
@@ -100,5 +100,7 @@ pip install -e .
 - https://github.com/TA-Lib/ta-lib
 - https://github.com/twopirllc/pandas-ta
 - https://github.com/bukosabino/ta
+- https://github.com/peerchemist/finta
 - https://github.com/wukan1986/ta_cn
+- https://support.worldquantbrain.com/hc/en-us/community/posts/20278408956439-从价量看技术指标总结-Technical-Indicator-
 
