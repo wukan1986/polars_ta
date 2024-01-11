@@ -63,6 +63,11 @@ def exp(x: Expr) -> Expr:
     return x.exp()
 
 
+def expm1(x: Expr) -> Expr:
+    """对数收益率 转 简单收益率"""
+    return x.exp() - 1
+
+
 def floor(x: Expr) -> Expr:
     return x.floor()
 
@@ -91,6 +96,7 @@ def log10(x: Expr) -> Expr:
 
 
 def log1p(x: Expr) -> Expr:
+    """简单收益率 转 对数收益率"""
     return x.log1p()
 
 
