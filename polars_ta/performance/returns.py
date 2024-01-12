@@ -1,6 +1,7 @@
 import numpy as np
 from polars import Expr
 
+from polars_ta.performance._nb import _sub_portfolio_returns
 from polars_ta.wq.arithmetic import log1p, expm1  # noqa
 # 对数收益
 from polars_ta.wq.time_series import ts_log_diff as ts_log_return  # noqa
@@ -24,7 +25,9 @@ def log_to_simple_return(x: Expr) -> Expr:
     return expm1(x)
 
 
-def cumulative_returns(returns: np.ndarray, weights: np.ndarray, period: int = 3, is_mean: bool = True) -> np.ndarray:
+def cumulative_returns(returns: np.ndarray, weights: np.ndarray,
+                       period: int = 3, is_mean: bool = True,
+                       benchmark: np.ndarray = None) -> np.ndarray:
     """累积收益
 
     精确计算收益是非常麻烦的事情，比如考虑手续费、滑点、涨跌停无法入场。考虑过多也会导致计算量巨大。
@@ -59,6 +62,8 @@ def cumulative_returns(returns: np.ndarray, weights: np.ndarray, period: int = 3
         权重处理方式。
         - True 表示等权，weights的取值为-1,0,1
         - False 表示在外指定权重。weights的取值为-1~1,weights.abs().sum(axis=1)==1
+    benchmark: 1d np.ndarray
+        基准收益率
 
     Returns
     -------
@@ -77,24 +82,16 @@ def cumulative_returns(returns: np.ndarray, weights: np.ndarray, period: int = 3
         returns = returns.reshape(-1, 1)
     if weights.ndim == 1:
         weights = weights.reshape(-1, 1)
-    #
-    m, n = weights.shape
-    #  记录每份资金的净值
-    out = np.zeros(shape=(m, period), dtype=float)
-    for i in range(period):
-        # 初始化新持仓
-        w = np.zeros_like(weights)
-        # 某一天的持仓需要持续period天
-        a = np.repeat(weights[i::period], period, axis=0)
-        # 更新到指定位置
-        w[i:] = a[:m - i]
-        # 计算此份资金的收益，净值从1开始
-        if is_mean:
-            # 等权分配
-            out[:, i] = (returns * w).mean(axis=1)
-        else:
-            # 将权重分配交给外部。一般pos.abs.sum==1
-            out[:, i] = (returns * w).sum(axis=1)
 
-    # 多份净值直接叠加平均
-    return (out + 1).cumprod(axis=0).mean(axis=1)
+    # 形状
+    m, n = weights.shape
+
+    #  记录每份资金每期收益率
+    out = _sub_portfolio_returns(m, n, weights, returns, period, is_mean)
+
+    if benchmark is None:
+        # 多份净值直接叠加后平均
+        return (out + 1).cumprod(axis=0).mean(axis=1)
+    else:
+        # 有基准，计算超额收益
+        return (out + 1).cumprod(axis=0).mean(axis=1) - (benchmark + 1).cumprod()
