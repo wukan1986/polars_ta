@@ -19,7 +19,6 @@ classifiers = [
 dependencies = [
     "polars",
     "numpy",
-    "TA-Lib",
     "numba",
 ]
 dynamic = ["version"]
