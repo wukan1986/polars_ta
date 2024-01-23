@@ -33,6 +33,8 @@ def batches_i2_o2(xx: List[np.ndarray], func, *args, dtype=None, ret_idx: int = 
 def nb_roll_sum(x1, window):
     """演示代码，请直接用 pl.col('A').rolling_sum(10).alias('a1')"""
     out = np.full(x1.shape, np.nan, dtype=float)
+    if len(x1) < window:
+        return out
     a1 = sliding_window_view(x1, window)
     for i, v1 in enumerate(a1):
         out[i + window - 1] = np.sum(v1)
@@ -43,6 +45,8 @@ def nb_roll_sum(x1, window):
 def nb_roll_cov(x1, x2, window):
     """演示代码，pl.rolling_cov(pl.col('A'), pl.col('B'), window_size=10).alias('a6')"""
     out = np.full(x1.shape, np.nan, dtype=float)
+    if len(x1) < window:
+        return out
     a1 = sliding_window_view(x1, window)
     a2 = sliding_window_view(x2, window)
     for i, (v1, v2) in enumerate(zip(a1, a2)):

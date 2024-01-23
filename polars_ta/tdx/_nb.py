@@ -7,6 +7,8 @@ from numpy.lib.stride_tricks import sliding_window_view
 @jit(nopython=True, nogil=True, cache=True)
 def roll_avedev(x1, window):
     out = full(x1.shape, np.nan, dtype=float)
+    if len(x1) < window:
+        return out
     a1 = sliding_window_view(x1, window)
     for i, v1 in enumerate(a1):
         out[i + window - 1] = mean(abs(v1 - mean(v1)))
@@ -21,6 +23,8 @@ def roll_bars_since_n(x1, window):
     TODO 用window来表示都不满足
     """
     out = full(x1.shape, np.nan, dtype=float)
+    if len(x1) < window:
+        return out
     a1 = sliding_window_view(x1, window)
     for i, v1 in enumerate(a1):
         p = argmax(v1)
