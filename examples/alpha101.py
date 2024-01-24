@@ -1,6 +1,5 @@
 from datetime import datetime
 
-import pandas as pd
 import polars as pl
 
 from polars_ta.prefix.tdx import *
@@ -36,8 +35,12 @@ df = pl.DataFrame(
         "LOW": np.random.rand(DATE_COUNT * ASSET_COUNT),
         "CLOSE": np.random.rand(DATE_COUNT * ASSET_COUNT),
         "VWAP": np.random.rand(DATE_COUNT * ASSET_COUNT),
+        "FILTER": np.tri(DATE_COUNT, ASSET_COUNT, k=-2).reshape(-1),
     }
 )
+
+# 每行数据量不同，测试是否会因为长度不足报错
+df = df.filter(pl.col("FILTER") == 1)
 
 # 部分Alpha101计算。不涉及时序和横截面，可直接计算
 df = df.with_columns(
@@ -58,6 +61,8 @@ def func_ts_date(df: pl.DataFrame) -> pl.DataFrame:
         *[ts_std_dev(CLOSE, i).alias(f'STD_{i:03d}') for i in (5, 10, 20, 60, 120)],
         *[ts_max(HIGH, i).alias(f'HHV_{i:03d}') for i in (5, 10, 20, 60, 120)],
         *[ts_min(LOW, i).alias(f'LLV_{i:03d}') for i in (5, 10, 20, 60, 120)],
+        *[ts_rank(CLOSE, i).alias(f'RANK_{i:03d}') for i in (5, 10, 20, 60, 120)],
+        *[ts_arg_max(HIGH, i).alias(f'HHVBAR_{i:03d}') for i in (5, 10, 20, 60, 120)],
 
         # 从tdx中导入指标
         *[ts_RSI(CLOSE, i).alias(f'RSI_{i:03d}') for i in (6, 12, 24)],
