@@ -74,7 +74,7 @@ from polars_ta.tdx.reference import MAX  # noqa
 from polars_ta.tdx.reference import MEMA as ts_MEMA  # noqa
 from polars_ta.tdx.reference import MIN  # noqa
 from polars_ta.tdx.reference import RANGE  # noqa
-from polars_ta.tdx.reference import SMA as ts_SMA  # noqa
+from polars_ta.tdx.reference import SMA_CN as ts_SMA_CN  # noqa
 from polars_ta.tdx.reference import SUMIF as ts_SUMIF  # noqa
 from polars_ta.tdx.reference import TMA as ts_TMA  # noqa
 from polars_ta.tdx.reference import TR as ts_TR  # noqa

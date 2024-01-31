@@ -7,7 +7,7 @@ from polars_ta.tdx.choice import IF
 from polars_ta.tdx.reference import DIFF
 from polars_ta.tdx.reference import MA
 from polars_ta.tdx.reference import REF
-from polars_ta.tdx.reference import SMA
+from polars_ta.tdx.reference import SMA_CN
 from polars_ta.tdx.reference import SUM
 from polars_ta.tdx.reference import TR
 from polars_ta.tdx.statistic import AVEDEV
@@ -57,8 +57,8 @@ def KDJ(HIGH: Expr, LOW: Expr, CLOSE: Expr, N: int = 9, M1: int = 3, M2: int = 3
 
     """
     rsv = RSV(HIGH, LOW, CLOSE, N)
-    k = SMA(rsv, M1, 1)
-    d = SMA(k, M2, 1)
+    k = SMA_CN(rsv, M1, 1)
+    d = SMA_CN(k, M2, 1)
     j = k * 3 - d * 2
     # return k, d, j
     return j

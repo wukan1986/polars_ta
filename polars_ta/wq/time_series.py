@@ -49,7 +49,7 @@ def ts_decay_exp_window(x: Expr, d: int = 30, factor: float = 1.0) -> Expr:
     return x.rolling_mean(d, weights=weights)
 
 
-def ts_decay_linear(x: Expr, d: int = 30, dense: bool = False) -> Expr:
+def ts_decay_linear(x: Expr, d: int = 30) -> Expr:
     # TODO weights not yet supported on array with null values
     weights = arange(1, d + 1, eager=True)
     return x.rolling_mean(d, weights=weights)

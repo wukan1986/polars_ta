@@ -103,8 +103,11 @@ def RANGE(a: Expr, b: Expr, c: Expr) -> Expr:
     return (b < a) & (a < c)
 
 
-def SMA(X: Expr, N: int, M: int = 1) -> Expr:
-    """用法:SMA(X,N,M),X的N日移动平均,M为权重,若Y=SMA(X,N,M)则Y=(X*M+Y'*(N-M))/N"""
+def SMA_CN(X: Expr, N: int, M: int) -> Expr:
+    """用法:SMA(X,N,M),X的N日移动平均,M为权重,若Y=SMA(X,N,M)则Y=(X*M+Y'*(N-M))/N
+
+    !!!为防止与talib版SMA误用，这里去了默认值1
+    """
     return X.ewm_mean(alpha=M / N, adjust=False, min_periods=1)
 
 
