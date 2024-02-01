@@ -1,4 +1,5 @@
 from functools import lru_cache
+from typing import Tuple
 
 import numpy as np
 from numba import jit
@@ -20,7 +21,7 @@ x.to_numpy().astype(float)
 def get_window_bounds(
         num_values: int = 0,
         window_size: int = 10,
-) -> tuple[np.ndarray, np.ndarray]:
+) -> Tuple[np.ndarray, np.ndarray]:
     end = np.arange(1, num_values + 1, dtype=np.int64)
     start = end - window_size
     start = np.clip(start, 0, num_values)
