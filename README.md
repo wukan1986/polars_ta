@@ -21,6 +21,9 @@ cd dist
 pip install polars_ta-0.1.2-py3-none-any.whl
 ```
 
+### TA-Lib安装
+Windows用户不会安装可从`https://github.com/cgohlke/talib-build/releases` 下载对应版本whl文件
+
 ## 使用方法
 
 参考`examples`目录即可，例如：
