@@ -41,12 +41,12 @@ def ts_pit(df: pl.DataFrame, funcs=(), date='date', update_time='update_time'):
 
     # 最大的更新时间
     max_update_time = df.select(update_time).max().to_series()
-    df3 = df2.append(max_update_time).unique().to_list()
+    df3 = df2.append(max_update_time).unique().sort().to_list()
 
-    if len(df2) <= 1:
+    if len(df3) <= 1:
         # 只有一条，表示中间没有修改过，可直接计算后返回
         for func in funcs:
-            df = df.with_columns(func)
+            df = func(df)
         return df
 
     dd = []
@@ -58,7 +58,7 @@ def ts_pit(df: pl.DataFrame, funcs=(), date='date', update_time='update_time'):
         d = d.group_by(date, maintain_order=True).last()
         # 分块计算
         for func in funcs:
-            d = d.with_columns(func)
+            d = func(d)
         dd.append(d)
 
     # 按报告期排序
