@@ -17,9 +17,10 @@ classifiers = [
     "Programming Language :: Python"
 ]
 dependencies = [
-    "polars",
+    "polars>=0.20.7",
     "numpy",
     "numba",
+    "pandas",
 ]
 dynamic = ["version"]
 

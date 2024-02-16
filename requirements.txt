@@ -1,3 +1,4 @@
+polars>=0.20.7
 numpy
-polars
 numba
+pandas

@@ -16,10 +16,7 @@ def add(a: Expr, b: Expr, *args, filter_: bool = False) -> Expr:
     _args = [a, b] + list(args)
 
     if filter_:
-        # TODO 等官方修复此bug
-        # https://github.com/pola-rs/polars/issues/13113
-        # return sum_horizontal(*args)
-        _args = [_.fill_null(0) for _ in _args]
+        return sum_horizontal(*_args)
 
     return reduce(function=lambda acc, x: acc + x, exprs=_args)
 
