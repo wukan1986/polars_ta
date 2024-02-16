@@ -46,7 +46,7 @@ def ts_pit(df: pl.DataFrame, funcs=(), date='date', update_time='update_time'):
     if len(df2) <= 1:
         # 只有一条，表示中间没有修改过，可直接计算后返回
         for func in funcs:
-            df = func(df)
+            df = df.with_columns(func)
         return df
 
     dd = []
@@ -58,7 +58,7 @@ def ts_pit(df: pl.DataFrame, funcs=(), date='date', update_time='update_time'):
         d = d.group_by(date, maintain_order=True).last()
         # 分块计算
         for func in funcs:
-            d = func(d)
+            d = d.with_columns(func)
         dd.append(d)
 
     # 按报告期排序
