@@ -30,28 +30,22 @@ def ts_pit(df: pl.DataFrame, funcs=(), date='date', update_time='update_time'):
     sort_by = [date, update_time]
     df = df.sort(sort_by)
 
-    df2 = (
+    dr = (
         # 分组，记录数量，和更新时间
-        df.group_by(date).agg(update_time, pl.count())
+        df.group_by(date).agg(update_time, pl.len())
         # 多加一行是否最后值
-        .filter(pl.col('count') > 1)
+        .filter(pl.col('len') > 1)
         .select(pl.col(update_time).list.slice(1))
         .explode(update_time).to_series()
     )
 
     # 最大的更新时间
     max_update_time = df.select(update_time).max().to_series()
-    df3 = df2.append(max_update_time).unique().sort().to_list()
-
-    if len(df3) <= 1:
-        # 只有一条，表示中间没有修改过，可直接计算后返回
-        for func in funcs:
-            df = func(df)
-        return df
+    dr = dr.append(max_update_time).unique().sort().to_list()
 
     dd = []
     # 遍历关键日期
-    for dt in df3:
+    for dt in dr:
         # 每次只看指定更新日之间的记录
         d = df.filter(pl.col(update_time) <= dt)
         # 已经排序了，只取能取最新值
