@@ -1,19 +1,23 @@
 import polars as pl
+from polars import selectors as cs
 
 
-def ts_pit(df: pl.DataFrame, funcs=(), date='date', update_time='update_time'):
+def ts_pit(df: pl.DataFrame, func=None,
+           date='date', update_time='update_time', asset='asset'):
     """Point In Time计算
 
     Parameters
     ----------
     df: pl.DataFrame
         group_by(date)后的数据块
-    funcs:
+    func:
         作用于pit提取出的DataFrame，可不填
     date:str
         分组依据
     update_time:str
         分组依据
+    asset:str
+        资产。asfreq时，asset为空，后面要分组时不方便
 
     Returns
     -------
@@ -43,15 +47,25 @@ def ts_pit(df: pl.DataFrame, funcs=(), date='date', update_time='update_time'):
     max_update_time = df.select(update_time).max().to_series()
     dr = dr.append(max_update_time).unique().sort().to_list()
 
+    # 部分很早的财报有缺失，比如只有年报或半年报，仿asfreq补充成4季
+    min_max_q = df.select(date).unique().upsample(date, every='1q')
+    # TODO 使用date填充update_time是否会引入问题？
+    df = df.join(min_max_q, on=date, how='outer_coalesce').with_columns(pl.col(update_time).fill_null(pl.col(date)))
+    # 由于asfreq导致asset可能为空，但之后可能要用到，所以填充一下
+    df = df.with_columns(pl.col(asset).forward_fill())
+
     dd = []
     # 遍历关键日期
     for dt in dr:
         # 每次只看指定更新日之间的记录
-        d = df.filter(pl.col(update_time) <= dt)
+        d: pl.DataFrame = df.filter(pl.col(update_time) <= dt)
         # 已经排序了，只取能取最新值
         d = d.group_by(date, maintain_order=True).last()
-        # 分块计算
-        for func in funcs:
+        # TODO 其实asfreq放这更合理，但为了提速将其提前
+
+        d = d.with_columns(pl.col(date).dt.quarter().alias('quarter'))
+        if func is not None:
+            # 分块计算
             d = func(d)
         dd.append(d)
 
@@ -60,3 +74,31 @@ def ts_pit(df: pl.DataFrame, funcs=(), date='date', update_time='update_time'):
     x = x.unique(subset=sort_by, keep='first').sort(sort_by)
 
     return x
+
+
+def period_to_quarter():
+    """时段数据转单成季"""
+    csnum = cs.numeric().exclude('quarter')
+    return pl.when(pl.col('quarter') == 1).then(csnum).otherwise(csnum.diff()).name.suffix('_Q')
+
+
+def peroid_to_ttm():
+    """时段数据计算ttm"""
+    csnum = cs.numeric().exclude('quarter')
+    # 年报数据
+    f1 = pl.when(pl.col('quarter') == 4).then(csnum).otherwise(None)
+    # 上年年报和同比都存在。当前报告期-上年报告期+上年年报
+    f2 = csnum - csnum.shift(4) + f1.forward_fill()
+    # 年化计算法=当前报告期*年化系数
+    f3 = csnum / pl.col('quarter') * 4
+    # return pl.coalesce(f1, f2, f3).name.suffix('_TTM')
+    return (pl.when(f1.is_not_null()).then(f1)
+            .when(f2.is_not_null()).then(f2)
+            .when(f3.is_not_null()).then(f3)
+            .otherwise(None)).name.suffix('_TTM')
+
+
+def point_to_ttm() -> pl.Expr:
+    """时点数据计算ttm"""
+    csnum = cs.numeric().exclude('quarter')
+    return csnum.rolling_mean(4).name.suffix('_TTM')

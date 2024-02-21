@@ -3,15 +3,11 @@ from pathlib import Path
 import pandas as pd
 import polars as pl
 
-from polars_ta.utils.pit import ts_pit
-from polars_ta.wq.time_series import ts_mean
+from polars_ta.utils.pit import ts_pit, period_to_quarter, peroid_to_ttm, point_to_ttm
 
 PATH_STEP0_INPUT1 = r'M:\data\jqresearch\get_STK_BALANCE_SHEET'
-
-
-# PATH_STEP0_INPUT1 = r'M:\data\jqresearch\get_fundamentals_cash_flow'
-# PATH_STEP0_INPUT1 = r'M:\data\jqresearch\get_fundamentals_income'
-# PATH_STEP0_INPUT1 = r'M:\data\jqresearch\get_fundamentals_indicator'
+PATH_STEP0_INPUT2 = r'M:\data\jqresearch\get_STK_INCOME_STATEMENT'
+PATH_STEP0_INPUT3 = r'M:\data\jqresearch\get_STK_CASHFLOW_STATEMENT'
 
 
 def load_parquet(folder):
@@ -22,15 +18,38 @@ def load_parquet(folder):
 
 
 df1 = load_parquet(PATH_STEP0_INPUT1)
+df1 = df1.filter(pl.col('report_type') == 0)
+df2 = load_parquet(PATH_STEP0_INPUT2)
+df2 = df2.filter(pl.col('report_type') == 0)
+df3 = load_parquet(PATH_STEP0_INPUT3)
+df3 = df3.filter(pl.col('report_type') == 0)
 
 
-def func(df: pl.DataFrame):
+def func1(df: pl.DataFrame):
+    """资产负债表"""
     df = df.with_columns(
-        ts_mean(pl.col('id'), 2).alias('test1')
+        point_to_ttm()
     )
     return df
 
 
+def func2(df: pl.DataFrame, date='report_date', update_time='pub_date', asset='code'):
+    """
+    利润表，现金流量表
+    """
+    df1 = df.with_columns(
+        # 转成单季
+        period_to_quarter(),
+        peroid_to_ttm(),
+    )
+    return df1
+
+
 if __name__ == '__main__':
-    d = df1.group_by('code').map_groups(lambda x: ts_pit(x, funcs=(func,), date='report_date', update_time='pub_date'))
-    print(d.tail())
+    d1 = df1.group_by('code').map_groups(lambda x: ts_pit(x, func=func1,
+                                                          date='report_date', update_time='pub_date', asset='code'))
+    d2 = df2.group_by('code').map_groups(lambda x: ts_pit(x, func=func2,
+                                                          date='report_date', update_time='pub_date', asset='code'))
+    d3 = df3.group_by('code').map_groups(lambda x: ts_pit(x, func=func2,
+                                                          date='report_date', update_time='pub_date', asset='code'))
+    print(d3.tail().to_pandas())
