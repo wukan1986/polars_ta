@@ -3,22 +3,26 @@ from polars import Expr, Series
 
 
 def cs_standardize_zscore(x: Expr, ddof: int = 0) -> Expr:
+    x = x.fill_nan(None)
     return (x - x.mean()) / x.std(ddof=ddof)
 
 
 def cs_standardize_minmax(x: Expr) -> Expr:
+    x = x.fill_nan(None)
     a = x.min()
     b = x.max()
     return (x - a) / (b - a)
 
 
 def cs_winsorize_quantile(x: Expr, low_limit: float = 0.025, up_limit: float = 0.995) -> Expr:
+    x = x.fill_nan(None)
     a = x.quantile(low_limit)
     b = x.quantile(up_limit)
     return x.clip(lower_bound=a, upper_bound=b)
 
 
 def cs_winsorize_3sigma(x: Expr, n: float = 3.) -> Expr:
+    x = x.fill_nan(None)
     a = x.mean()
     b = n * x.std(ddof=0)
     return x.clip(lower_bound=a - b, upper_bound=a + b)
@@ -26,12 +30,14 @@ def cs_winsorize_3sigma(x: Expr, n: float = 3.) -> Expr:
 
 def cs_winsorize_mad(x: Expr, n: float = 3., k: float = 1.4826) -> Expr:
     # https://en.wikipedia.org/wiki/Median_absolute_deviation
+    x = x.fill_nan(None)
     a = x.median()
     b = (n * k) * (x - a).abs().median()
     return x.clip(lower_bound=a - b, upper_bound=a + b)
 
 
 def cs_neutralize_demean(x: Expr) -> Expr:
+    x = x.fill_nan(None)
     return x - x.mean()
 
 
@@ -41,6 +47,8 @@ def cs_neutralize_residual_simple(y: Expr, x: Expr) -> Expr:
     # e_i = y_i - a - bx_i
     #     = y_i - ȳ + bx̄ - bx_i
     #     = y_i - ȳ - b(x_i - x̄)
+    x = x.fill_nan(None)
+    y = y.fill_nan(None)
     x_demeaned = x - x.mean()
     y_demeaned = y - y.mean()
     x_demeaned_squared = x_demeaned.pow(2)
