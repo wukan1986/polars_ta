@@ -2,6 +2,7 @@ from polars import Expr, Int32, UInt16, map_batches
 from polars import arange, repeat
 from polars import rolling_corr, rolling_cov
 
+from polars_ta import TA_EPSILON
 from polars_ta.utils.numba_ import batches_i1_o1, batches_i2_o1
 from polars_ta.utils.pandas_ import roll_kurt, roll_rank
 from polars_ta.wq._nb import roll_argmax, roll_argmin, roll_prod, roll_co_kurtosis, roll_co_skewness, roll_moment, roll_partial_corr, roll_triple_corr
@@ -144,7 +145,7 @@ def ts_returns(x: Expr, d: int = 1) -> Expr:
 def ts_scale(x: Expr, d: int = 5) -> Expr:
     a = ts_min(x, d)
     b = ts_max(x, d)
-    return (x - a) / (b - a)
+    return (x - a) / (b - a + TA_EPSILON)
 
 
 def ts_skewness(x: Expr, d: int = 5, bias: bool = False) -> Expr:

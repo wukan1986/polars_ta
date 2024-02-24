@@ -1,5 +1,6 @@
 from polars import Expr
 
+from polars_ta import TA_EPSILON
 from polars_ta.ta.price import MEDPRICE
 from polars_ta.tdx.reference import COUNT
 from polars_ta.tdx.reference import MA
@@ -15,7 +16,7 @@ def BRAR_AR(OPEN: Expr, HIGH: Expr, LOW: Expr, CLOSE: Expr, N: int = 26) -> Expr
 
     """
 
-    AR = SUM(HIGH - OPEN, N) / SUM(OPEN - LOW, N)  # * 100
+    AR = SUM(HIGH - OPEN, N) / (SUM(OPEN - LOW, N) + TA_EPSILON)  # * 100
     return AR
 
 
@@ -26,7 +27,7 @@ def BRAR_BR(OPEN: Expr, HIGH: Expr, LOW: Expr, CLOSE: Expr, N: int = 26) -> Expr
 
     """
     LC = REF(CLOSE, 1)
-    BR = SUM(MAX(0, HIGH - LC), N) / SUM(MAX(0, LC - LOW), N)  # * 100
+    BR = SUM(MAX(0, HIGH - LC), N) / (SUM(MAX(0, LC - LOW), N) + TA_EPSILON)  # * 100
     return BR
 
 
@@ -41,7 +42,7 @@ def CR(HIGH: Expr, LOW: Expr, N: int = 26) -> Expr:
 
     """
     MID = REF(MEDPRICE(HIGH, LOW), 1)
-    return SUM(MAX(0, HIGH - MID), N) / SUM(MAX(0, MID - LOW), N)  # *100
+    return SUM(MAX(0, HIGH - MID), N) / (SUM(MAX(0, MID - LOW), N) + TA_EPSILON)  # *100
 
 
 def PSY(CLOSE: Expr, N: int = 12) -> Expr:

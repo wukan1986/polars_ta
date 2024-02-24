@@ -1,5 +1,6 @@
 from polars import Expr
 
+from polars_ta import TA_EPSILON
 from polars_ta.ta.operators import MAX
 from polars_ta.ta.operators import MIN
 from polars_ta.ta.overlap import EMA
@@ -95,7 +96,7 @@ def ROCR100(close: Expr, timeperiod: int = 10) -> Expr:
 
 def RSI(close: Expr, timeperiod: int = 14) -> Expr:
     dif = close.diff().fill_null(0)
-    return RMA(max_(dif, 0), timeperiod) / RMA(dif.abs(), timeperiod)  # * 100
+    return RMA(max_(dif, 0), timeperiod) / (RMA(dif.abs(), timeperiod) + TA_EPSILON)  # * 100
 
 
 def RSV(high: Expr, low: Expr, close: Expr, timeperiod: int = 5) -> Expr:
@@ -109,7 +110,7 @@ def RSV(high: Expr, low: Expr, close: Expr, timeperiod: int = 5) -> Expr:
     a = MAX(high, timeperiod)
     b = MIN(low, timeperiod)
 
-    return (close - b) / (a - b)
+    return (close - b) / (a - b + TA_EPSILON)
 
 
 def STOCHF_fastd(high: Expr, low: Expr, close: Expr, fastk_period: int = 5, fastd_period: int = 3) -> Expr:
@@ -139,4 +140,4 @@ def WILLR(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:
     a = MAX(high, timeperiod)
     b = MIN(low, timeperiod)
 
-    return (a - close) / (a - b)
+    return (a - close) / (a - b + TA_EPSILON)

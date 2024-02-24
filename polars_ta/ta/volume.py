@@ -1,10 +1,11 @@
 from polars import Expr
 
+from polars_ta import TA_EPSILON
 from polars_ta.ta.overlap import EMA
 
 
 def AD(high: Expr, low: Expr, close: Expr, volume: Expr) -> Expr:
-    ad = ((close - low) - (high - close)) / (high - low) * volume
+    ad = ((close - low) - (high - close)) / (high - low + TA_EPSILON) * volume
     return ad.cum_sum()
 
 

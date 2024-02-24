@@ -1,5 +1,6 @@
 from polars import Expr
 
+from polars_ta import TA_EPSILON
 from polars_ta.tdx.arithmetic import ABS
 from polars_ta.tdx.choice import IF
 from polars_ta.tdx.reference import MA
@@ -29,7 +30,7 @@ def EMV(HIGH: Expr, LOW: Expr, VOL: Expr, N: int = 14) -> Expr:
 
     VOLUME = MA(VOL, N) / VOL
     MID = 100 * (ADD - REF(ADD, 1)) / ADD
-    return MA(MID * VOLUME * SUB / MA(SUB, N), N)
+    return MA(MID * VOLUME * SUB / (MA(SUB, N) + TA_EPSILON), N)
 
 
 def PLUS_DM(HIGH: Expr, LOW: Expr, N: int = 14) -> Expr:

@@ -1,5 +1,6 @@
 from polars import Expr
 
+from polars_ta import TA_EPSILON
 from polars_ta.ta.momentum import RSI  # noqa
 from polars_ta.ta.momentum import RSV
 from polars_ta.ta.price import TYPPRICE
@@ -83,5 +84,5 @@ def MFI(CLOSE: Expr, HIGH: Expr, LOW: Expr, VOL: Expr, N: int = 14) -> Expr:
     """
     TYP = TYPPRICE(HIGH, LOW, CLOSE)
     LT = REF(TYP, 1)
-    V1 = SUM(IF(TYP > LT, TYP * VOL, 0), N) / SUM(IF(TYP < LT, TYP * VOL, 0), N)
+    V1 = SUM(IF(TYP > LT, TYP * VOL, 0), N) / (SUM(IF(TYP < LT, TYP * VOL, 0), N) + TA_EPSILON)
     return (1 - (1 / (1 + V1)))  # * 100
