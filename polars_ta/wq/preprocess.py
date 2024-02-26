@@ -84,6 +84,10 @@ def residual_multiple(cols: List[Series], add_constant: bool) -> Series:
     return Series(out, nan_to_null=True)
 
 
-def cs_neutralize_residual_multiple(y: Expr, x: Expr, *more_x: Expr, add_constant: bool = False) -> Expr:
+def cs_neutralize_residual_multiple(y: Expr, *more_x: Expr, add_constant: bool = False) -> Expr:
     """多元回归"""
-    return map_batches([y, x, *more_x], lambda xx: residual_multiple(xx, add_constant))
+    (*_x, is_bool) = more_x
+    if isinstance(is_bool, bool):
+        return map_batches([y, *_x], lambda xx: residual_multiple(xx, is_bool))
+    else:
+        return map_batches([y, *more_x], lambda xx: residual_multiple(xx, add_constant))
