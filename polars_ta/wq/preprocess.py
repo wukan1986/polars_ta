@@ -1,3 +1,5 @@
+from typing import List
+
 import numpy as np
 from polars import Expr, Series, map_batches
 
@@ -57,10 +59,14 @@ def cs_neutralize_residual_simple(y: Expr, x: Expr) -> Expr:
     return y_demeaned - beta * x_demeaned
 
 
-def residual_multiple(cols) -> Series:
+def residual_multiple(cols: List[Series], add_constant: bool) -> Series:
     # https://stackoverflow.com/a/74906705/1894479
     # 比struct.unnest要快一些
-    yx = np.vstack([c.to_numpy() for c in cols]).T
+    cols = [c.to_numpy() for c in cols]
+    if add_constant:
+        cols += [np.ones_like(cols[0])]
+    yx = np.vstack(cols).T
+
     # 跳过nan
     mask = np.any(np.isnan(yx), axis=1)
     yx_ = yx[~mask, :]
@@ -78,6 +84,6 @@ def residual_multiple(cols) -> Series:
     return Series(out, nan_to_null=True)
 
 
-def cs_neutralize_residual_multiple(y: Expr, x: Expr, *more_x: Expr) -> Expr:
+def cs_neutralize_residual_multiple(y: Expr, x: Expr, *more_x: Expr, add_constant: bool = False) -> Expr:
     """多元回归"""
-    return map_batches([y, x, *more_x], lambda xx: residual_multiple(xx))
+    return map_batches([y, x, *more_x], lambda xx: residual_multiple(xx, add_constant))
