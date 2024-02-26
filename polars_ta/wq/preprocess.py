@@ -60,14 +60,22 @@ def cs_neutralize_residual_simple(y: Expr, x: Expr) -> Expr:
 def residual_multiple(cols) -> Series:
     # https://stackoverflow.com/a/74906705/1894479
     # 比struct.unnest要快一些
-    cols = [c.to_numpy() for c in cols]
-    y = cols[0]
-    x = cols[1:]
-    A = np.vstack(x).T
-    coef = np.linalg.lstsq(A, y, rcond=None)[0]
-    y_hat = np.sum(A * coef, axis=1)
+    yx = np.vstack([c.to_numpy() for c in cols]).T
+    # 跳过nan
+    mask = np.any(np.isnan(yx), axis=1)
+    yx_ = yx[~mask, :]
+
+    y = yx_[:, 0]
+    x = yx_[:, 1:]
+    coef = np.linalg.lstsq(x, y, rcond=None)[0]
+    y_hat = np.sum(x * coef, axis=1)
     residual = y - y_hat
-    return Series(residual, nan_to_null=True)
+
+    # 回填时，处理空值
+    out = np.empty_like(yx[:, 0])
+    out[~mask] = residual
+    out[mask] = np.nan
+    return Series(out, nan_to_null=True)
 
 
 def cs_neutralize_residual_multiple(y: Expr, x: Expr, *more_x: Expr) -> Expr:
