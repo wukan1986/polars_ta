@@ -1,5 +1,5 @@
 import numpy as np
-from polars import Expr, Series
+from polars import Expr, Series, map_batches
 
 
 def cs_standardize_zscore(x: Expr, ddof: int = 0) -> Expr:
@@ -42,6 +42,7 @@ def cs_neutralize_demean(x: Expr) -> Expr:
 
 
 def cs_neutralize_residual_simple(y: Expr, x: Expr) -> Expr:
+    """一元回归"""
     # https://stackoverflow.com/a/74906705/1894479
     # 一元回归时，这个版本更快，不需再补充常量1
     # e_i = y_i - a - bx_i
@@ -56,7 +57,7 @@ def cs_neutralize_residual_simple(y: Expr, x: Expr) -> Expr:
     return y_demeaned - beta * x_demeaned
 
 
-def cs_neutralize_residual_multiple(cols) -> Series:
+def residual_multiple(cols) -> Series:
     # https://stackoverflow.com/a/74906705/1894479
     # 比struct.unnest要快一些
     cols = [c.to_numpy() for c in cols]
@@ -66,4 +67,9 @@ def cs_neutralize_residual_multiple(cols) -> Series:
     coef = np.linalg.lstsq(A, y, rcond=None)[0]
     y_hat = np.sum(A * coef, axis=1)
     residual = y - y_hat
-    return Series(residual)
+    return Series(residual, nan_to_null=True)
+
+
+def cs_neutralize_residual_multiple(y: Expr, x: Expr, *more_x: Expr) -> Expr:
+    """多元回归"""
+    return map_batches([y, x, *more_x], lambda xx: residual_multiple(xx))

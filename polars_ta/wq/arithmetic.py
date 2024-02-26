@@ -156,7 +156,7 @@ def round_down(x: Expr, f: int = 1) -> Expr:
 
 
 def s_log_1p(x: Expr) -> Expr:
-    return (x.abs() + 1).log() * x.sign()
+    return x.abs().log1p() * x.sign()
 
 
 def sign(x: Expr) -> Expr:
