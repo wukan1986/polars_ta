@@ -3,6 +3,8 @@ from typing import List
 import numpy as np
 from polars import Expr, Series, map_batches
 
+from polars_ta import TA_EPSILON
+
 
 def cs_standardize_zscore(x: Expr, ddof: int = 0) -> Expr:
     x = x.fill_nan(None)
@@ -13,7 +15,7 @@ def cs_standardize_minmax(x: Expr) -> Expr:
     x = x.fill_nan(None)
     a = x.min()
     b = x.max()
-    return (x - a) / (b - a)
+    return (x - a) / (b - a + TA_EPSILON)
 
 
 def cs_winsorize_quantile(x: Expr, low_limit: float = 0.025, up_limit: float = 0.995) -> Expr:
