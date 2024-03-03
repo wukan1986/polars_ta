@@ -29,7 +29,7 @@ def cs_one_side(x: Expr, is_long: bool = True) -> Expr:
     raise
 
 
-def cs_rank(x: Expr, rate: int = 2, pct: bool = True) -> Expr:
+def cs_rank(x: Expr, pct: bool = True) -> Expr:
     """Ranks the input among all the instruments and returns an equally distributed number between 0.0 and 1.0. For precise sort, use the rate as 0."""
     if pct:
         return x.rank() / x.count()

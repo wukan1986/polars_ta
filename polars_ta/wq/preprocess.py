@@ -84,10 +84,16 @@ def residual_multiple(cols: List[Series], add_constant: bool) -> Series:
     return Series(out, nan_to_null=True)
 
 
-def cs_neutralize_residual_multiple(y: Expr, *more_x: Expr, add_constant: bool = False) -> Expr:
-    """多元回归"""
-    (*_x, is_bool) = more_x
-    if isinstance(is_bool, bool):
-        return map_batches([y, *_x], lambda xx: residual_multiple(xx, is_bool))
-    else:
-        return map_batches([y, *more_x], lambda xx: residual_multiple(xx, add_constant))
+def cs_neutralize_residual_multiple(y: Expr, *more_x: Expr) -> Expr:
+    """多元回归
+
+    Examples
+    --------
+    >>> cs_neutralize_residual_multiple(EP, LOG_MKT_CAP, *cs.expand_selector(df, cs.matches(r"^sw_l1_\d+$")), ONE)
+
+    Notes
+    -----
+    1. 常量1，可以通过多输入1列来完成
+    2. 正则表达式的用法比较特别，需用`cs.expand_selector`
+    """
+    return map_batches([y, *more_x], lambda xx: residual_multiple(xx, False))
