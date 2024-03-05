@@ -37,6 +37,13 @@ def cs_winsorize_mad(x: Expr, n: float = 3., k: float = 1.4826) -> Expr:
 
 
 def cs_neutralize_demean(x: Expr) -> Expr:
+    """demean
+
+    Notes
+    -----
+    速度没有多元回归快，因为这里需要按日期行业groupby，
+    而多元回归只要添加行业哑变量，然后按日期groupby即可
+    """
     return x - x.mean()
 
 

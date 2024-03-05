@@ -10,8 +10,7 @@ def _qcut(x1: Series, q: int) -> Series:
         return pd.qcut(x1, q, labels=False, duplicates='drop')
 
 
-def cs_bucket(x: Expr,
-              q: int = 10) -> Expr:
+def cs_bucket(x: Expr, q: int = 10) -> Expr:
     """Convert float values into indexes for user-specified buckets. Bucket is useful for creating group values, which can be passed to group operators as input."""
     # TODO 等官方提供原生功能
     return x.map_batches(lambda x1: Series(_qcut(x1, q), nan_to_null=True, dtype=Int16))
