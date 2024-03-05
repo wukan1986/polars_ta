@@ -48,6 +48,26 @@ def pasteurize(x: Expr) -> Expr:
     return when(x.is_infinite()).then(None).otherwise(x)
 
 
+def purify(x: Expr) -> Expr:
+    """Clear infinities (+inf, -inf) by replacing with NaN."""
+    return when(x.is_infinite()).then(None).otherwise(x)
+
+
+def fill_nan(x: Expr) -> Expr:
+    """填充nan为null"""
+    return x.fill_nan(None)
+
+
+def fill_infinite(x: Expr) -> Expr:
+    """填充 +inf, -inf为null
+
+    Notes
+    -----
+    如果要对多列进行处理，需要在所有表达式最后添加`.name.keep()`，由于这不是最后一列，所以只能注释
+    """
+    return when(x.is_infinite()).then(None).otherwise(x)  # .name.keep()
+
+
 def right_tail(x: Expr, minimum: float = 0) -> Expr:
     """NaN everything less than minimum, minimum should be constant."""
     return when(x < minimum).then(None).otherwise(x)

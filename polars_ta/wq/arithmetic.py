@@ -1,7 +1,6 @@
 import numpy as np
 from polars import Expr, Series
 from polars import reduce, max_horizontal, sum_horizontal, min_horizontal, Int64
-from polars import when
 
 
 def abs_(x: Expr) -> Expr:
@@ -130,11 +129,6 @@ def multiply(a: Expr, b: Expr, *args, filter_: bool = False) -> Expr:
 def power(x: Expr, y: Expr) -> Expr:
     """x ^ y"""
     return x.pow(y)
-
-
-def purify(x: Expr) -> Expr:
-    """Clear infinities (+inf, -inf) by replacing with NaN."""
-    return when(x.is_infinite()).then(None).otherwise(x)
 
 
 def reverse(x: Expr) -> Expr:
