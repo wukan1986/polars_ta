@@ -1,7 +1,7 @@
 from typing import List
 
 import numpy as np
-from polars import Expr, Series, map_batches
+from polars import Expr, Series, map_batches, struct
 
 from polars_ta import TA_EPSILON
 
@@ -62,14 +62,12 @@ def cs_neutralize_residual_simple(y: Expr, x: Expr) -> Expr:
 
 
 def residual_multiple(cols: List[Series], add_constant: bool) -> Series:
-    # https://stackoverflow.com/a/74906705/1894479
-    # 比struct.unnest要快一些
-    cols = [c.to_numpy() for c in cols]
+    cols = [c.to_numpy() for c in cols[0].struct]
     if add_constant:
         cols += [np.ones_like(cols[0])]
     yx = np.vstack(cols).T
 
-    # 跳过nan
+    # skip nan
     mask = np.any(np.isnan(yx), axis=1)
     yx_ = yx[~mask, :]
 
@@ -79,7 +77,7 @@ def residual_multiple(cols: List[Series], add_constant: bool) -> Series:
     y_hat = np.sum(x * coef, axis=1)
     residual = y - y_hat
 
-    # 回填时，处理空值
+    # refill
     out = np.empty_like(yx[:, 0])
     out[~mask] = residual
     out[mask] = np.nan
@@ -92,10 +90,11 @@ def cs_neutralize_residual_multiple(y: Expr, *more_x: Expr) -> Expr:
     Examples
     --------
     >>> cs_neutralize_residual_multiple(EP, LOG_MKT_CAP, *cs.expand_selector(df, cs.matches(r"^sw_l1_\d+$")), ONE)
+    >>> cs_neutralize_residual_multiple(EP, LOG_MKT_CAP, pl.col(r"^sw_l1_\d+$"), ONE)
 
     Notes
     -----
-    1. 常量1，可以通过多输入1列来完成
-    2. 正则表达式的用法比较特别，需用`cs.expand_selector`
+    常量1，可以通过多输入1列来完成
     """
-    return map_batches([y, *more_x], lambda xx: residual_multiple(xx, False))
+    return map_batches(struct([y, *more_x]), lambda xx: residual_multiple(xx, False))
+
