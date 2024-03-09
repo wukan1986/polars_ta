@@ -1,7 +1,7 @@
 from typing import List
 
 import numpy as np
-from polars import Expr, Series, map_batches, struct
+from polars import Expr, Series, Struct, map_batches
 
 from polars_ta import TA_EPSILON
 
@@ -62,7 +62,10 @@ def cs_neutralize_residual_simple(y: Expr, x: Expr) -> Expr:
 
 
 def residual_multiple(cols: List[Series], add_constant: bool) -> Series:
-    cols = [c.to_numpy() for c in cols[0].struct]
+    # 将pl.Struct转成list,这样可以实现传正则，其它也转list
+    cols = [list(c.struct) if isinstance(c.dtype, Struct) else [c] for c in cols]
+    # 二维列表转一维列表，再转np.ndarray
+    cols = [i.to_numpy() for p in cols for i in p]
     if add_constant:
         cols += [np.ones_like(cols[0])]
     yx = np.vstack(cols).T
@@ -90,11 +93,11 @@ def cs_neutralize_residual_multiple(y: Expr, *more_x: Expr) -> Expr:
     Examples
     --------
     >>> cs_neutralize_residual_multiple(EP, LOG_MKT_CAP, *cs.expand_selector(df, cs.matches(r"^sw_l1_\d+$")), ONE)
-    >>> cs_neutralize_residual_multiple(EP, LOG_MKT_CAP, pl.col(r"^sw_l1_\d+$"), ONE)
+    >>> cs_neutralize_residual_multiple(EP, LOG_MKT_CAP, pl.struct(r"^sw_l1_\d+$"), ONE)
 
     Notes
     -----
     常量1，可以通过多输入1列来完成
+    正则列需要通过`pl.struct`传输，比之前整体转`pl.struct`能支持复杂公式
     """
-    return map_batches(struct([y, *more_x]), lambda xx: residual_multiple(xx, False))
-
+    return map_batches([y, *more_x], lambda xx: residual_multiple(xx, False))
