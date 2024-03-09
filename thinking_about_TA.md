@@ -1,3 +1,24 @@
+# About Technical Indicators
+
+There are three types of technical indicators
+
+1. Time series indicators. Must be sorted by time, and then calculated. It is difficult to handle null in the middle.
+2. Cross-sectional indicators. No order requirement, the whole row is calculated, and there may be a null, which needs to be compatible.
+3. Single element indicators. Can be single-column, multi-column, and can be calculated in any way.
+
+In terms of calculation, time series indicators have one more dimension than cross-sectional indicators. For example
+
+1. `cs_rank` is a cross-sectional sort
+2. `ts_rank` is to calculate `cs_rank` in a rolling time window, take `[-1]` each time, and then concatenate them
+
+3. `cs_zscore` first aggregates to calculate `mean` and `std`, then broadcast `mean` and `std`, and perform a one-dimensional calculation with `x`
+
+So common technical indicators are generally the flexible application of `aggregation` and `broadcasting`
+
+Since `ts_` indicators are based on `cs_`, theoretically `rolling` can be used directly, but in practice, it is generally not used in this way.
+`cs_` is generally rewritten in `cython`, `numba`, etc., and if you mix `ts_` and `cs_`, `ts_` will make thousands of `cs_` call.
+So it is common to put `rolling` operations into `cython`, `numba`, etc. as well.
+
 # 对技术指标的再思考
 
 用使用方式来说，指标分为三种

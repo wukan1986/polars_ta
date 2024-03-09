@@ -17,7 +17,10 @@ def roll_avedev(x1, window):
 
 @jit(nopython=True, nogil=True, fastmath=True, cache=True)
 def roll_bars_since_n(x1, window):
-    """BARSSINCEN(X,N):N周期内第一次X不为0到现在的天数
+    """BARSSINCEN(X,N): the distance of the first observation that `X != 0` in `N` periods
+    BARSSINCEN(X,N):N周期内第一次X不为0到现在的天数
+
+    TODO what if all values are 0?
 
     TODO 如果一个周期内，都不满足，值取多少？0表当前值满足条件, window-1表示的是区间第0位置的值
     TODO 用window来表示都不满足

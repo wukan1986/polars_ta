@@ -7,7 +7,8 @@ def codegen_import_as(module: str, prefix: str = 'ts_',
                       include_func: Optional[List[str]] = None,
                       exclude_func: Optional[List[str]] = None,
                       include_parameter: Optional[List[str]] = None):
-    """通过反射，生成代码的小工具
+    """Generate codes by `reflection`
+    通过反射，生成代码的小工具
 
     Parameters
     ----------

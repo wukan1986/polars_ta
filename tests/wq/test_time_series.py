@@ -34,6 +34,7 @@ class TestDemoClass:
     def test_ts_skewness(self):
         from polars_ta.wq.time_series import ts_skewness
 
+        # cannot set tune bias in pandas
         # 好像没办法告诉pandas关闭偏差校正
         result1 = self.df_pd[["high"]].rolling(5).skew()
         result2 = self.df_pl.select(ts_skewness(pl.col(["high"]), d=5))

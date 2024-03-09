@@ -13,6 +13,7 @@ def NATR(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:
 
     Notes
     -----
+    talib.ATR multiples another 100
     talib.ATR版相当于多乘了100
 
     """
@@ -24,6 +25,7 @@ def TRANGE(high: Expr, low: Expr, close: Expr) -> Expr:
 
     Notes
     -----
+    the 0-th position is `x` rather than `nan` in talib
     第0位置为max(x,nan,nan)=x,比talib多一个值
 
     """

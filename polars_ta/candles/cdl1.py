@@ -1,4 +1,9 @@
 """
+In this file we use
+open_: Expr, high: Expr, low: Expr, close: Expr
+for all parameters
+to ensure the similar function signatures when calling them
+
 本文件中参数全用
 open_: Expr, high: Expr, low: Expr, close: Expr
 统一的好处是在使用时不用考虑函数调用区别
@@ -46,7 +51,9 @@ def shadows(open_: Expr, high: Expr, low: Expr, close: Expr) -> Expr:
 
 
 def efficiency_ratio(open_: Expr, high: Expr, low: Expr, close: Expr) -> Expr:
-    """K线内的市场效率。两个总长减去一个实体长就是路程
+    """
+    abs(close-open) / (2 * (high-low) - abs(close-open) + TA_EPSILON)
+    K线内的市场效率。两个总长减去一个实体长就是路程
 
     比较粗略的计算市场效率的方法。丢失了部分路程信息，所以结果会偏大
     """

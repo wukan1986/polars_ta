@@ -60,7 +60,8 @@ def exp(x: Expr) -> Expr:
 
 
 def expm1(x: Expr) -> Expr:
-    """对数收益率 转 简单收益率"""
+    """convert log return to simple return
+    对数收益率 转 简单收益率"""
     return x.exp() - 1
 
 
@@ -92,7 +93,8 @@ def log10(x: Expr) -> Expr:
 
 
 def log1p(x: Expr) -> Expr:
-    """简单收益率 转 对数收益率"""
+    """convert simple return to log return
+    简单收益率 转 对数收益率"""
     return x.log1p()
 
 
@@ -202,5 +204,6 @@ def tanh(x: Expr) -> Expr:
 
 
 def truncate(x: Expr) -> Expr:
-    """向零取整"""
+    """truncate towards zero
+    向零取整"""
     return x.cast(Int64)

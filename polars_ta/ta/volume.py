@@ -16,6 +16,7 @@ def ADOSC(high: Expr, low: Expr, close: Expr, volume: Expr, fastperiod: int = 3,
 
 def OBV(close: Expr, volume: Expr) -> Expr:
     """"""
+    # using volume for the first value will be exactly the same as talib.OBV
     # 第一个值用volume就与talib.OBV完全一样了
     obv = close.diff().sign().fill_null(1) * volume
     return obv.cum_sum()

@@ -12,6 +12,7 @@ PATH_STEP0_INPUT3 = r'M:\data\jqresearch\get_STK_CASHFLOW_STATEMENT'
 
 def load_parquet(folder):
     paths = list(Path(folder).glob('*.parquet'))
+    # due to the data is not complete when writing, the data type can only be read from pandas then convert to polars
     # 写入时由于部分数据为空，导致入写类型不同，读取就存在问题，只能用pandas读回来
     dfs = pd.concat([pd.read_parquet(p) for p in paths])
     return pl.from_pandas(dfs, nan_to_null=True)
@@ -26,7 +27,8 @@ df3 = df3.filter(pl.col('report_type') == 0)
 
 
 def func1(df: pl.DataFrame):
-    """资产负债表"""
+    """balance sheet
+    资产负债表"""
     df = df.with_columns(
         point_to_ttm()
     )
@@ -34,7 +36,7 @@ def func1(df: pl.DataFrame):
 
 
 def func2(df: pl.DataFrame, date='report_date', update_time='pub_date', asset='code'):
-    """
+    """income statment, cash flow statment
     利润表，现金流量表
     """
     df1 = df.with_columns(

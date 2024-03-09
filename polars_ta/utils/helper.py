@@ -1,4 +1,25 @@
 """
+We follow the spirit of
+
+https://github.com/pola-rs/polars/issues/9261
+
+and adjusted it to fit our needs. The usage is as follows
+
+expr.ta.func(..., skip_nan=False, output_idx=None, schema=None, schema_format='{}', nan_to_null=False)
+
+skip_nan: bool
+    reduces speed
+output_idx: int
+    select a single column when outputing multiple columns
+schema: list or tuple
+    assign column names for multiple output columns
+schema_format: str
+    assign data types for multiple output columns
+nan_to_null: bool
+    replace all nan to null when outputing
+
+
+
 以下是在github issues中 @cmdlineluser 提供的 注册命名空间 方案
 
 https://github.com/pola-rs/polars/issues/9261
@@ -29,7 +50,8 @@ def func_wrap_mn(func, cols,
                  *args,
                  skip_nan=False, output_idx=None, schema=None, schema_format='{}', nan_to_null=False,
                  **kwargs):
-    """多输入多输出，兼容一输入一输出
+    """multiple input multiple output, compatible with single input single output
+    多输入多输出，兼容一输入一输出
 
     Parameters
     ----------
@@ -82,6 +104,7 @@ def func_wrap_mn(func, cols,
                 schema = [f'column_{i}' for i in range(len(result))]
 
             schema = [schema_format.format(name) for name in schema]
+            # nan_to_null is not effective for struct
             # nan_to_null 对struct中的nan无效
             return DataFrame(result, schema=schema, nan_to_null=nan_to_null).to_struct('')
         # output only one column
@@ -102,7 +125,8 @@ def func_wrap_11(func, cols,
                  *args,
                  skip_nan=False, output_idx=None, schema=None, schema_format='{}', nan_to_null=False,
                  **kwargs):
-    """一输入，一输出。处理速度能更快一些"""
+    """single input single output is faster than multiple input multiple output
+    一输入，一输出。处理速度能更快一些"""
     _cols = cols
 
     if skip_nan:
@@ -131,7 +155,18 @@ def func_wrap_11(func, cols,
 
 class FuncHelper:
     def __init__(self, expr: Expr, lib=None, wrap=None) -> None:
-        """初始化
+        """initialization
+
+        Parameters
+        ----------
+        expr
+        lib:
+            third-party packages required
+        wrap:
+            wrapper for third-party packages
+
+
+        初始化
 
         Parameters
         ----------

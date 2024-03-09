@@ -1,4 +1,10 @@
 """
+Parse talib functions for polars Expressions
+
+This version is more direct, without skip nan values, and without input and output checks
+
+polars does not skip nan values as well. It should be processed by specific functions
+
 本脚本主要功能是将talib封装成更适合表达式的版本
 
 与另一版本的区别是这版本调用更直接，没有跳过空的操作，也没有输入与输出数量的判断工作

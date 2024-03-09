@@ -44,7 +44,7 @@ def NOT(condition: Expr) -> Expr:
 def UPNDAY(close: Expr, N: int) -> Expr:
     return NDAY(close, close.shift(), N)
 
-
+# Eastmoney has these two functions
 # 东方财富中有此两函数
 ALL = EVERY
 ANY = EXIST

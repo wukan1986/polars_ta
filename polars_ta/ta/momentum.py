@@ -20,6 +20,7 @@ def APO(close: Expr, fastperiod: int = 12, slowperiod: int = 26, matype: int = 0
 
 def AROON_aroondown(high: Expr, low: Expr, timeperiod: int = 14) -> Expr:
     """
+    Lower band:
     下轨:(N-LLVBARS(L,N))/N*100,COLORGREEN;
     """
     return 1 - ts_arg_min(low, timeperiod, reverse=True) / timeperiod
@@ -27,10 +28,13 @@ def AROON_aroondown(high: Expr, low: Expr, timeperiod: int = 14) -> Expr:
 
 def AROON_aroonup(high: Expr, low: Expr, timeperiod: int = 14) -> Expr:
     """
+    Upper band:
     上轨:(N-HHVBARS(H,N))/N*100,COLORRED;
 
     Notes
     -----
+    You cannot use pd.Series.rolling().arg_max() with reverse order, which leads to a larger result when there are two or more high points
+    so we don't use pandas
     arg_max没有逆序，导致出现两个及以上最高点时，结果偏大
 
     """
@@ -42,6 +46,8 @@ def MACD_macd(close: Expr, fastperiod: int = 12, slowperiod: int = 26) -> Expr:
 
     Notes
     -----
+    When counting how many data we have
+    we refer to `slowperiod`, while `talib.MACD` refers to `fastperiod`
     talib.MACD有效数据按fastperiod，而本项目按slowperiod
 
     """
@@ -53,6 +59,7 @@ def MACD_macdhist(close: Expr, fastperiod: int = 12, slowperiod: int = 26, signa
 
     Notes
     -----
+    Chinese version is multiplied by 2
     中国版多了乘2
 
     """
@@ -104,6 +111,8 @@ def RSV(high: Expr, low: Expr, close: Expr, timeperiod: int = 5) -> Expr:
 
     Notes
     -----
+    Also called `STOCHF_fastk`, `talib.STOCHF` is multiplied by 100,
+    and it is very similar to the `WILLR` indicator
     又名STOCHF_fastk, talib.STOCHF版相当于多乘了100，与WILLR指标又很像
 
     """
@@ -129,6 +138,7 @@ def WILLR(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:
 
     Notes
     -----
+    `talib.WILLR` is multiplied by -100, but I think it is unnecessary
     talib.WILLR版相当于多乘了-100，但个人认为没有必要
 
     References

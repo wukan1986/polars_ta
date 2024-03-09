@@ -1,4 +1,5 @@
 """
+Add prefix to talib functions
 本脚本主要功能是将talib封装添加前缀
 """
 import talib as _talib

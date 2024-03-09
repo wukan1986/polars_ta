@@ -53,12 +53,14 @@ def purify(x: Expr) -> Expr:
 
 
 def fill_nan(x: Expr) -> Expr:
-    """填充nan为null"""
+    """fill nan by null
+    填充nan为null"""
     return x.fill_nan(None)
 
 
 def fill_infinite(x: Expr) -> Expr:
-    """填充 +inf, -inf为null
+    """fill infinite by null
+    填充 +inf, -inf为null
 
     Notes
     -----

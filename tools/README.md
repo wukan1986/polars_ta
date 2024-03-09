@@ -1,3 +1,21 @@
+# Code Conversion Tools
+
+## TA-Lib tool (codegen_talib.py)
+
+Wrap the original `TA-Lib` and save it to `polars_ta.talib.__init__.py`.
+
+1. Support `Expr`
+2. Support `skipna`
+3. Multi-output support
+
+## Prefix adding tool
+
+Add the `ts_` prefix to some functions to facilitate use in `expr_codegen` and other tools.
+
+1. `prefix_ta.py` adds a prefix to `polars_ta.ta` and saves it to `polars_ta.prefix.ta.py`
+2. `prefix_tdx.py` adds a prefix to `polars_ta.tdx` and saves it to `polars_ta.prefix.tdx.py`
+3. `prefix_talib.py` adds a prefix to `polars_ta.talib` and saves it to `polars_ta.prefix.talib.py` (same as `codegen_talib`)
+
 # 代码转换工具
 
 ## TA-Lib工具(codegen_talib.py)

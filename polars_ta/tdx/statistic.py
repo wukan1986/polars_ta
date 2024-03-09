@@ -8,7 +8,8 @@ from polars_ta.wq.time_series import ts_std_dev as _ts_std_dev
 
 
 def AVEDEV(close: Expr, timeperiod: int = 5) -> Expr:
-    """平均绝对偏差"""
+    """mean absolute deviation
+    平均绝对偏差"""
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy(), roll_avedev, timeperiod))
 
 
@@ -21,7 +22,8 @@ def SLOPE(close: Expr, timeperiod: int = 5) -> Expr:
 
 
 def STD(close: Expr, timeperiod: int = 5) -> Expr:
-    """估算标准差"""
+    """std dev with ddof = 1
+    估算标准差"""
     return _ts_std_dev(close, timeperiod, 1)
 
 
@@ -31,7 +33,8 @@ def STDDEV(close: Expr, timeperiod: int = 5) -> Expr:
 
 
 def STDP(close: Expr, timeperiod: int = 5) -> Expr:
-    """总体标准差"""
+    """std dev with ddof = 0
+    总体标准差"""
     return _ts_std_dev(close, timeperiod, 0)
 
 

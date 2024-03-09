@@ -23,28 +23,32 @@ from polars_ta.wq.time_series import ts_sum as SUM
 
 
 def BARSLAST(condition: Expr) -> Expr:
-    """BARSLAST(X),上一次X不为0到现在的天数"""
+    """# of Observations since last time condition was true
+    上一次X不为0到现在的天数"""
     a = condition.cum_count()
     b = when(condition.cast(Boolean)).then(a).otherwise(None).forward_fill()
     return a - b
 
 
 def BARSLASTCOUNT(condition: Expr) -> Expr:
-    """BARSLASTCOUNT(X),统计连续满足条件的周期数"""
+    """Cumulative count of continuous true observations
+    统计连续满足条件的周期数"""
     a = condition.cast(Int32).cum_sum()
     b = when(condition.cast(Boolean)).then(None).otherwise(a).forward_fill().fill_null(0)
     return a - b
 
 
 def BARSSINCE(condition: Expr) -> Expr:
-    """BARSSINCE(X):第一次X不为0到现在的天数"""
+    """# of observations since the first time condition was true
+    第一次X不为0到现在的天数"""
     a = condition.cum_count()
     b = condition.cast(Boolean).arg_true().first()
     return a - b
 
 
 def BARSSINCEN(condition: Expr, N: int = 30) -> Expr:
-    """BARSSINCEN(X,N):N周期内第一次X不为0到现在的天数"""
+    """# of Observations since the first time condition was true (rolling within N observations)
+    N周期内第一次X不为0到现在的天数"""
     return condition.cast(Boolean).map_batches(lambda x1: batches_i1_o1(x1.to_numpy(), roll_bars_since_n, N, dtype=UInt16))
 
 
@@ -54,14 +58,22 @@ def CUMSUM(close: Expr) -> Expr:
 
 
 def DMA(close: Expr, alpha: float = 0.5) -> Expr:
-    """DMA(X,A),求X的动态移动平均.
-算法:Y=A*X+(1-A)*Y',其中Y'表示上一周期Y值,A必须大于0且小于1.A支持变量"""
+    """DMA(X,alpha), (Exponential moving average given alpha)
+    Y = alpha * X + (1 - alpha) * last_Y
+    requires 0 < alpha < 1
+
+    求X的动态移动平均.
+    算法:Y=A*X+(1-A)*Y',其中Y'表示上一周期Y值,A必须大于0且小于1.A支持变量"""
     return close.ewm_mean(alpha=alpha, adjust=False, min_periods=1)
 
 
 def EMA(close: Expr, N: int = 30) -> Expr:
-    """EMA(X,N):X的N日指数移动平均.算法:Y=(X*2+Y'*(N-1))/(N+1)
- EMA(X,N)相当于SMA(X,N+1,2),N支持变量"""
+    """EMA(X,N): Exponential moving average given N
+
+    Y = X * 2/(N+1) + last_Y * (N-1)/(N+1)
+
+    X的N日指数移动平均.算法:Y=(X*2+Y'*(N-1))/(N+1)
+    EMA(X,N)相当于SMA(X,N+1,2),N支持变量"""
     return _ema(close, N)
 
 
@@ -70,7 +82,8 @@ def EXPMA(close: Expr, N: int = 30) -> Expr:
 
 
 def EXPMEMA(close: Expr, N: int = 30) -> Expr:
-    """EXPMEMA(X,M),X的M日指数平滑移动平均。EXPMEMA同EMA(即EXPMA)的差别在于他的起始值为一平滑值
+    """Slow version of EMA. Do not use it unless you have to
+    EXPMEMA(X,M),X的M日指数平滑移动平均。EXPMEMA同EMA(即EXPMA)的差别在于他的起始值为一平滑值
 
     Notes
     -----
@@ -83,17 +96,22 @@ def EXPMEMA(close: Expr, N: int = 30) -> Expr:
 
 
 def HOD(close: Expr, N: int = 30) -> Expr:
-    """HOD(X,N):求当前X数据是N周期内的第几个高值,N=0则从第一个有效值开始"""
+    """rolling rank of each data in descending order
+    HOD(X,N):求当前X数据是N周期内的第几个高值,N=0则从第一个有效值开始"""
     return close.map_batches(lambda a: roll_rank(a, N, pct=False, ascending=False))
 
 
 def LOD(close: Expr, N: int = 30) -> Expr:
-    """LOD(X,N):求当前X数据是N周期内的第几个低值"""
+    """rolling rank of each data in ascending order
+    LOD(X,N):求当前X数据是N周期内的第几个低值"""
     return close.map_batches(lambda a: roll_rank(a, N, pct=False, ascending=True))
 
 
 def MEMA(close: Expr, N: int = 30) -> Expr:
-    """MEMA(X,N):X的N日平滑移动平均,如Y=(X+Y'*(N-1))/N
+    """Exponential moving average given N
+    Y = X / N + last_Y * (N-1) / N
+
+    MEMA(X,N):X的N日平滑移动平均,如Y=(X+Y'*(N-1))/N
  MEMA(X,N)相当于SMA(X,N,1)"""
     raise
 
@@ -104,7 +122,10 @@ def RANGE(a: Expr, b: Expr, c: Expr) -> Expr:
 
 
 def SMA_CN(X: Expr, N: int, M: int) -> Expr:
-    """用法:SMA(X,N,M),X的N日移动平均,M为权重,若Y=SMA(X,N,M)则Y=(X*M+Y'*(N-M))/N
+    """Exponential Moving average given alpha = M/N
+    Y = X * M/N + last_Y * (N-M)/N
+
+    用法:SMA(X,N,M),X的N日移动平均,M为权重,若Y=SMA(X,N,M)则Y=(X*M+Y'*(N-M))/N
 
     !!!为防止与talib版SMA误用，这里去了默认值1
     """

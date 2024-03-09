@@ -1,4 +1,5 @@
 """
+Algorithm in this file is slow, and has been replaced by numba and other methods
 本目录下算法有些慢，已经用numba等其它方法代替
 """
 import numpy as np
@@ -9,7 +10,7 @@ def _arg_max(x: Series):
     """
     Notes
     -----
-    等polars推出rolling_arg_max(reverse=True)这个问题能好转
+    TODO 等polars推出rolling_arg_max(reverse=True)这个问题能好转
 
     """
     # return x[::-1].arg_max()

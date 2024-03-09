@@ -10,8 +10,8 @@ from polars_ta.wq.arithmetic import cos as COS  # noqa
 from polars_ta.wq.arithmetic import exp as EXP  # noqa
 from polars_ta.wq.arithmetic import floor as FLOOR  # noqa
 from polars_ta.wq.arithmetic import fraction as FRACPART  # noqa
-from polars_ta.wq.arithmetic import log as LN  # noqa # 自然对数
-from polars_ta.wq.arithmetic import log10 as LOG  # noqa # 10为底的对数
+from polars_ta.wq.arithmetic import log as LN  # noqa # 自然对数 (log base e)
+from polars_ta.wq.arithmetic import log10 as LOG  # noqa # 10为底的对数 (log base 10)
 from polars_ta.wq.arithmetic import max_ as MAX  # noqa
 from polars_ta.wq.arithmetic import min_ as MIN  # noqa
 from polars_ta.wq.arithmetic import mod as MOD  # noqa
@@ -39,7 +39,9 @@ def ROUND2(x: Expr, decimals: int = 0) -> Expr:
 
 
 def BETWEEN(a: Expr, b: Expr, c: Expr) -> Expr:
-    """BETWEEN(A,B,C)表示A处于B和C之间时返回1(B<=A<=C或C<=A<=B),否则返回0"""
+    """1 if B<=A<=C or C<=A<=B else 0
+
+    BETWEEN(A,B,C)表示A处于B和C之间时返回1(B<=A<=C或C<=A<=B),否则返回0"""
     x1 = (b <= a) & (a <= c)
     x2 = (c <= a) & (a <= b)
     return x1 | x2
