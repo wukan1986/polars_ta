@@ -80,8 +80,9 @@ def func_ts_date(df: pl.DataFrame) -> pl.DataFrame:
 
     return df
 
+
 # ensure grouped before applying to multi-asset data
 # 多资产需要先按资产分组
-df = df.group_by(by=['asset']).map_groups(func_ts_date)
+df = df.group_by('asset').map_groups(func_ts_date)
 
 print(df)

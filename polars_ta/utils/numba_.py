@@ -11,6 +11,7 @@ from polars import Series, Expr, map_batches
 
 """
 Series.to_numpy的操作在调用之前做，这样可控一些
+batches_i1_o1这一类的函数输入不支持Series，只支持numpy。设计成在map_batches转换更可控
 """
 
 

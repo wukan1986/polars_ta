@@ -35,7 +35,7 @@ def AROON_aroonup(high: Expr, low: Expr, timeperiod: int = 14) -> Expr:
     -----
     You cannot use pd.Series.rolling().arg_max() with reverse order, which leads to a larger result when there are two or more high points
     so we don't use pandas
-    arg_max没有逆序，导致出现两个及以上最高点时，结果偏大
+    pd.Series.rolling().arg_max()没有逆序，导致出现两个及以上最高点时，结果偏大
 
     """
     return 1 - ts_arg_max(high, timeperiod, reverse=True) / timeperiod
