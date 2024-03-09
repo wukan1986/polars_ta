@@ -1,5 +1,47 @@
 # nan_to_null
 
+It is important to handle nan and null values correctly. In many cases, null values may occur. Such as:
+
+1. Stock suspension, data missing, etc.
+2. Calculation exceptions, such as division by 0, log non-positive, etc.
+
+
+## Null (None in Python) and NaN are different!
+
+```python
+None == None  # True # (It should be `None is None`)
+np.nan == np.nan  # False
+```
+
+But in `pandas/numpy` many do not distinguish between `None` and `np.nan`, so you should always use `is_null/is_nan` functions to be safe.
+
+1. In `pandas` 1.x, the representation of null values is:
+  - floating point uses `nan`,
+  - string uses `None`,
+  - time uses `pd.NaT`,
+  - integer has no null value representation, it can be converted to a floating-point number.
+2. In `pandas` 2.x, the backend can use `Arrow`. It has two storage areas, one is the original data, and the other is the validity bitmap array, which marks whether it is `null`, so there is no data type restriction.
+3. In `polars`, the backend is `Arrow`.
+
+With a bitmap array, counting `null` values is faster than traversing the original array.
+
+## `polars`
+
+1. Most functions adapt to `null` but not `nan`, the best way should be using `fill_nan(None)` first.
+2. To adapt to third-party packages, such as `TA-Lib`, when calling `to_numpy`, `null` will be automatically converted to `nan`, and the return value should be `pl.Series(, nan_to_null=True)`.
+3. For the case of `null/nan` appearing in the middle, there is currently no good way to handle it.
+
+## Reference
+
+1. https://pola-rs.github.io/polars/user-guide/expressions/null/#notanumber-or-nan-values
+2. https://pandas.pydata.org/docs/user_guide/missing_data.html
+
+
+
+
+
+# nan_to_null
+
 空值的处理是一件非常头疼的事性。多种情况下可能会出现空值。如：
 
 1. 股票停牌、数据缺失 等

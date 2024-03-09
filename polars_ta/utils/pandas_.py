@@ -8,6 +8,13 @@ from pandas._libs.window.aggregations import roll_rank as _roll_rank
 from polars import Series
 
 """
+When converting float32 to float64 before computing. Either use
+x.cast(Float64).to_numpy()
+or
+x.to_numpy().astype(float)
+
+The second one is faster
+
 在计算前需要将float32转成float64，有以下两种方法
 x.cast(Float64).to_numpy()
 x.to_numpy().astype(float)
@@ -32,11 +39,11 @@ def roll_rank(x: Series, d: int, pct: bool = True, method: str = 'average', asce
     start, end = get_window_bounds(len(x), d)
     """
     https://github.com/pandas-dev/pandas/blob/main/pandas/_libs/window/aggregations.pyx#L1281
-    
+
     def roll_rank(const float64_t[:] values, ndarray[int64_t] start,
               ndarray[int64_t] end, int64_t minp, bint percentile,
               str method, bint ascending) -> np.ndarray:
-              
+
     O(N log(window)) implementation using skip list
     """
     ret = _roll_rank(x.to_numpy().astype(float), start, end, d, pct, method, ascending)

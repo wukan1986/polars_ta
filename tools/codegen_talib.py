@@ -1,4 +1,5 @@
 """
+Parse talib functions for polars Expressions
 本脚本主要功能是将talib封装成更适合表达式的版本
 """
 import talib as _talib
@@ -104,6 +105,7 @@ from polars_ta.utils.helper import func_wrap_mn as _func_wrap_mn
                 input_names.append(in_names)
         parameters = info['parameters']
         output_names = info['output_names']
+        # two modes, v2 is faster
         # 两种生成模式，v2版直接一些，所以要快一点点
         # txt = _codegen_func_v1(name, input_names, parameters, output_names)
         txt = _codegen_func_v2(name, input_names, parameters, output_names)

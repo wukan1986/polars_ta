@@ -23,6 +23,7 @@ def cs_winsorize_quantile(x: Expr, low_limit: float = 0.025, up_limit: float = 0
 
 
 def cs_winsorize_3sigma(x: Expr, n: float = 3.) -> Expr:
+    # fill_nan will seriously reduce speed. So it's more appropriate for users to handle it themselves
     # fill_nan(None) 严重拖慢速度，所以还是由用户自己处理更合适
     a = x.mean()
     b = n * x.std(ddof=0)
@@ -41,6 +42,11 @@ def cs_neutralize_demean(x: Expr) -> Expr:
 
     Notes
     -----
+    Slower than multivariate regression. We need to groupby date and industry here,
+    while multivariate regression only needs to add industry dummy variables and then groupby date
+
+    Notes
+    -----
     速度没有多元回归快，因为这里需要按日期行业groupby，
     而多元回归只要添加行业哑变量，然后按日期groupby即可
     """
@@ -48,7 +54,8 @@ def cs_neutralize_demean(x: Expr) -> Expr:
 
 
 def cs_neutralize_residual_simple(y: Expr, x: Expr) -> Expr:
-    """一元回归"""
+    """simple regression
+    一元回归"""
     # https://stackoverflow.com/a/74906705/1894479
     # 一元回归时，这个版本更快，不需再补充常量1
     # e_i = y_i - a - bx_i
@@ -88,7 +95,8 @@ def residual_multiple(cols: List[Series], add_constant: bool) -> Series:
 
 
 def cs_neutralize_residual_multiple(y: Expr, *more_x: Expr) -> Expr:
-    """多元回归
+    """multivariate regression
+    多元回归
 
     Examples
     --------
@@ -97,6 +105,7 @@ def cs_neutralize_residual_multiple(y: Expr, *more_x: Expr) -> Expr:
 
     Notes
     -----
+    add a constant column for the intercept
     常量1，可以通过多输入1列来完成
     正则列需要通过`pl.struct`传输，比之前整体转`pl.struct`能支持复杂公式
     """

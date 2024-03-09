@@ -1,3 +1,54 @@
+# Differences in Indicators
+
+## 1. EMA alike indicators
+
+### 1.1 EMA
+
+1. EMA(CLOSE, 10), `talib.set_compatibility(0)` is the default, and is equivalent to`EXPMEMA`
+    - The first not nan value starts as `talib.SMA(CLOSE, 10)`
+2. EMA(CLOSE, 10), `talib.set_compatibility(1)`
+    - The first not nan value starts as `CLOSE`
+
+Since the logic of `EMA` calculation has changed in `TA-Lib`'s `compatibility mode 0`, it is complex and inefficient to implement it using expressions.
+
+We only implement `compatibility mode 1`.
+It just so happens that the Chinese stock software only implements `compatibility mode 1`.
+You can compare the full data with `TA-Lib` for unit testing.
+
+Indicators affected by `EMA` include `MACD, DEMA, TEMA, TRIX, T3`, etc.
+
+### 1.2 Chinese Version of SMA(X, N, M)
+
+In essence, it is `RMA compatibility mode 0`, that is,
+the first valid value is the moving average. And then the difference is `alpha`
+
+1. `SMA(X, N, M) = X.ema_mean(alpha=M/N)`
+2. `RMA(X, N) = X.ema_mean(alpha=1/N) = SMA(X, N, 1)`
+3. `EMA(x, N) = X.ema_mean(alpha=2/(N+1)) = X.ema_mean(span=N)`
+
+Refer to: [ewm_mean](https://pola-rs.github.io/polars/py-polars/html/reference/expressions/api/polars.Expr.ewm_mean.html#polars.Expr.ewm_mean)
+
+In this case, we use `RMA compatibility mode 1`.
+There exists error in switching between the two modes.
+So please provide enough length of data.
+The data in the later part can be used for unit testing.
+
+Indicators affected by `SMA` include `ATR, RSI`, etc.
+
+
+### 1.3 Moving Sum
+
+Some indicators including `ADX` require the first value as a `SUM` rather than `SMA`. We will implement them later by `ema_mean(alpha=1/N)`
+
+
+## 2. MAX/MIN
+
+1. In package `wq`, `max_/min_` are cross-sectional operators, `ts_max/ts_min` are time series indicators
+2. In `talib`, `MAX/MIN` are time series indicators, without cross-sectional operators.
+3. In `ta`, to mimic `talib`, `MAX/MIN` are time series indicators, without cross-sectional operators.
+4. In `tdx`, `MAX/MIN` are cross-sectional operators, `HHV/LLV` are time series indicators.
+
+
 # 指标区别
 
 ## 1. EMA系列

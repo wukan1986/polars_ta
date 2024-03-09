@@ -27,6 +27,7 @@ class TestDemoClass:
         # print(result1)
         # print(result3)
 
+        # value at position 0 is `x` rather than `nan` in talib
         # pl版第一个位置计算的值为max(x,nan,nan)=x比talib多一个值
         assert np.allclose(result1[1:], result3[1:], equal_nan=True)
 

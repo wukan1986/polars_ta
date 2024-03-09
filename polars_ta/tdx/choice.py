@@ -6,12 +6,16 @@ from polars_ta.wq.logical import if_else
 
 
 def IF(condition: Expr, a: Expr, b: Expr) -> Expr:
-    """IF(X,A,B)若X不为0则返回A,否则返回B"""
+    """A if X != 0 else B
+    IF(X,A,B)若X不为0则返回A,否则返回B
+    """
     return if_else(condition.cast(Boolean), a, b)
 
 
 def IFN(condition: Expr, a: Expr, b: Expr) -> Expr:
-    """IFN(X,A,B)若X不为0则返回B,否则返回A"""
+    """B if X != 0 else A
+    IFN(X,A,B)若X不为0则返回B,否则返回A
+    """
     return if_else(condition.cast(Boolean), b, a)
 
 

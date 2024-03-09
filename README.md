@@ -1,5 +1,127 @@
 # polars_ta
 
+Technical Indicator Operators Rewritten in `polars`.
+
+We provide wrappers for some functions (like `TA-Lib`) that are not `pl.Expr` alike.
+
+## How to Install
+
+### Using `pip`
+
+```commandline
+pip install -i https://pypi.org/simple --upgrade polars_ta
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple --upgrade polars_ta  # Mirror in China
+```
+
+### Build from Source
+
+```commandline
+git clone --depth=1 https://github.com/wukan1986/polars_ta.git
+cd polars_ta
+python -m build
+cd dist
+pip install polars_ta-0.1.2-py3-none-any.whl
+```
+
+### How to Install TA-Lib
+Non-official `TA-Lib` wheels can be downloaded from `https://github.com/cgohlke/talib-build/releases`
+
+## Usage
+
+See `examples` folder.
+
+```python
+# We need to modify the function name by prefixing `ts_` before using them in `expr_coodegen`
+from polars_ta.prefix.tdx import *
+# Import functions from `wq`
+from polars_ta.prefix.wq import *
+
+# Example
+df = df.with_columns([
+    # Load from `wq`
+    *[ts_returns(CLOSE, i).alias(f'ROCP_{i:03d}') for i in (1, 3, 5, 10, 20, 60, 120)],
+    *[ts_mean(CLOSE, i).alias(f'SMA_{i:03d}') for i in (5, 10, 20, 60, 120)],
+    *[ts_std_dev(CLOSE, i).alias(f'STD_{i:03d}') for i in (5, 10, 20, 60, 120)],
+    *[ts_max(HIGH, i).alias(f'HHV_{i:03d}') for i in (5, 10, 20, 60, 120)],
+    *[ts_min(LOW, i).alias(f'LLV_{i:03d}') for i in (5, 10, 20, 60, 120)],
+
+    # Load from `tdx`
+    *[ts_RSI(CLOSE, i).alias(f'RSI_{i:03d}') for i in (6, 12, 24)],
+])
+```
+
+## How We Designed This
+
+1. We use `Expr` instead of `Series` to avoid using `Series` in the calculation. Functions are no longer methods of class.
+2. Use `wq` first. It mimics `WorldQuant Alpha` and strives to be consistent with them.
+3. Use `ta` otherwise. It is a `polars`-style version of `TA-Lib`. It tries to reuse functions from `wq`.
+4. Use `tdx` last. It also tries to import functions from `wq` and `ta`.
+5. We keep the same signature and parameters as the original `TA-Lib` in `talib`.
+6. If there is a naming conflict, we suggest calling `wq`, `ta`, `tdx`, `talib` in order. The higher the priority, the closer the implementation is to `Expr`.
+
+## Comparison of Our Indicators and Others
+
+See [compare](compare.md)
+
+## Handling Null/NaN Values
+
+See [nan_to_null](nan_to_null.md)
+
+## Evolve of Our TA-Lib Wrappers
+
+1. `Expr.map_batches` can be used to call third-party libraries, such as `TA-Lib, bottleneck`. But because of the input and output format requirements, you need to wrap the third-party API with a function.
+  - Both input and output can only be one column. If you want to support multiple columns, you need to convert them to `pl.Struct`. After that, you need to use `unnest` to split `pl.Struct`.
+  - The output must be `pl.Series`
+2. Start to use `register_expr_namespace` to simplify the code
+  - Implementation [helper.py](polars_ta/utils/helper.py)
+  - Usage demo [demo_ta1.py](examples/demo_ta1.py)
+  - Pros: Easy to use
+  - Cons:
+    - The `member function call mode` is not convenient for inputting into genetic algorithms for factor mining
+    - `__getattribute__` dynamic method call is very flexible, but loses `IDE` support.
+3. Prefix expression. Convert all member functions into formulas
+  - Implementation [wrapper.py](polars_ta/utils/wrapper.py)
+  - Usage demo [demo_ta2.py](examples/demo_ta2.py)
+  - Pros: Can be input into our implementation of genetic algorithms
+  - Cons: `__getattribute__` dynamic method call is very flexible, but loses `IDE` support.
+4. Code generation.
+  - Implementation [codegen_talib2.py](tools/codegen_talib2.py)
+  - Generated result will be at [\_\_init\_\_.py](polars_ta/talib/__init__.py)
+  - Usage demo [demo_ta3.py](examples/demo_ta3.py)
+  - Pros:
+    - Can be input into our implementation of genetic algorithms
+    - `IDE` support
+
+
+## Debugging
+
+```commandline
+git clone --depth=1 https://github.com/wukan1986/polars_ta.git
+cd polars_ta
+pip install -e .
+```
+
+Notice:
+If you have added some functions in `ta` or `tdx`, please run `prefix_ta.py` or `prefix_tdx.py` inside the `tools` folder to generate the corrected Python script (with the prefix added).
+This is required to use in `expr_codegen`.
+
+## Reference
+
+- https://github.com/pola-rs/polars
+- https://github.com/TA-Lib/ta-lib
+- https://github.com/twopirllc/pandas-ta
+- https://github.com/bukosabino/ta
+- https://github.com/peerchemist/finta
+- https://github.com/wukan1986/ta_cn
+- https://support.worldquantbrain.com/hc/en-us/community/posts/20278408956439-从价量看技术指标总结-Technical-Indicator-
+
+
+
+
+
+
+# polars_ta
+
 基于`polars`的算子库。实现量化投研中常用的技术指标、数据处理等函数。对于不易翻译成`Expr`的库（如：`TA-Lib`）也提供了函数式调用的封装
 
 ## 安装

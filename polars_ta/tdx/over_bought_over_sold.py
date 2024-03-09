@@ -19,6 +19,7 @@ def ATR(HIGH: Expr, LOW: Expr, CLOSE: Expr, N: int = 14) -> Expr:
 
     Notes
     -----
+    Warning: it is different with talib.ATR
     与talib.ATR不同
 
     """
@@ -42,6 +43,7 @@ def CCI(HIGH: Expr, LOW: Expr, CLOSE: Expr, N: int = 14) -> Expr:
 
     Notes
     -----
+    Avoid using `AVEDEV`, it is slow
     AVEDEV计算慢，少用
 
     """

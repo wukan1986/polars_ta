@@ -1,4 +1,9 @@
 """
+In this file we use
+open_: Expr, high: Expr, low: Expr, close: Expr
+for all parameters
+to ensure the similar function signatures when calling them
+
 本文件中参数全用
 open_: Expr, high: Expr, low: Expr, close: Expr
 统一的好处是在使用时不用考虑函数调用区别

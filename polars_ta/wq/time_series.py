@@ -25,6 +25,7 @@ def ts_co_skewness(x: Expr, y: Expr, d: int = 5, ddof: int = 0) -> Expr:
 
 
 def ts_corr(x: Expr, y: Expr, d: int = 5, ddof: int = 1) -> Expr:
+    # x, y is indifferent with y, x
     # x、y不区分先后
     return rolling_corr(x, y, window_size=d, ddof=ddof)
 
@@ -34,11 +35,13 @@ def ts_count(x: Expr, d: int = 30) -> Expr:
 
 
 def ts_count_nans(x: Expr, d: int = 5) -> Expr:
+    # null or nan?
     # null与nan到底用哪一个？
     return x.is_null().rolling_sum(d)
 
 
 def ts_covariance(x: Expr, y: Expr, d: int = 5, ddof: int = 1) -> Expr:
+    # x, y is indifferent with y, x
     # x、y不区分先后
     return rolling_cov(x, y, window_size=d, ddof=ddof)
 
@@ -149,6 +152,7 @@ def ts_scale(x: Expr, d: int = 5) -> Expr:
 
 
 def ts_skewness(x: Expr, d: int = 5, bias: bool = False) -> Expr:
+    # same with pandas when bias=False
     # bias=False与pandas结果一样
     return x.rolling_skew(d, bias=bias)
 

@@ -1,4 +1,9 @@
 """
+The following comes from Trading Systems and Methods, Chapter 1, Measuring Noise
+
+We do not provide ATR and STD here.
+
+
 ATR与STD也是一种度量波动的方法，这里不再提供
 
 以下方法来自于Trading Systems and Methods, Chapter 1, Measuring Noise

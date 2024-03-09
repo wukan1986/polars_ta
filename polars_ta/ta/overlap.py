@@ -10,10 +10,14 @@ from polars_ta.wq.time_series import ts_mean as SMA  # noqa
 
 
 def BBANDS_upperband(close: Expr, timeperiod: int = 5, nbdevup: float = 2) -> Expr:
-    """布林线上轨
+    """Bollinger Bands Upper Band
+    布林线上轨
 
     Notes
     -----
+    1. You may create a new functino based on this, to replace the middle band
+    2. use negative values in `nbdevup` for the lower band
+
     1. 想替换中线算法时，参考此代码新建一个函数
     2. 想生成下轨时，nbdevup用负数
     """
@@ -51,7 +55,8 @@ def MIDPRICE(high: Expr, low: Expr, timeperiod: int = 14) -> Expr:
 
 
 def RMA(close: Expr, timeperiod: int = 30) -> Expr:
-    """TA-Lib没有明确的提供此算法，这里只是为了调用方便而放在此处
+    """TA-Lib does not provide this algorithm explicitly, it is just put here for convenience
+    TA-Lib没有明确的提供此算法，这里只是为了调用方便而放在此处
 
     References
     ----------
@@ -67,6 +72,7 @@ def TEMA(close: Expr, timeperiod: int = 30) -> Expr:
 
     Notes
     -----
+    todo: if the nesting level is too deep, maybe call talib.TEMA directly
     嵌套层数过多，也许直接调用talib.TEMA更快
 
     """

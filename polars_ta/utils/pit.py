@@ -4,7 +4,35 @@ from polars import selectors as cs
 
 def ts_pit(df: pl.DataFrame, func=None,
            date='date', update_time='update_time', asset='asset'):
-    """Point In Time计算
+    """Computing Point In Time
+
+    Parameters
+    ----------
+    df: pl.DataFrame
+        dataframe after group_by(date)
+    func:
+        apply to the dataframe output from pit, can be None
+    date:str
+        column name, group by this col
+    update_time:str
+        column name, group by this col
+    asset:str
+        asset column name
+        资产。asfreq时，asset为空，后面要分组时不方便
+
+    Returns
+    -------
+    pd.DataFrame
+
+    Notes
+    -----
+    1. Data update might be weekeng
+    2. You cannot use this for further time-series computation.
+        Alert for inclusion of future data
+    3. This is different from general `ts_` functions, be careful
+
+
+    Point In Time计算
 
     Parameters
     ----------
@@ -30,11 +58,13 @@ def ts_pit(df: pl.DataFrame, func=None,
     3. 此算子与一般的`ts_`算子不同，小心使用
 
     """
+    # sort first
     # 一定要提前排序
     sort_by = [date, update_time]
     df = df.sort(sort_by)
 
     dr = (
+        # group by, record the count and update time
         # 分组，记录数量，和更新时间
         df.group_by(date).agg(update_time, pl.len())
         # 多加一行是否最后值
@@ -47,6 +77,7 @@ def ts_pit(df: pl.DataFrame, func=None,
     max_update_time = df.select(update_time).max().to_series()
     dr = dr.append(max_update_time).unique().sort().to_list()
 
+    # fill missing data to 4 quarters
     # 部分很早的财报有缺失，比如只有年报或半年报，仿asfreq补充成4季
     min_max_q = df.select(date).unique().upsample(date, every='1q')
     # TODO 使用date填充update_time是否会引入问题？
@@ -55,6 +86,7 @@ def ts_pit(df: pl.DataFrame, func=None,
     df = df.with_columns(pl.col(asset).forward_fill())
 
     dd = []
+    # iterate over the key dates
     # 遍历关键日期
     for dt in dr:
         # 每次只看指定更新日之间的记录
@@ -69,6 +101,7 @@ def ts_pit(df: pl.DataFrame, func=None,
             d = func(d)
         dd.append(d)
 
+    # sort by the date and update time
     # 按报告期排序
     x = pl.concat(dd)
     x = x.unique(subset=sort_by, keep='first').sort(sort_by)

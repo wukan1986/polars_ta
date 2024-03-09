@@ -1,4 +1,14 @@
 """
+Another wrapper for raised github issue
+
+before:
+expr.ta.func(..., skip_nan=False, output_idx=None, schema=None, schema_format='{}', nan_to_null=False)
+
+now:
+func(expr, ..., skip_nan=False, output_idx=None, schema=None, schema_format='{}', nan_to_null=False)
+
+This wrapper allows the prefix expression to be easily used in genetic algorithm tools
+
 此处是对github issues上提出的 注册命名空间 方案的再封装
 
 之前的使用方法为

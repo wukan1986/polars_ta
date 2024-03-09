@@ -1,4 +1,5 @@
 """
+Demo for using numba to implement rolling functions.
 本文件是使用numba实现rolling的函数，演示用
 """
 from typing import List
@@ -31,7 +32,8 @@ def batches_i2_o2(xx: List[np.ndarray], func, *args, dtype=None, ret_idx: int = 
 
 @jit(nopython=True, nogil=True, cache=True)
 def nb_roll_sum(x1, window):
-    """演示代码，请直接用 pl.col('A').rolling_sum(10).alias('a1')"""
+    """Demo code. Use `pl.col('A').rolling_sum(10).alias('a1')` instead.
+    演示代码，请直接用 pl.col('A').rolling_sum(10).alias('a1')"""
     out = np.full(x1.shape, np.nan, dtype=float)
     if len(x1) < window:
         return out
@@ -43,7 +45,8 @@ def nb_roll_sum(x1, window):
 
 @jit(nopython=True, nogil=True, cache=True)
 def nb_roll_cov(x1, x2, window):
-    """演示代码，pl.rolling_cov(pl.col('A'), pl.col('B'), window_size=10).alias('a6')"""
+    """Demo code. Use `pl.rolling_cov(pl.col('A'), pl.col('B'), window_size=10).alias('a6')` instead.
+    演示代码，pl.rolling_cov(pl.col('A'), pl.col('B'), window_size=10).alias('a6')"""
     out = np.full(x1.shape, np.nan, dtype=float)
     if len(x1) < window:
         return out

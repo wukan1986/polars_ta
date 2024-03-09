@@ -85,7 +85,8 @@ def roll_co_skewness(x1, x2, window):
 
 @jit(nopython=True, nogil=True, fastmath=True, cache=True)
 def _moment(a1, k):
-    """中心矩阵"""
+    """centeral moment
+    中心矩阵"""
     return mean((a1 - mean(a1)) ** k)
 
 

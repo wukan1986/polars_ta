@@ -20,6 +20,7 @@ def MAX(close: Expr, timeperiod: int = 30) -> Expr:
 
     Notes
     -----
+    It is the maximum value of the time series, not the maximum value of multiple columns (max_horizontal)
     时序上窗口最大，不要与多列最大搞混
 
     """
@@ -27,7 +28,10 @@ def MAX(close: Expr, timeperiod: int = 30) -> Expr:
 
 
 def MAXINDEX(close: Expr, timeperiod: int = 30) -> Expr:
-    """与ts_arg_max的区别是，标记了每个区间最大值的绝对位置，可用来画图标记"""
+    """
+    Comparing to `ts_arg_max` this also marks the abs. position of the max value
+    与ts_arg_max的区别是，标记了每个区间最大值的绝对位置，可用来画图标记
+    """
     a = close.cum_count()
     b = ts_arg_max(close, timeperiod)
     return a - b
