@@ -110,3 +110,8 @@ def cs_neutralize_residual_multiple(y: Expr, *more_x: Expr) -> Expr:
     正则列需要通过`pl.struct`传输，比之前整体转`pl.struct`能支持复杂公式
     """
     return map_batches([y, *more_x], lambda xx: residual_multiple(xx, False))
+
+
+def cs_neutralize_residual(y: Expr, *more_x: Expr) -> Expr:
+    """回归"""
+    return cs_neutralize_residual_multiple(y, *more_x)
