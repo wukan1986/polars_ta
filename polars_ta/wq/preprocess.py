@@ -115,3 +115,13 @@ def cs_neutralize_residual_multiple(y: Expr, *more_x: Expr) -> Expr:
 def cs_neutralize_residual(y: Expr, *more_x: Expr) -> Expr:
     """回归"""
     return cs_neutralize_residual_multiple(y, *more_x)
+
+
+def cs_mad_zscore(y: Expr) -> Expr:
+    """常用功能简化封装。去极值、标准化"""
+    return cs_standardize_zscore(cs_winsorize_mad(y))
+
+
+def cs_mad_zscore_resid(y: Expr, *more_x: Expr) -> Expr:
+    """常用功能简化封装。去极值、标准化、中性化"""
+    return cs_neutralize_residual_multiple(cs_standardize_zscore(cs_winsorize_mad(y)), *more_x)
