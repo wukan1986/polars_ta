@@ -3,6 +3,7 @@ from polars import Expr
 from polars_ta.wq.preprocess import cs_neutralize_demean, cs_standardize_minmax, cs_winsorize_3sigma
 from polars_ta.wq.preprocess import cs_standardize_zscore
 
+
 # In the original version, the function names are not prefixed with `cs_`,
 # here we add it to prevent confusion
 # 原版函数名都没有加`cs_`, 这里统一加一防止混淆
@@ -34,9 +35,9 @@ def cs_one_side(x: Expr, is_long: bool = True) -> Expr:
 def cs_rank(x: Expr, pct: bool = True) -> Expr:
     """Ranks the input among all the instruments and returns an equally distributed number between 0.0 and 1.0. For precise sort, use the rate as 0."""
     if pct:
-        return x.rank() / x.count()
+        return x.rank(method='min') / x.count()
     else:
-        return x.rank()
+        return x.rank(method='min')
 
 
 def cs_scale(x: Expr, scale_: float = 1, long_scale: float = 1, short_scale: float = 1) -> Expr:

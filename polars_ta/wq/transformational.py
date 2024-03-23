@@ -1,5 +1,5 @@
 import pandas as pd
-from polars import Expr, when, Series, Int16
+from polars import Expr, when, Series, Int16, max_horizontal
 
 
 def _qcut(x1: Series, q: int) -> Series:
@@ -10,10 +10,18 @@ def _qcut(x1: Series, q: int) -> Series:
         return pd.qcut(x1, q, labels=False, duplicates='drop')
 
 
+def _rank_qcut(x: Expr, q: int = 10) -> Expr:
+    """结果与qcut基本一样，速度快三倍"""
+    a = x.rank(method='min') - 1.001
+    b = max_horizontal(x.count() - 1, 1)
+    return (a / b * q).cast(Int16)
+
+
 def cs_bucket(x: Expr, q: int = 10) -> Expr:
     """Convert float values into indexes for user-specified buckets. Bucket is useful for creating group values, which can be passed to group operators as input."""
     # TODO 等官方提供原生功能
-    return x.map_batches(lambda x1: Series(_qcut(x1, q), nan_to_null=True, dtype=Int16))
+    # return x.map_batches(lambda x1: Series(_qcut(x1, q), nan_to_null=True, dtype=Int16))
+    return _rank_qcut(x, q)
 
 
 def clamp(x: Expr, lower: float = 0, upper: float = 0, inverse: bool = False, mask: float = None) -> Expr:
