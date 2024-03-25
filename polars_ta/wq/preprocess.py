@@ -4,6 +4,7 @@ import numpy as np
 from polars import Expr, Series, Struct, map_batches
 
 from polars_ta import TA_EPSILON
+from polars_ta.wq.cross_sectional import cs_rank
 
 
 def cs_standardize_zscore(x: Expr, ddof: int = 0) -> Expr:
@@ -125,3 +126,10 @@ def cs_mad_zscore(y: Expr) -> Expr:
 def cs_mad_zscore_resid(y: Expr, *more_x: Expr) -> Expr:
     """常用功能简化封装。去极值、标准化、中性化"""
     return cs_neutralize_residual_multiple(cs_standardize_zscore(cs_winsorize_mad(y)), *more_x)
+
+
+def cs_mad_rank(y: Expr) -> Expr:
+    """常用功能简化封装。去极值，排名。
+
+    适合于分层收益V型或倒V的情况"""
+    return cs_rank(cs_winsorize_mad(y))
