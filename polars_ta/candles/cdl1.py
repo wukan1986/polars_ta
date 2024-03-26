@@ -71,12 +71,12 @@ def candle_color(open_: Expr, high: Expr, low: Expr, close: Expr) -> Expr:
 
 def four_price_doji(open_: Expr, high: Expr, low: Expr, close: Expr) -> Expr:
     """一字"""
-    return low > (high - TA_EPSILON)
+    return low >= (high - TA_EPSILON)
 
 
 def doji(open_: Expr, high: Expr, low: Expr, close: Expr) -> Expr:
     """十字(含一字、T字)"""
-    return (open_ - close).abs() < TA_EPSILON
+    return (open_ - close).abs() <= TA_EPSILON
 
 
 def dragonfly(open_: Expr, high: Expr, low: Expr, close: Expr) -> Expr:
