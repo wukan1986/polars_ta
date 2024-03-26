@@ -1,3 +1,3 @@
 from ._version import __version__
 
-TA_EPSILON = 1e-14
+TA_EPSILON = 1e-8
