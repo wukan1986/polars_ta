@@ -147,3 +147,10 @@ def cs_mad_rank2_resid(y: Expr, m: float, *more_x: Expr) -> Expr:
 
     适合于分层收益V型或倒V的情况"""
     return cs_neutralize_residual_multiple((cs_rank(cs_winsorize_mad(y)) - m) ** 2, *more_x)
+
+
+def cs_rank2(y: Expr, m: float) -> Expr:
+    """非线性处理。移动峰或谷到零点，然后平方
+
+    适合于分层收益V型或倒V的情况"""
+    return (cs_rank(y) - m) ** 2
