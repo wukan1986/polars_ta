@@ -34,7 +34,7 @@ def BARSLASTCOUNT(condition: Expr) -> Expr:
     """Cumulative count of continuous true observations
     统计连续满足条件的周期数"""
     a = condition.cast(Int32).cum_sum()
-    b = when(condition.cast(Boolean)).then(None).otherwise(a).forward_fill().fill_null(0)
+    b = when(~condition.cast(Boolean)).then(a).otherwise(None).forward_fill().fill_null(0)
     return a - b
 
 
