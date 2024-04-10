@@ -125,7 +125,7 @@ def cs_mad_zscore(y: Expr) -> Expr:
 
 def cs_mad_zscore_resid(y: Expr, *more_x: Expr) -> Expr:
     """常用功能简化封装。去极值、标准化、中性化"""
-    return cs_neutralize_residual_multiple(cs_standardize_zscore(cs_winsorize_mad(y)), *more_x)
+    return cs_neutralize_residual(cs_standardize_zscore(cs_winsorize_mad(y)), *more_x)
 
 
 def cs_mad_rank(y: Expr) -> Expr:
@@ -146,7 +146,7 @@ def cs_mad_rank2_resid(y: Expr, m: float, *more_x: Expr) -> Expr:
     """非线性处理。去极值，排名，移动峰或谷到零点，然后平方。回归取残差
 
     适合于分层收益V型或倒V的情况"""
-    return cs_neutralize_residual_multiple((cs_rank(cs_winsorize_mad(y)) - m) ** 2, *more_x)
+    return cs_neutralize_residual((cs_rank(cs_winsorize_mad(y)) - m) ** 2, *more_x)
 
 
 def cs_rank2(y: Expr, m: float) -> Expr:

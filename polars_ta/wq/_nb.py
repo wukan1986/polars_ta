@@ -149,3 +149,28 @@ def roll_triple_corr(x1, x2, x3, window):
     for i, (v1, v2, v3) in enumerate(zip(a1, a2, a3)):
         out[i + window - 1] = _triple_corr(v1, v2, v3)
     return out
+
+
+@jit(nopython=True, nogil=True, fastmath=True, cache=True)
+def isnan(x):
+    # https://github.com/numba/numba/issues/2919#issuecomment-747377615
+    if int(x) == -9223372036854775808:
+        return True
+    else:
+        return False
+
+
+@jit(nopython=True, nogil=True, fastmath=True, cache=True)
+def _zip_prod(a, b):
+    for i in range(1, a.shape[0]):
+        if isnan(a[i]):
+            a[i] = a[i - 1] * b[i - 1]
+    return a
+
+
+@jit(nopython=True, nogil=True, fastmath=False, cache=False)
+def _zip_sum(a, b):
+    for i in range(1, a.shape[0]):
+        if isnan(a[i]):
+            a[i] = a[i - 1] + b[i - 1]
+    return a

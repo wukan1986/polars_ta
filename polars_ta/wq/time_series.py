@@ -5,7 +5,7 @@ from polars import rolling_corr, rolling_cov
 from polars_ta import TA_EPSILON
 from polars_ta.utils.numba_ import batches_i1_o1, batches_i2_o1
 from polars_ta.utils.pandas_ import roll_kurt, roll_rank
-from polars_ta.wq._nb import roll_argmax, roll_argmin, roll_prod, roll_co_kurtosis, roll_co_skewness, roll_moment, roll_partial_corr, roll_triple_corr
+from polars_ta.wq._nb import roll_argmax, roll_argmin, roll_prod, roll_co_kurtosis, roll_co_skewness, roll_moment, roll_partial_corr, roll_triple_corr, _zip_prod, _zip_sum
 
 
 def ts_arg_max(x: Expr, d: int = 5, reverse: bool = True) -> Expr:
@@ -176,3 +176,13 @@ def ts_weighted_delay(x: Expr, k: float = 0.5) -> Expr:
 
 def ts_zscore(x: Expr, d: int = 5) -> Expr:
     return (x - ts_mean(x, d)) / ts_std_dev(x, d)
+
+
+def ts_zip_prod(v: Expr, r: Expr) -> Expr:
+    """z字形累乘。可用于市值累乘日收益率的情况，如成份股权重按行情更新"""
+    return map_batches([v, r], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _zip_prod))
+
+
+def ts_zip_sum(x: Expr, y: Expr) -> Expr:
+    """z字形累加"""
+    return map_batches([x, y], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _zip_sum))
