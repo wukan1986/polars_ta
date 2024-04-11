@@ -66,6 +66,11 @@ def fill_nan(x: Expr) -> Expr:
     return x.fill_nan(None)
 
 
+def fill_zero(x: Expr) -> Expr:
+    """填充null为0"""
+    return x.fill_null(0)
+
+
 def right_tail(x: Expr, minimum: float = 0) -> Expr:
     """NaN everything less than minimum, minimum should be constant."""
     return when(x >= minimum).then(x).otherwise(None)

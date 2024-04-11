@@ -1,29 +1,35 @@
 from typing import List
 
 import numpy as np
+import polars_ols as pls
 from polars import Expr, Series, Struct, map_batches
+from polars_ols.least_squares import OLSKwargs
 
 from polars_ta import TA_EPSILON
 from polars_ta.wq.cross_sectional import cs_rank
 
 
-def cs_standardize_zscore(x: Expr, ddof: int = 0) -> Expr:
+# ======================
+# standardize
+def cs_zscore(x: Expr, ddof: int = 0) -> Expr:
     return (x - x.mean()) / x.std(ddof=ddof)
 
 
-def cs_standardize_minmax(x: Expr) -> Expr:
+def cs_minmax(x: Expr) -> Expr:
     a = x.min()
     b = x.max()
     return (x - a) / (b - a + TA_EPSILON)
 
 
-def cs_winsorize_quantile(x: Expr, low_limit: float = 0.025, up_limit: float = 0.995) -> Expr:
+# ======================
+# winsorize
+def cs_quantile(x: Expr, low_limit: float = 0.025, up_limit: float = 0.995) -> Expr:
     a = x.quantile(low_limit)
     b = x.quantile(up_limit)
     return x.clip(lower_bound=a, upper_bound=b)
 
 
-def cs_winsorize_3sigma(x: Expr, n: float = 3.) -> Expr:
+def cs_3sigma(x: Expr, n: float = 3.) -> Expr:
     # fill_nan will seriously reduce speed. So it's more appropriate for users to handle it themselves
     # fill_nan(None) 严重拖慢速度，所以还是由用户自己处理更合适
     a = x.mean()
@@ -31,14 +37,16 @@ def cs_winsorize_3sigma(x: Expr, n: float = 3.) -> Expr:
     return x.clip(lower_bound=a - b, upper_bound=a + b)
 
 
-def cs_winsorize_mad(x: Expr, n: float = 3., k: float = 1.4826) -> Expr:
+def cs_mad(x: Expr, n: float = 3., k: float = 1.4826) -> Expr:
     # https://en.wikipedia.org/wiki/Median_absolute_deviation
     a = x.median()
     b = (n * k) * (x - a).abs().median()
     return x.clip(lower_bound=a - b, upper_bound=a + b)
 
 
-def cs_neutralize_demean(x: Expr) -> Expr:
+# ======================
+# neutralize
+def cs_demean(x: Expr) -> Expr:
     """demean
 
     Notes
@@ -54,22 +62,12 @@ def cs_neutralize_demean(x: Expr) -> Expr:
     return x - x.mean()
 
 
-def cs_neutralize_residual_simple(y: Expr, x: Expr) -> Expr:
-    """simple regression
-    一元回归"""
-    # https://stackoverflow.com/a/74906705/1894479
-    # 一元回归时，这个版本更快，不需再补充常量1
-    # e_i = y_i - a - bx_i
-    #     = y_i - ȳ + bx̄ - bx_i
-    #     = y_i - ȳ - b(x_i - x̄)
-    x_demeaned = x - x.mean()
-    y_demeaned = y - y.mean()
-    x_demeaned_squared = x_demeaned.pow(2)
-    beta = x_demeaned.dot(y_demeaned) / x_demeaned_squared.sum()
-    return y_demeaned - beta * x_demeaned
+# ======================
+# neutralize
+_ols_kwargs = OLSKwargs(null_policy='drop', solve_method='svd')
 
 
-def residual_multiple(cols: List[Series], add_constant: bool) -> Series:
+def _residual_multiple(cols: List[Series], add_constant: bool) -> Series:
     # 将pl.Struct转成list,这样可以实现传正则，其它也转list
     cols = [list(c.struct) if isinstance(c.dtype, Struct) else [c] for c in cols]
     # 二维列表转一维列表，再转np.ndarray
@@ -95,58 +93,47 @@ def residual_multiple(cols: List[Series], add_constant: bool) -> Series:
     return Series(out, nan_to_null=True)
 
 
-def cs_neutralize_residual_multiple(y: Expr, *more_x: Expr) -> Expr:
+def cs_resid_(y: Expr, *more_x: Expr) -> Expr:
     """multivariate regression
     多元回归
-
-    Examples
-    --------
-    >>> cs_neutralize_residual_multiple(EP, LOG_MKT_CAP, *cs.expand_selector(df, cs.matches(r"^sw_l1_\d+$")), ONE)
-    >>> cs_neutralize_residual_multiple(EP, LOG_MKT_CAP, pl.struct(r"^sw_l1_\d+$"), ONE)
-
-    Notes
-    -----
-    add a constant column for the intercept
-    常量1，可以通过多输入1列来完成
-    正则列需要通过`pl.struct`传输，比之前整体转`pl.struct`能支持复杂公式
     """
-    return map_batches([y, *more_x], lambda xx: residual_multiple(xx, False))
+    return map_batches([y, *more_x], lambda xx: _residual_multiple(xx, False))
 
 
-def cs_neutralize_residual(y: Expr, *more_x: Expr) -> Expr:
-    """回归"""
-    return cs_neutralize_residual_multiple(y, *more_x)
+def cs_resid(y: Expr, *more_x: Expr) -> Expr:
+    """多元回归取残差"""
+    return pls.compute_least_squares(y, *more_x, mode='residuals', ols_kwargs=_ols_kwargs)
 
 
 def cs_mad_zscore(y: Expr) -> Expr:
     """常用功能简化封装。去极值、标准化"""
-    return cs_standardize_zscore(cs_winsorize_mad(y))
+    return cs_zscore(cs_mad(y))
 
 
 def cs_mad_zscore_resid(y: Expr, *more_x: Expr) -> Expr:
     """常用功能简化封装。去极值、标准化、中性化"""
-    return cs_neutralize_residual(cs_standardize_zscore(cs_winsorize_mad(y)), *more_x)
+    return cs_resid(cs_zscore(cs_mad(y)), *more_x)
 
 
 def cs_mad_rank(y: Expr) -> Expr:
     """常用功能简化封装。去极值，排名。
 
     适合于分层收益V型或倒V的情况"""
-    return cs_rank(cs_winsorize_mad(y))
+    return cs_rank(cs_mad(y))
 
 
 def cs_mad_rank2(y: Expr, m: float) -> Expr:
     """非线性处理。去极值，排名，移动峰或谷到零点，然后平方
 
     适合于分层收益V型或倒V的情况"""
-    return (cs_rank(cs_winsorize_mad(y)) - m) ** 2
+    return (cs_rank(cs_mad(y)) - m) ** 2
 
 
 def cs_mad_rank2_resid(y: Expr, m: float, *more_x: Expr) -> Expr:
     """非线性处理。去极值，排名，移动峰或谷到零点，然后平方。回归取残差
 
     适合于分层收益V型或倒V的情况"""
-    return cs_neutralize_residual((cs_rank(cs_winsorize_mad(y)) - m) ** 2, *more_x)
+    return cs_resid((cs_rank(cs_mad(y)) - m) ** 2, *more_x)
 
 
 def cs_rank2(y: Expr, m: float) -> Expr:
