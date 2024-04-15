@@ -1,5 +1,5 @@
 import numpy as np
-from polars import Expr, Series
+from polars import Expr, Series, mean_horizontal
 from polars import reduce, max_horizontal, sum_horizontal, min_horizontal, Int64
 
 
@@ -12,11 +12,9 @@ def abs_(x: Expr) -> Expr:
 
 def add(a: Expr, b: Expr, *args, filter_: bool = False) -> Expr:
     """Add all inputs (at least 2 inputs required). If filter = true, filter all input NaN to 0 before adding"""
-    _args = [a, b] + list(args)
-
     if filter_:
-        return sum_horizontal(*_args)
-
+        return sum_horizontal(a, b, *args)
+    _args = [a, b] + list(args)
     return reduce(function=lambda acc, x: acc + x, exprs=_args)
 
 
@@ -100,19 +98,16 @@ def log1p(x: Expr) -> Expr:
 
 def max_(a: Expr, b: Expr, *args) -> Expr:
     """Maximum value of all inputs. At least 2 inputs are required."""
-    _args = [a, b] + list(args)
-    return max_horizontal(*_args)
+    return max_horizontal(a, b, *args)
 
 
 def mean(a: Expr, b: Expr, *args) -> Expr:
-    _args = [a, b] + list(args)
-    return sum_horizontal(*_args) / len(_args)
+    return mean_horizontal(a, b, *args)
 
 
 def min_(a: Expr, b: Expr, *args) -> Expr:
     """Maximum value of all inputs. At least 2 inputs are required."""
-    _args = [a, b] + list(args)
-    return min_horizontal(*_args)
+    return min_horizontal(a, b, *args)
 
 
 def mod(x: Expr, y: Expr) -> Expr:
@@ -207,3 +202,16 @@ def truncate(x: Expr) -> Expr:
     """truncate towards zero
     向零取整"""
     return x.cast(Int64)
+
+
+def var(a: Expr, b: Expr, *args) -> Expr:
+    """水平方差"""
+    _args = [a, b] + list(args)
+    _mean = mean_horizontal(*_args)
+    _sum = sum_horizontal([(expr - _mean) ** 2 for expr in _args])
+    return _sum
+
+
+def std(a: Expr, b: Expr, *args) -> Expr:
+    """水平标准差"""
+    return var(a, b, *args).sqrt()
