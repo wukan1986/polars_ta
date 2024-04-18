@@ -1,9 +1,13 @@
+import polars_ols as pls
 from polars import Expr, when
-
+from polars_ols import OLSKwargs
 
 # In the original version, the function names are not prefixed with `cs_`,
 # here we add it to prevent confusion
 # 原版函数名都没有加`cs_`, 这里统一加一防止混淆
+
+
+_ols_kwargs = OLSKwargs(null_policy='drop', solve_method='svd')
 
 
 def cs_one_side(x: Expr, is_long: bool = True) -> Expr:
@@ -43,3 +47,13 @@ def cs_fill_zero(x: Expr) -> Expr:
 
     在权重矩阵中使用时。一定要保证所有股票都在，停牌不能被过滤了"""
     return when(x.is_not_null().sum() == 0).then(x).otherwise(x.fill_null(0))
+
+
+def cs_regression_neut(y: Expr, x: Expr) -> Expr:
+    """一元回归残差"""
+    return pls.compute_least_squares(y, x, add_intercept=True, mode='residuals', ols_kwargs=_ols_kwargs)
+
+
+def cs_regression_proj(y: Expr, x: Expr) -> Expr:
+    """一元回归预测"""
+    return pls.compute_least_squares(y, x, add_intercept=True, mode='predictions', ols_kwargs=_ols_kwargs)

@@ -1,6 +1,8 @@
+import polars_ols as pls
 from polars import Expr, Int32, UInt16, map_batches
 from polars import arange, repeat
 from polars import rolling_corr, rolling_cov
+from polars_ols import RollingKwargs
 
 from polars_ta import TA_EPSILON
 from polars_ta.utils.numba_ import batches_i1_o1, batches_i2_o1
@@ -186,3 +188,19 @@ def ts_zip_prod(v: Expr, r: Expr) -> Expr:
 def ts_zip_sum(x: Expr, y: Expr) -> Expr:
     """z字形累加"""
     return map_batches([x, y], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _zip_sum))
+
+
+def ts_regression_resid(y: Expr, x: Expr, d: int) -> Expr:
+    return pls.compute_rolling_least_squares(y, x, mode='residuals', add_intercept=True, rolling_kwargs=RollingKwargs(window_size=d))
+
+
+def ts_regression_pred(y: Expr, x: Expr, d: int) -> Expr:
+    return pls.compute_rolling_least_squares(y, x, mode='predictions', add_intercept=True, rolling_kwargs=RollingKwargs(window_size=d))
+
+
+def ts_regression_intercept(y: Expr, x: Expr, d: int) -> Expr:
+    return pls.compute_rolling_least_squares(y, x, mode='coefficients', add_intercept=True, rolling_kwargs=RollingKwargs(window_size=d)).struct[1]
+
+
+def ts_regression_slope(y: Expr, x: Expr, d: int) -> Expr:
+    return pls.compute_rolling_least_squares(y, x, mode='coefficients', add_intercept=True, rolling_kwargs=RollingKwargs(window_size=d)).struct[0]

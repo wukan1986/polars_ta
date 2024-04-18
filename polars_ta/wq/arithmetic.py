@@ -69,9 +69,9 @@ def floor(x: Expr) -> Expr:
 
 def fraction(x: Expr) -> Expr:
     """This operator removes the whole number part and returns the remaining fraction part with sign."""
-    # return sign(x) * (abs(x) - floor(abs(x)))
-    # return x.sign() * (x.abs() % 1)
-    return x % 1
+    # 按小学时的定义，负数-1.2的整数部分是-2,小数部分是0.8，而这有所不同
+    # return x % 1
+    return x.sign() * (x.abs() % 1)
 
 
 def inverse(x: Expr) -> Expr:
@@ -150,6 +150,15 @@ def s_log_1p(x: Expr) -> Expr:
     return x.abs().log1p() * x.sign()
 
 
+def sigmoid(a: Expr) -> Expr:
+    # a<0
+    # b = a.exp()
+    # return b / (1 + b)
+
+    # a>0
+    return 1 / (1 + (-a).exp())
+
+
 def sign(x: Expr) -> Expr:
     if isinstance(x, (Expr, Series)):
         return x.sign()
@@ -174,6 +183,10 @@ def sin(x: Expr) -> Expr:
 
 def sinh(x: Expr) -> Expr:
     return x.sinh()
+
+
+def softsign(a: Expr) -> Expr:
+    return a / (1 + a.abs())
 
 
 def sqrt(x: Expr) -> Expr:
@@ -205,13 +218,13 @@ def truncate(x: Expr) -> Expr:
 
 
 def var(a: Expr, b: Expr, *args) -> Expr:
-    """水平方差"""
+    """多列水平方差"""
     _args = [a, b] + list(args)
-    _mean = mean_horizontal(*_args)
+    _mean = mean_horizontal(_args)
     _sum = sum_horizontal([(expr - _mean) ** 2 for expr in _args])
     return _sum
 
 
 def std(a: Expr, b: Expr, *args) -> Expr:
-    """水平标准差"""
+    """多列水平标准差"""
     return var(a, b, *args).sqrt()

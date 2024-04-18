@@ -1,5 +1,5 @@
 polars>=0.20.19
-polars-ols>=0.2.9
+polars-ols>=0.3.0
 numpy
 numba
 pandas
