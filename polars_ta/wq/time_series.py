@@ -214,3 +214,13 @@ def ts_resid(y: Expr, *more_x: Expr, d: int) -> Expr:
 def ts_pred(y: Expr, *more_x: Expr, d: int) -> Expr:
     """多元时序滚动回归预测"""
     return pls.compute_rolling_least_squares(y, *more_x, mode='predictions', rolling_kwargs=RollingKwargs(window_size=d))
+
+
+def ts_weighted_mean(x: Expr, w: Expr, d: int) -> Expr:
+    """时序加权平均"""
+    return (x * w).rolling_sum(d) / w.rolling_sum(d)
+
+
+def ts_weighted_sum(x: Expr, w: Expr, d: int) -> Expr:
+    """时序加权求和"""
+    return (x * w).rolling_sum(d)
