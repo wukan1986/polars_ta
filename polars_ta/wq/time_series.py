@@ -191,29 +191,29 @@ def ts_zip_sum(x: Expr, y: Expr) -> Expr:
 
 
 def ts_regression_resid(y: Expr, x: Expr, d: int) -> Expr:
-    return pls.compute_rolling_least_squares(y, x, mode='residuals', add_intercept=True, rolling_kwargs=RollingKwargs(window_size=d))
+    return pls.compute_rolling_least_squares(y, x, mode='residuals', add_intercept=True, rolling_kwargs=RollingKwargs(window_size=d, min_periods=d))
 
 
 def ts_regression_pred(y: Expr, x: Expr, d: int) -> Expr:
-    return pls.compute_rolling_least_squares(y, x, mode='predictions', add_intercept=True, rolling_kwargs=RollingKwargs(window_size=d))
+    return pls.compute_rolling_least_squares(y, x, mode='predictions', add_intercept=True, rolling_kwargs=RollingKwargs(window_size=d, min_periods=d))
 
 
 def ts_regression_intercept(y: Expr, x: Expr, d: int) -> Expr:
-    return pls.compute_rolling_least_squares(y, x, mode='coefficients', add_intercept=True, rolling_kwargs=RollingKwargs(window_size=d)).struct[1]
+    return pls.compute_rolling_least_squares(y, x, mode='coefficients', add_intercept=True, rolling_kwargs=RollingKwargs(window_size=d, min_periods=d)).struct[1]
 
 
 def ts_regression_slope(y: Expr, x: Expr, d: int) -> Expr:
-    return pls.compute_rolling_least_squares(y, x, mode='coefficients', add_intercept=True, rolling_kwargs=RollingKwargs(window_size=d)).struct[0]
+    return pls.compute_rolling_least_squares(y, x, mode='coefficients', add_intercept=True, rolling_kwargs=RollingKwargs(window_size=d, min_periods=d)).struct[0]
 
 
 def ts_resid(y: Expr, *more_x: Expr, d: int) -> Expr:
     """多元时序滚动回归取残差"""
-    return pls.compute_rolling_least_squares(y, *more_x, mode='residuals', rolling_kwargs=RollingKwargs(window_size=d))
+    return pls.compute_rolling_least_squares(y, *more_x, mode='residuals', rolling_kwargs=RollingKwargs(window_size=d, min_periods=d))
 
 
 def ts_pred(y: Expr, *more_x: Expr, d: int) -> Expr:
     """多元时序滚动回归预测"""
-    return pls.compute_rolling_least_squares(y, *more_x, mode='predictions', rolling_kwargs=RollingKwargs(window_size=d))
+    return pls.compute_rolling_least_squares(y, *more_x, mode='predictions', rolling_kwargs=RollingKwargs(window_size=d, min_periods=d))
 
 
 def ts_weighted_mean(x: Expr, w: Expr, d: int) -> Expr:
