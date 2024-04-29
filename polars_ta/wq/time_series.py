@@ -5,7 +5,7 @@ from polars import rolling_corr, rolling_cov
 from polars_ols import RollingKwargs
 
 from polars_ta import TA_EPSILON
-from polars_ta.utils.numba_ import batches_i1_o1, batches_i2_o1
+from polars_ta.utils.numba_ import batches_i1_o1, batches_i2_o1, roll_split_i2_o1
 from polars_ta.utils.pandas_ import roll_kurt, roll_rank
 from polars_ta.wq._nb import roll_argmax, roll_argmin, roll_prod, roll_co_kurtosis, roll_co_skewness, roll_moment, roll_partial_corr, roll_triple_corr, _zip_prod, _zip_sum
 
@@ -224,3 +224,11 @@ def ts_weighted_mean(x: Expr, w: Expr, d: int) -> Expr:
 def ts_weighted_sum(x: Expr, w: Expr, d: int) -> Expr:
     """时序加权求和"""
     return (x * w).rolling_sum(d)
+
+
+def ts_split_sum(a: Expr, b: Expr, d: int, n: int) -> Expr:
+    """切割论求和，以b为依据，对a进行切割
+
+    在d窗口范围内以b为依据进行从小到大排序。最大的N个和-最小的N个和
+    """
+    return roll_split_i2_o1(a, b, d, n)

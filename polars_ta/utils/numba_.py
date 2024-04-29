@@ -64,3 +64,52 @@ def roll_sum(x: Expr, n: int) -> Expr:
 
 def roll_cov(a: Expr, b: Expr, n: int) -> Expr:
     return map_batches([a, b], lambda xx: batches_i2_o1([x1.to_numpy() for x1 in xx], nb_roll_cov, n))
+
+
+@jit(nopython=True, nogil=True, cache=True)
+def nb_split_o1(x1, x2, window=10, n=2):
+    out = np.full((x1.shape[0], 2), np.nan, dtype=float)
+    if len(x1) < window:
+        return out[:, 1] - out[:, 0]
+    a1 = sliding_window_view(x1, window)
+    a2 = sliding_window_view(x2, window)
+    for i, (v1, v2) in enumerate(zip(a1, a2)):
+        # 排序两次，解决nan的问题
+        b1 = np.argsort(v2)[:n]
+        b2 = np.argsort(-v2)[:n]
+        out[i + window - 1, 0] = np.sum(v1[b1])
+        out[i + window - 1, 1] = np.sum(v1[b2])
+    return out[:, 1] - out[:, 0]
+
+
+@jit(nopython=True, nogil=True, cache=True)
+def nb_split_o2(x1, x2, window=10, n=2):
+    out = np.full((x1.shape[0], 2), np.nan, dtype=float)
+    if len(x1) < window:
+        return out
+    a1 = sliding_window_view(x1, window)
+    a2 = sliding_window_view(x2, window)
+    for i, (v1, v2) in enumerate(zip(a1, a2)):
+        # 排序两次，解决nan的问题
+        b1 = np.argsort(v2)[:n]
+        b2 = np.argsort(-v2)[:n]
+        out[i + window - 1, 0] = np.sum(v1[b1])
+        out[i + window - 1, 1] = np.sum(v1[b2])
+    return out
+
+
+def roll_split_i2_o1(a: Expr, b: Expr, d: int, n: int) -> Expr:
+    """切割论的示例。只输出一个结果"""
+    return map_batches(
+        [a, b],
+        lambda xx: batches_i2_o1([x1.to_numpy() for x1 in xx], nb_split_o1, d, n)
+    )
+
+
+def roll_split_i2_o2(a: Expr, b: Expr, d: int, n: int) -> Expr:
+    """切割论的示例。两输出，由用户自己进行后期处理"""
+    # !!!输出为struct时的特殊写法，使用其它写法都会导致之后想struct.field失败
+    return map_batches(
+        [a, b],
+        lambda xx: batches_i2_o1([x1.to_numpy() for x1 in xx], nb_split_o2, d, n).list.to_struct()
+    ).struct.rename_fields(['split_a', 'split_b'])

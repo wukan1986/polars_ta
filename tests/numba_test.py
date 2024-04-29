@@ -3,9 +3,9 @@ import time
 import numpy as np
 import polars as pl
 from numba import jit
-from polars_ta.wq.time_series import ts_co_kurtosis
 
-from polars_ta.utils.numba_ import nb_roll_sum, batches_i1_o1, roll_sum, roll_cov
+from polars_ta.utils.numba_ import nb_roll_sum, batches_i1_o1, roll_sum, roll_cov, roll_split_i2_o1, roll_split_i2_o2
+from polars_ta.wq.time_series import ts_co_kurtosis
 
 
 @jit(nopython=True, nogil=True, fastmath=True, cache=True)
@@ -23,6 +23,8 @@ a = df.with_columns([
     pl.rolling_cov(pl.col('A'), pl.col('B'), window_size=10).alias('a6'),
     roll_cov(pl.col('A'), pl.col('B'), 10).alias('a7'),
     ts_co_kurtosis(pl.col('A'), pl.col('B'), 10).alias('a8'),
+    roll_split_i2_o1(pl.col('A'), pl.col('B'), 10, 2).alias('a9'),
+    roll_split_i2_o2(pl.col('A'), pl.col('B'), 10, 2).struct.field('split_b').alias('a10'),
 ])
 print(a)
 
