@@ -36,6 +36,7 @@ packages = [
     "polars_ta.candles",
     "polars_ta.performance",
     "polars_ta.prefix",
+    "polars_ta.reports",
     "polars_ta.ta",
     "polars_ta.talib",
     "polars_ta.tdx",
