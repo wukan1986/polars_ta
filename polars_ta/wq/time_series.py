@@ -78,6 +78,11 @@ def ts_kurtosis(x: Expr, d: int = 5) -> Expr:
     return x.map_batches(lambda a: roll_kurt(a, d))
 
 
+def ts_l2_norm(x: Expr, d: int = 5) -> Expr:
+    """Euclidean norm"""
+    return x.pow(2).rolling_sum(d).sqrt()
+
+
 def ts_log_diff(x: Expr, d: int = 1) -> Expr:
     """Returns log(current value of input or x[t] ) - log(previous value of input or x[t-1])."""
     return x.log().diff(d)

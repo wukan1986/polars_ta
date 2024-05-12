@@ -29,6 +29,11 @@ def vec_kurtosis(x: Expr) -> Expr:
     return x.kurtosis()
 
 
+def vec_l2_norm(x: Expr) -> Expr:
+    """Euclidean norm"""
+    return x.pow(2).sum().sqrt()
+
+
 def vec_max(x: Expr) -> Expr:
     """Maximum value form vector field x"""
     return x.max()
