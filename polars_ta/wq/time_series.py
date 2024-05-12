@@ -95,10 +95,6 @@ def ts_mean(x: Expr, d: int = 5) -> Expr:
     return x.rolling_mean(d)
 
 
-def ts_gmean(x: Expr, d: int = 5) -> Expr:
-    return x.pow(2).rolling_sum(d).sqrt()
-
-
 def ts_median(x: Expr, d: int = 5) -> Expr:
     return x.rolling_median(d)
 
