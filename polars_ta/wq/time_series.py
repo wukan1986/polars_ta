@@ -70,7 +70,7 @@ def ts_delta(x: Expr, d: int = 1) -> Expr:
 
 
 def ts_ir(x: Expr, d: int = 1) -> Expr:
-    return ts_mean(x, d) / ts_std_dev(x, d)
+    return ts_mean(x, d) / ts_std_dev(x, d, 0)
 
 
 def ts_kurtosis(x: Expr, d: int = 5) -> Expr:
@@ -93,6 +93,10 @@ def ts_max_diff(x: Expr, d: int = 30) -> Expr:
 
 def ts_mean(x: Expr, d: int = 5) -> Expr:
     return x.rolling_mean(d)
+
+
+def ts_gmean(x: Expr, d: int = 5) -> Expr:
+    return x.pow(2).rolling_sum(d).sqrt()
 
 
 def ts_median(x: Expr, d: int = 5) -> Expr:

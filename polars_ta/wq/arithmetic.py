@@ -185,8 +185,8 @@ def sinh(x: Expr) -> Expr:
     return x.sinh()
 
 
-def softsign(a: Expr) -> Expr:
-    return a / (1 + a.abs())
+def softsign(x: Expr) -> Expr:
+    return x / (1 + x.abs())
 
 
 def sqrt(x: Expr) -> Expr:
