@@ -6,8 +6,7 @@ from polars import when
 
 def and_(a: Expr, b: Expr, *args) -> Expr:
     """Logical AND operator, returns true if both operands are true and returns false otherwise"""
-    _args = [a, b] + list(args)
-    return all_horizontal(*args)
+    return all_horizontal(a, b, *args)
 
 
 def equal(input1: Expr, input2: Expr) -> Expr:
@@ -52,5 +51,4 @@ def negate(input1: Expr) -> Expr:
 
 def or_(a: Expr, b: Expr, *args) -> Expr:
     """Logical OR operator returns true if either or both inputs are true and returns false otherwise"""
-    _args = [a, b] + list(args)
-    return any_horizontal(*args)
+    return any_horizontal(a, b, *args)
