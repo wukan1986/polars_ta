@@ -7,7 +7,7 @@ from polars_ols import RollingKwargs
 from polars_ta import TA_EPSILON
 from polars_ta.utils.numba_ import batches_i1_o1, batches_i2_o1, roll_split_i2_o1
 from polars_ta.utils.pandas_ import roll_kurt, roll_rank
-from polars_ta.wq._nb import roll_argmax, roll_argmin, roll_prod, roll_co_kurtosis, roll_co_skewness, roll_moment, roll_partial_corr, roll_triple_corr, _zip_prod, _zip_sum
+from polars_ta.wq._nb import roll_argmax, roll_argmin, roll_prod, roll_co_kurtosis, roll_co_skewness, roll_moment, roll_partial_corr, roll_triple_corr, _zip_prod, _zip_sum, signals_to_amount
 
 
 def ts_arg_max(x: Expr, d: int = 5, reverse: bool = True) -> Expr:
@@ -237,3 +237,11 @@ def ts_split_sum(a: Expr, b: Expr, d: int, n: int) -> Expr:
     在d窗口范围内以b为依据进行从小到大排序。最大的N个和-最小的N个和
     """
     return roll_split_i2_o1(a, b, d, n)
+
+
+def ts_signals_to_amount(long_entry: Expr, long_exit: Expr,
+                         short_entry: Expr, short_exit: Expr,
+                         accumulate: bool = False, action: bool = False) -> Expr:
+    """多空信号转持仓"""
+    return map_batches([long_entry, long_exit, short_entry, short_exit],
+                       lambda xx: batches_i2_o1([x1.to_numpy().astype(bool) for x1 in xx], signals_to_amount, accumulate, action))
