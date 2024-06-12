@@ -48,6 +48,26 @@ def ts_covariance(x: Expr, y: Expr, d: int = 5, ddof: int = 1) -> Expr:
     return rolling_cov(x, y, window_size=d, ddof=ddof)
 
 
+def ts_cum_max(x: Expr) -> Expr:
+    """时序累计最大"""
+    return x.cum_max()
+
+
+def ts_cum_min(x: Expr) -> Expr:
+    """时序累计最小"""
+    return x.cum_min()
+
+
+def ts_cum_prod(x: Expr) -> Expr:
+    """时序累乘"""
+    return x.cum_prod()
+
+
+def ts_cum_sum(x: Expr) -> Expr:
+    """时序累加"""
+    return x.cum_sum()
+
+
 def ts_decay_exp_window(x: Expr, d: int = 30, factor: float = 1.0) -> Expr:
     # TODO weights not yet supported on array with null values
     y = arange(d - 1, -1, step=-1, eager=False)
