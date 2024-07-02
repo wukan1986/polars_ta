@@ -34,7 +34,7 @@ def MAXINDEX(close: Expr, timeperiod: int = 30) -> Expr:
     """
     a = close.cum_count()
     b = ts_arg_max(close, timeperiod)
-    return a - b
+    return a - b - 1
 
 
 def MIN(close: Expr, timeperiod: int = 30) -> Expr:
@@ -44,7 +44,7 @@ def MIN(close: Expr, timeperiod: int = 30) -> Expr:
 def MININDEX(close: Expr, timeperiod: int = 30) -> Expr:
     a = close.cum_count()
     b = ts_arg_min(close, timeperiod)
-    return a - b
+    return a - b - 1
 
 
 def MULT(high: Expr, low: Expr) -> Expr:

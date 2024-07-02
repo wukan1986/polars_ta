@@ -33,7 +33,7 @@ With a bitmap array, counting `null` values is faster than traversing the origin
 
 ## Reference
 
-1. https://pola-rs.github.io/polars/user-guide/expressions/null/#notanumber-or-nan-values
+1. https://docs.pola.rs/user-guide/expressions/missing-data/#null-and-nan-values
 2. https://pandas.pydata.org/docs/user_guide/missing_data.html
 
 
@@ -72,5 +72,5 @@ np.nan == np.nan  # False
 
 # 参考
 
-1. https://pola-rs.github.io/polars/user-guide/expressions/null/#notanumber-or-nan-values
+1. https://docs.pola.rs/user-guide/expressions/missing-data/#null-and-nan-values
 2. https://pandas.pydata.org/docs/user_guide/missing_data.html

@@ -90,7 +90,7 @@ class TestDemoClass:
         from polars_ta.ta.momentum import AROON_aroonup
 
         _, result1 = talib.AROON(self.high_np, self.low_np, timeperiod=timeperiod)
-        result2 = self.df_pl.select(AROON_aroonup(pl.col("high"), pl.col("low"), timeperiod=timeperiod))
+        result2 = self.df_pl.select(AROON_aroonup(pl.col("high"), pl.col("low"), timeperiod=timeperiod).alias('high'))
         result3 = result2['high'].to_numpy() * 100
         print()
         print(result1)
