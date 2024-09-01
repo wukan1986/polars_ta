@@ -6,632 +6,2262 @@ from polars_ta.utils.numba_ import batches_i1_o1, batches_i1_o2, batches_i2_o1, 
 
 
 def HT_DCPERIOD(close: Expr) -> Expr:  # ['real']
+    """ HT_DCPERIOD(real)
+
+    Hilbert Transform - Dominant Cycle Period (Cycle Indicators)
+
+    Inputs:
+        real: (any ndarray)
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.HT_DCPERIOD))
 
 
 def HT_DCPHASE(close: Expr) -> Expr:  # ['real']
+    """ HT_DCPHASE(real)
+
+    Hilbert Transform - Dominant Cycle Phase (Cycle Indicators)
+
+    Inputs:
+        real: (any ndarray)
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.HT_DCPHASE))
 
 
 def HT_PHASOR(close: Expr, ret_idx: int = 1) -> Expr:  # ['inphase', 'quadrature']
+    """ HT_PHASOR(real)
+
+    Hilbert Transform - Phasor Components (Cycle Indicators)
+
+    Inputs:
+        real: (any ndarray)
+    Outputs:
+        inphase
+        quadrature
+    """
     return close.map_batches(lambda x1: batches_i1_o2(x1.to_numpy().astype(float), _ta.HT_PHASOR, ret_idx=ret_idx))
 
 
 def HT_SINE(close: Expr, ret_idx: int = 1) -> Expr:  # ['sine', 'leadsine']
+    """ HT_SINE(real)
+
+    Hilbert Transform - SineWave (Cycle Indicators)
+
+    Inputs:
+        real: (any ndarray)
+    Outputs:
+        sine
+        leadsine
+    """
     return close.map_batches(lambda x1: batches_i1_o2(x1.to_numpy().astype(float), _ta.HT_SINE, ret_idx=ret_idx))
 
 
 def HT_TRENDMODE(close: Expr) -> Expr:  # ['integer']
+    """ HT_TRENDMODE(real)
+
+    Hilbert Transform - Trend vs Cycle Mode (Cycle Indicators)
+
+    Inputs:
+        real: (any ndarray)
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.HT_TRENDMODE))
 
 
 def ADD(high: Expr, low: Expr) -> Expr:  # ['real']
+    """ ADD(real0, real1)
+
+    Vector Arithmetic Add (Math Operators)
+
+    Inputs:
+        real0: (any ndarray)
+        real1: (any ndarray)
+    Outputs:
+        real
+    """
     return map_batches([high, low], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.ADD))
 
 
 def DIV(high: Expr, low: Expr) -> Expr:  # ['real']
+    """ DIV(real0, real1)
+
+    Vector Arithmetic Div (Math Operators)
+
+    Inputs:
+        real0: (any ndarray)
+        real1: (any ndarray)
+    Outputs:
+        real
+    """
     return map_batches([high, low], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.DIV))
 
 
 def MAX(close: Expr, timeperiod: int = 30) -> Expr:  # ['real']
+    """ MAX(real[, timeperiod=?])
+
+    Highest value over a specified period (Math Operators)
+
+    Inputs:
+        real: (any ndarray)
+    Parameters:
+        timeperiod: 30
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.MAX, timeperiod))
 
 
 def MAXINDEX(close: Expr, timeperiod: int = 30) -> Expr:  # ['integer']
+    """ MAXINDEX(real[, timeperiod=?])
+
+    Index of highest value over a specified period (Math Operators)
+
+    Inputs:
+        real: (any ndarray)
+    Parameters:
+        timeperiod: 30
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.MAXINDEX, timeperiod))
 
 
 def MIN(close: Expr, timeperiod: int = 30) -> Expr:  # ['real']
+    """ MIN(real[, timeperiod=?])
+
+    Lowest value over a specified period (Math Operators)
+
+    Inputs:
+        real: (any ndarray)
+    Parameters:
+        timeperiod: 30
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.MIN, timeperiod))
 
 
 def MININDEX(close: Expr, timeperiod: int = 30) -> Expr:  # ['integer']
+    """ MININDEX(real[, timeperiod=?])
+
+    Index of lowest value over a specified period (Math Operators)
+
+    Inputs:
+        real: (any ndarray)
+    Parameters:
+        timeperiod: 30
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.MININDEX, timeperiod))
 
 
 def MINMAX(close: Expr, timeperiod: int = 30, ret_idx: int = 1) -> Expr:  # ['min', 'max']
+    """ MINMAX(real[, timeperiod=?])
+
+    Lowest and highest values over a specified period (Math Operators)
+
+    Inputs:
+        real: (any ndarray)
+    Parameters:
+        timeperiod: 30
+    Outputs:
+        min
+        max
+    """
     return close.map_batches(lambda x1: batches_i1_o2(x1.to_numpy().astype(float), _ta.MINMAX, timeperiod, ret_idx=ret_idx))
 
 
 def MINMAXINDEX(close: Expr, timeperiod: int = 30, ret_idx: int = 1) -> Expr:  # ['minidx', 'maxidx']
+    """ MINMAXINDEX(real[, timeperiod=?])
+
+    Indexes of lowest and highest values over a specified period (Math Operators)
+
+    Inputs:
+        real: (any ndarray)
+    Parameters:
+        timeperiod: 30
+    Outputs:
+        minidx
+        maxidx
+    """
     return close.map_batches(lambda x1: batches_i1_o2(x1.to_numpy().astype(float), _ta.MINMAXINDEX, timeperiod, ret_idx=ret_idx))
 
 
 def MULT(high: Expr, low: Expr) -> Expr:  # ['real']
+    """ MULT(real0, real1)
+
+    Vector Arithmetic Mult (Math Operators)
+
+    Inputs:
+        real0: (any ndarray)
+        real1: (any ndarray)
+    Outputs:
+        real
+    """
     return map_batches([high, low], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.MULT))
 
 
 def SUB(high: Expr, low: Expr) -> Expr:  # ['real']
+    """ SUB(real0, real1)
+
+    Vector Arithmetic Subtraction (Math Operators)
+
+    Inputs:
+        real0: (any ndarray)
+        real1: (any ndarray)
+    Outputs:
+        real
+    """
     return map_batches([high, low], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.SUB))
 
 
 def SUM(close: Expr, timeperiod: int = 30) -> Expr:  # ['real']
+    """ SUM(real[, timeperiod=?])
+
+    Summation (Math Operators)
+
+    Inputs:
+        real: (any ndarray)
+    Parameters:
+        timeperiod: 30
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.SUM, timeperiod))
 
 
 def ACOS(close: Expr) -> Expr:  # ['real']
+    """ ACOS(real)
+
+    Vector Trigonometric ACos (Math Transform)
+
+    Inputs:
+        real: (any ndarray)
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.ACOS))
 
 
 def ASIN(close: Expr) -> Expr:  # ['real']
+    """ ASIN(real)
+
+    Vector Trigonometric ASin (Math Transform)
+
+    Inputs:
+        real: (any ndarray)
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.ASIN))
 
 
 def ATAN(close: Expr) -> Expr:  # ['real']
+    """ ATAN(real)
+
+    Vector Trigonometric ATan (Math Transform)
+
+    Inputs:
+        real: (any ndarray)
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.ATAN))
 
 
 def CEIL(close: Expr) -> Expr:  # ['real']
+    """ CEIL(real)
+
+    Vector Ceil (Math Transform)
+
+    Inputs:
+        real: (any ndarray)
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.CEIL))
 
 
 def COS(close: Expr) -> Expr:  # ['real']
+    """ COS(real)
+
+    Vector Trigonometric Cos (Math Transform)
+
+    Inputs:
+        real: (any ndarray)
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.COS))
 
 
 def COSH(close: Expr) -> Expr:  # ['real']
+    """ COSH(real)
+
+    Vector Trigonometric Cosh (Math Transform)
+
+    Inputs:
+        real: (any ndarray)
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.COSH))
 
 
 def EXP(close: Expr) -> Expr:  # ['real']
+    """ EXP(real)
+
+    Vector Arithmetic Exp (Math Transform)
+
+    Inputs:
+        real: (any ndarray)
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.EXP))
 
 
 def FLOOR(close: Expr) -> Expr:  # ['real']
+    """ FLOOR(real)
+
+    Vector Floor (Math Transform)
+
+    Inputs:
+        real: (any ndarray)
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.FLOOR))
 
 
 def LN(close: Expr) -> Expr:  # ['real']
+    """ LN(real)
+
+    Vector Log Natural (Math Transform)
+
+    Inputs:
+        real: (any ndarray)
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.LN))
 
 
 def LOG10(close: Expr) -> Expr:  # ['real']
+    """ LOG10(real)
+
+    Vector Log10 (Math Transform)
+
+    Inputs:
+        real: (any ndarray)
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.LOG10))
 
 
 def SIN(close: Expr) -> Expr:  # ['real']
+    """ SIN(real)
+
+    Vector Trigonometric Sin (Math Transform)
+
+    Inputs:
+        real: (any ndarray)
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.SIN))
 
 
 def SINH(close: Expr) -> Expr:  # ['real']
+    """ SINH(real)
+
+    Vector Trigonometric Sinh (Math Transform)
+
+    Inputs:
+        real: (any ndarray)
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.SINH))
 
 
 def SQRT(close: Expr) -> Expr:  # ['real']
+    """ SQRT(real)
+
+    Vector Square Root (Math Transform)
+
+    Inputs:
+        real: (any ndarray)
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.SQRT))
 
 
 def TAN(close: Expr) -> Expr:  # ['real']
+    """ TAN(real)
+
+    Vector Trigonometric Tan (Math Transform)
+
+    Inputs:
+        real: (any ndarray)
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.TAN))
 
 
 def TANH(close: Expr) -> Expr:  # ['real']
+    """ TANH(real)
+
+    Vector Trigonometric Tanh (Math Transform)
+
+    Inputs:
+        real: (any ndarray)
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.TANH))
 
 
 def ADX(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
+    """ ADX(high, low, close[, timeperiod=?])
+
+    Average Directional Movement Index (Momentum Indicators)
+
+    Inputs:
+        prices: ['high', 'low', 'close']
+    Parameters:
+        timeperiod: 14
+    Outputs:
+        real
+    """
     return map_batches([high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.ADX, timeperiod))
 
 
 def ADXR(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
+    """ ADXR(high, low, close[, timeperiod=?])
+
+    Average Directional Movement Index Rating (Momentum Indicators)
+
+    Inputs:
+        prices: ['high', 'low', 'close']
+    Parameters:
+        timeperiod: 14
+    Outputs:
+        real
+    """
     return map_batches([high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.ADXR, timeperiod))
 
 
 def APO(close: Expr, fastperiod: int = 12, slowperiod: int = 26, matype: int = 0) -> Expr:  # ['real']
+    """ APO(real[, fastperiod=?, slowperiod=?, matype=?])
+
+    Absolute Price Oscillator (Momentum Indicators)
+
+    Inputs:
+        real: (any ndarray)
+    Parameters:
+        fastperiod: 12
+        slowperiod: 26
+        matype: 0 (Simple Moving Average)
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.APO, fastperiod, slowperiod, matype))
 
 
 def AROON(high: Expr, low: Expr, timeperiod: int = 14, ret_idx: int = 1) -> Expr:  # ['aroondown', 'aroonup']
+    """ AROON(high, low[, timeperiod=?])
+
+    Aroon (Momentum Indicators)
+
+    Inputs:
+        prices: ['high', 'low']
+    Parameters:
+        timeperiod: 14
+    Outputs:
+        aroondown
+        aroonup
+    """
     return map_batches([high, low], lambda xx: batches_i2_o2([x1.to_numpy().astype(float) for x1 in xx], _ta.AROON, timeperiod, ret_idx=ret_idx))
 
 
 def AROONOSC(high: Expr, low: Expr, timeperiod: int = 14) -> Expr:  # ['real']
+    """ AROONOSC(high, low[, timeperiod=?])
+
+    Aroon Oscillator (Momentum Indicators)
+
+    Inputs:
+        prices: ['high', 'low']
+    Parameters:
+        timeperiod: 14
+    Outputs:
+        real
+    """
     return map_batches([high, low], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.AROONOSC, timeperiod))
 
 
 def BOP(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['real']
+    """ BOP(open, high, low, close)
+
+    Balance Of Power (Momentum Indicators)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        real
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.BOP))
 
 
 def CCI(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
+    """ CCI(high, low, close[, timeperiod=?])
+
+    Commodity Channel Index (Momentum Indicators)
+
+    Inputs:
+        prices: ['high', 'low', 'close']
+    Parameters:
+        timeperiod: 14
+    Outputs:
+        real
+    """
     return map_batches([high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CCI, timeperiod))
 
 
 def CMO(close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
+    """ CMO(real[, timeperiod=?])
+
+    Chande Momentum Oscillator (Momentum Indicators)
+
+    Inputs:
+        real: (any ndarray)
+    Parameters:
+        timeperiod: 14
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.CMO, timeperiod))
 
 
 def DX(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
+    """ DX(high, low, close[, timeperiod=?])
+
+    Directional Movement Index (Momentum Indicators)
+
+    Inputs:
+        prices: ['high', 'low', 'close']
+    Parameters:
+        timeperiod: 14
+    Outputs:
+        real
+    """
     return map_batches([high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.DX, timeperiod))
 
 
 def MACD(close: Expr, fastperiod: int = 12, slowperiod: int = 26, signalperiod: int = 9, ret_idx: int = 2) -> Expr:  # ['macd', 'macdsignal', 'macdhist']
+    """ MACD(real[, fastperiod=?, slowperiod=?, signalperiod=?])
+
+    Moving Average Convergence/Divergence (Momentum Indicators)
+
+    Inputs:
+        real: (any ndarray)
+    Parameters:
+        fastperiod: 12
+        slowperiod: 26
+        signalperiod: 9
+    Outputs:
+        macd
+        macdsignal
+        macdhist
+    """
     return close.map_batches(lambda x1: batches_i1_o2(x1.to_numpy().astype(float), _ta.MACD, fastperiod, slowperiod, signalperiod, ret_idx=ret_idx))
 
 
 def MACDEXT(close: Expr, fastperiod: int = 12, fastmatype: int = 0, slowperiod: int = 26, slowmatype: int = 0, signalperiod: int = 9, signalmatype: int = 0, ret_idx: int = 2) -> Expr:  # ['macd', 'macdsignal', 'macdhist']
+    """ MACDEXT(real[, fastperiod=?, fastmatype=?, slowperiod=?, slowmatype=?, signalperiod=?, signalmatype=?])
+
+    MACD with controllable MA type (Momentum Indicators)
+
+    Inputs:
+        real: (any ndarray)
+    Parameters:
+        fastperiod: 12
+        fastmatype: 0
+        slowperiod: 26
+        slowmatype: 0
+        signalperiod: 9
+        signalmatype: 0
+    Outputs:
+        macd
+        macdsignal
+        macdhist
+    """
     return close.map_batches(lambda x1: batches_i1_o2(x1.to_numpy().astype(float), _ta.MACDEXT, fastperiod, fastmatype, slowperiod, slowmatype, signalperiod, signalmatype, ret_idx=ret_idx))
 
 
 def MACDFIX(close: Expr, signalperiod: int = 9, ret_idx: int = 2) -> Expr:  # ['macd', 'macdsignal', 'macdhist']
+    """ MACDFIX(real[, signalperiod=?])
+
+    Moving Average Convergence/Divergence Fix 12/26 (Momentum Indicators)
+
+    Inputs:
+        real: (any ndarray)
+    Parameters:
+        signalperiod: 9
+    Outputs:
+        macd
+        macdsignal
+        macdhist
+    """
     return close.map_batches(lambda x1: batches_i1_o2(x1.to_numpy().astype(float), _ta.MACDFIX, signalperiod, ret_idx=ret_idx))
 
 
 def MFI(high: Expr, low: Expr, close: Expr, volume: Expr, timeperiod: int = 14) -> Expr:  # ['real']
+    """ MFI(high, low, close, volume[, timeperiod=?])
+
+    Money Flow Index (Momentum Indicators)
+
+    Inputs:
+        prices: ['high', 'low', 'close', 'volume']
+    Parameters:
+        timeperiod: 14
+    Outputs:
+        real
+    """
     return map_batches([high, low, close, volume], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.MFI, timeperiod))
 
 
 def MINUS_DI(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
+    """ MINUS_DI(high, low, close[, timeperiod=?])
+
+    Minus Directional Indicator (Momentum Indicators)
+
+    Inputs:
+        prices: ['high', 'low', 'close']
+    Parameters:
+        timeperiod: 14
+    Outputs:
+        real
+    """
     return map_batches([high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.MINUS_DI, timeperiod))
 
 
 def MINUS_DM(high: Expr, low: Expr, timeperiod: int = 14) -> Expr:  # ['real']
+    """ MINUS_DM(high, low[, timeperiod=?])
+
+    Minus Directional Movement (Momentum Indicators)
+
+    Inputs:
+        prices: ['high', 'low']
+    Parameters:
+        timeperiod: 14
+    Outputs:
+        real
+    """
     return map_batches([high, low], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.MINUS_DM, timeperiod))
 
 
 def MOM(close: Expr, timeperiod: int = 10) -> Expr:  # ['real']
+    """ MOM(real[, timeperiod=?])
+
+    Momentum (Momentum Indicators)
+
+    Inputs:
+        real: (any ndarray)
+    Parameters:
+        timeperiod: 10
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.MOM, timeperiod))
 
 
 def PLUS_DI(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
+    """ PLUS_DI(high, low, close[, timeperiod=?])
+
+    Plus Directional Indicator (Momentum Indicators)
+
+    Inputs:
+        prices: ['high', 'low', 'close']
+    Parameters:
+        timeperiod: 14
+    Outputs:
+        real
+    """
     return map_batches([high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.PLUS_DI, timeperiod))
 
 
 def PLUS_DM(high: Expr, low: Expr, timeperiod: int = 14) -> Expr:  # ['real']
+    """ PLUS_DM(high, low[, timeperiod=?])
+
+    Plus Directional Movement (Momentum Indicators)
+
+    Inputs:
+        prices: ['high', 'low']
+    Parameters:
+        timeperiod: 14
+    Outputs:
+        real
+    """
     return map_batches([high, low], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.PLUS_DM, timeperiod))
 
 
 def PPO(close: Expr, fastperiod: int = 12, slowperiod: int = 26, matype: int = 0) -> Expr:  # ['real']
+    """ PPO(real[, fastperiod=?, slowperiod=?, matype=?])
+
+    Percentage Price Oscillator (Momentum Indicators)
+
+    Inputs:
+        real: (any ndarray)
+    Parameters:
+        fastperiod: 12
+        slowperiod: 26
+        matype: 0 (Simple Moving Average)
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.PPO, fastperiod, slowperiod, matype))
 
 
 def ROC(close: Expr, timeperiod: int = 10) -> Expr:  # ['real']
+    """ ROC(real[, timeperiod=?])
+
+    Rate of change : ((real/prevPrice)-1)*100 (Momentum Indicators)
+
+    Inputs:
+        real: (any ndarray)
+    Parameters:
+        timeperiod: 10
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.ROC, timeperiod))
 
 
 def ROCP(close: Expr, timeperiod: int = 10) -> Expr:  # ['real']
+    """ ROCP(real[, timeperiod=?])
+
+    Rate of change Percentage: (real-prevPrice)/prevPrice (Momentum Indicators)
+
+    Inputs:
+        real: (any ndarray)
+    Parameters:
+        timeperiod: 10
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.ROCP, timeperiod))
 
 
 def ROCR(close: Expr, timeperiod: int = 10) -> Expr:  # ['real']
+    """ ROCR(real[, timeperiod=?])
+
+    Rate of change ratio: (real/prevPrice) (Momentum Indicators)
+
+    Inputs:
+        real: (any ndarray)
+    Parameters:
+        timeperiod: 10
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.ROCR, timeperiod))
 
 
 def ROCR100(close: Expr, timeperiod: int = 10) -> Expr:  # ['real']
+    """ ROCR100(real[, timeperiod=?])
+
+    Rate of change ratio 100 scale: (real/prevPrice)*100 (Momentum Indicators)
+
+    Inputs:
+        real: (any ndarray)
+    Parameters:
+        timeperiod: 10
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.ROCR100, timeperiod))
 
 
 def RSI(close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
+    """ RSI(real[, timeperiod=?])
+
+    Relative Strength Index (Momentum Indicators)
+
+    Inputs:
+        real: (any ndarray)
+    Parameters:
+        timeperiod: 14
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.RSI, timeperiod))
 
 
 def STOCH(high: Expr, low: Expr, close: Expr, fastk_period: int = 5, slowk_period: int = 3, slowk_matype: int = 0, slowd_period: int = 3, slowd_matype: int = 0, ret_idx: int = 1) -> Expr:  # ['slowk', 'slowd']
+    """ STOCH(high, low, close[, fastk_period=?, slowk_period=?, slowk_matype=?, slowd_period=?, slowd_matype=?])
+
+    Stochastic (Momentum Indicators)
+
+    Inputs:
+        prices: ['high', 'low', 'close']
+    Parameters:
+        fastk_period: 5
+        slowk_period: 3
+        slowk_matype: 0
+        slowd_period: 3
+        slowd_matype: 0
+    Outputs:
+        slowk
+        slowd
+    """
     return map_batches([high, low, close], lambda xx: batches_i2_o2([x1.to_numpy().astype(float) for x1 in xx], _ta.STOCH, fastk_period, slowk_period, slowk_matype, slowd_period, slowd_matype, ret_idx=ret_idx))
 
 
 def STOCHF(high: Expr, low: Expr, close: Expr, fastk_period: int = 5, fastd_period: int = 3, fastd_matype: int = 0, ret_idx: int = 1) -> Expr:  # ['fastk', 'fastd']
+    """ STOCHF(high, low, close[, fastk_period=?, fastd_period=?, fastd_matype=?])
+
+    Stochastic Fast (Momentum Indicators)
+
+    Inputs:
+        prices: ['high', 'low', 'close']
+    Parameters:
+        fastk_period: 5
+        fastd_period: 3
+        fastd_matype: 0
+    Outputs:
+        fastk
+        fastd
+    """
     return map_batches([high, low, close], lambda xx: batches_i2_o2([x1.to_numpy().astype(float) for x1 in xx], _ta.STOCHF, fastk_period, fastd_period, fastd_matype, ret_idx=ret_idx))
 
 
 def STOCHRSI(close: Expr, timeperiod: int = 14, fastk_period: int = 5, fastd_period: int = 3, fastd_matype: int = 0, ret_idx: int = 1) -> Expr:  # ['fastk', 'fastd']
+    """ STOCHRSI(real[, timeperiod=?, fastk_period=?, fastd_period=?, fastd_matype=?])
+
+    Stochastic Relative Strength Index (Momentum Indicators)
+
+    Inputs:
+        real: (any ndarray)
+    Parameters:
+        timeperiod: 14
+        fastk_period: 5
+        fastd_period: 3
+        fastd_matype: 0
+    Outputs:
+        fastk
+        fastd
+    """
     return close.map_batches(lambda x1: batches_i1_o2(x1.to_numpy().astype(float), _ta.STOCHRSI, timeperiod, fastk_period, fastd_period, fastd_matype, ret_idx=ret_idx))
 
 
 def TRIX(close: Expr, timeperiod: int = 30) -> Expr:  # ['real']
+    """ TRIX(real[, timeperiod=?])
+
+    1-day Rate-Of-Change (ROC) of a Triple Smooth EMA (Momentum Indicators)
+
+    Inputs:
+        real: (any ndarray)
+    Parameters:
+        timeperiod: 30
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.TRIX, timeperiod))
 
 
 def ULTOSC(high: Expr, low: Expr, close: Expr, timeperiod1: int = 7, timeperiod2: int = 14, timeperiod3: int = 28) -> Expr:  # ['real']
+    """ ULTOSC(high, low, close[, timeperiod1=?, timeperiod2=?, timeperiod3=?])
+
+    Ultimate Oscillator (Momentum Indicators)
+
+    Inputs:
+        prices: ['high', 'low', 'close']
+    Parameters:
+        timeperiod1: 7
+        timeperiod2: 14
+        timeperiod3: 28
+    Outputs:
+        real
+    """
     return map_batches([high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.ULTOSC, timeperiod1, timeperiod2, timeperiod3))
 
 
 def WILLR(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
+    """ WILLR(high, low, close[, timeperiod=?])
+
+    Williams' %R (Momentum Indicators)
+
+    Inputs:
+        prices: ['high', 'low', 'close']
+    Parameters:
+        timeperiod: 14
+    Outputs:
+        real
+    """
     return map_batches([high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.WILLR, timeperiod))
 
 
 def BBANDS(close: Expr, timeperiod: int = 5, nbdevup: float = 2.0, nbdevdn: float = 2.0, matype: int = 0, ret_idx: int = 2) -> Expr:  # ['upperband', 'middleband', 'lowerband']
+    """ BBANDS(real[, timeperiod=?, nbdevup=?, nbdevdn=?, matype=?])
+
+    Bollinger Bands (Overlap Studies)
+
+    Inputs:
+        real: (any ndarray)
+    Parameters:
+        timeperiod: 5
+        nbdevup: 2.0
+        nbdevdn: 2.0
+        matype: 0 (Simple Moving Average)
+    Outputs:
+        upperband
+        middleband
+        lowerband
+    """
     return close.map_batches(lambda x1: batches_i1_o2(x1.to_numpy().astype(float), _ta.BBANDS, timeperiod, nbdevup, nbdevdn, matype, ret_idx=ret_idx))
 
 
 def DEMA(close: Expr, timeperiod: int = 30) -> Expr:  # ['real']
+    """ DEMA(real[, timeperiod=?])
+
+    Double Exponential Moving Average (Overlap Studies)
+
+    Inputs:
+        real: (any ndarray)
+    Parameters:
+        timeperiod: 30
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.DEMA, timeperiod))
 
 
 def EMA(close: Expr, timeperiod: int = 30) -> Expr:  # ['real']
+    """ EMA(real[, timeperiod=?])
+
+    Exponential Moving Average (Overlap Studies)
+
+    Inputs:
+        real: (any ndarray)
+    Parameters:
+        timeperiod: 30
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.EMA, timeperiod))
 
 
 def HT_TRENDLINE(close: Expr) -> Expr:  # ['real']
+    """ HT_TRENDLINE(real)
+
+    Hilbert Transform - Instantaneous Trendline (Overlap Studies)
+
+    Inputs:
+        real: (any ndarray)
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.HT_TRENDLINE))
 
 
 def KAMA(close: Expr, timeperiod: int = 30) -> Expr:  # ['real']
+    """ KAMA(real[, timeperiod=?])
+
+    Kaufman Adaptive Moving Average (Overlap Studies)
+
+    Inputs:
+        real: (any ndarray)
+    Parameters:
+        timeperiod: 30
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.KAMA, timeperiod))
 
 
 def MA(close: Expr, timeperiod: int = 30, matype: int = 0) -> Expr:  # ['real']
+    """ MA(real[, timeperiod=?, matype=?])
+
+    Moving average (Overlap Studies)
+
+    Inputs:
+        real: (any ndarray)
+    Parameters:
+        timeperiod: 30
+        matype: 0 (Simple Moving Average)
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.MA, timeperiod, matype))
 
 
 def MAMA(close: Expr, fastlimit: float = 0.5, slowlimit: float = 0.05, ret_idx: int = 1) -> Expr:  # ['mama', 'fama']
+    """ MAMA(real[, fastlimit=?, slowlimit=?])
+
+    MESA Adaptive Moving Average (Overlap Studies)
+
+    Inputs:
+        real: (any ndarray)
+    Parameters:
+        fastlimit: 0.5
+        slowlimit: 0.05
+    Outputs:
+        mama
+        fama
+    """
     return close.map_batches(lambda x1: batches_i1_o2(x1.to_numpy().astype(float), _ta.MAMA, fastlimit, slowlimit, ret_idx=ret_idx))
 
 
 def MAVP(close: Expr, periods: Expr, minperiod: int = 2, maxperiod: int = 30, matype: int = 0) -> Expr:  # ['real']
+    """ MAVP(real, periods[, minperiod=?, maxperiod=?, matype=?])
+
+    Moving average with variable period (Overlap Studies)
+
+    Inputs:
+        real: (any ndarray)
+        periods: (any ndarray)
+    Parameters:
+        minperiod: 2
+        maxperiod: 30
+        matype: 0 (Simple Moving Average)
+    Outputs:
+        real
+    """
     return map_batches([close, periods], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.MAVP, minperiod, maxperiod, matype))
 
 
 def MIDPOINT(close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
+    """ MIDPOINT(real[, timeperiod=?])
+
+    MidPoint over period (Overlap Studies)
+
+    Inputs:
+        real: (any ndarray)
+    Parameters:
+        timeperiod: 14
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.MIDPOINT, timeperiod))
 
 
 def MIDPRICE(high: Expr, low: Expr, timeperiod: int = 14) -> Expr:  # ['real']
+    """ MIDPRICE(high, low[, timeperiod=?])
+
+    Midpoint Price over period (Overlap Studies)
+
+    Inputs:
+        prices: ['high', 'low']
+    Parameters:
+        timeperiod: 14
+    Outputs:
+        real
+    """
     return map_batches([high, low], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.MIDPRICE, timeperiod))
 
 
 def SAR(high: Expr, low: Expr, acceleration: float = 0.02, maximum: float = 0.2) -> Expr:  # ['real']
+    """ SAR(high, low[, acceleration=?, maximum=?])
+
+    Parabolic SAR (Overlap Studies)
+
+    Inputs:
+        prices: ['high', 'low']
+    Parameters:
+        acceleration: 0.02
+        maximum: 0.2
+    Outputs:
+        real
+    """
     return map_batches([high, low], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.SAR, acceleration, maximum))
 
 
 def SAREXT(high: Expr, low: Expr, startvalue: float = 0.0, offsetonreverse: float = 0.0, accelerationinitlong: float = 0.02, accelerationlong: float = 0.02, accelerationmaxlong: float = 0.2, accelerationinitshort: float = 0.02, accelerationshort: float = 0.02, accelerationmaxshort: float = 0.2) -> Expr:  # ['real']
+    """ SAREXT(high, low[, startvalue=?, offsetonreverse=?, accelerationinitlong=?, accelerationlong=?, accelerationmaxlong=?, accelerationinitshort=?, accelerationshort=?, accelerationmaxshort=?])
+
+    Parabolic SAR - Extended (Overlap Studies)
+
+    Inputs:
+        prices: ['high', 'low']
+    Parameters:
+        startvalue: 0.0
+        offsetonreverse: 0.0
+        accelerationinitlong: 0.02
+        accelerationlong: 0.02
+        accelerationmaxlong: 0.2
+        accelerationinitshort: 0.02
+        accelerationshort: 0.02
+        accelerationmaxshort: 0.2
+    Outputs:
+        real
+    """
     return map_batches([high, low], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.SAREXT, startvalue, offsetonreverse, accelerationinitlong, accelerationlong, accelerationmaxlong, accelerationinitshort, accelerationshort, accelerationmaxshort))
 
 
 def SMA(close: Expr, timeperiod: int = 30) -> Expr:  # ['real']
+    """ SMA(real[, timeperiod=?])
+
+    Simple Moving Average (Overlap Studies)
+
+    Inputs:
+        real: (any ndarray)
+    Parameters:
+        timeperiod: 30
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.SMA, timeperiod))
 
 
 def T3(close: Expr, timeperiod: int = 5, vfactor: float = 0.7) -> Expr:  # ['real']
+    """ T3(real[, timeperiod=?, vfactor=?])
+
+    Triple Exponential Moving Average (T3) (Overlap Studies)
+
+    Inputs:
+        real: (any ndarray)
+    Parameters:
+        timeperiod: 5
+        vfactor: 0.7
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.T3, timeperiod, vfactor))
 
 
 def TEMA(close: Expr, timeperiod: int = 30) -> Expr:  # ['real']
+    """ TEMA(real[, timeperiod=?])
+
+    Triple Exponential Moving Average (Overlap Studies)
+
+    Inputs:
+        real: (any ndarray)
+    Parameters:
+        timeperiod: 30
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.TEMA, timeperiod))
 
 
 def TRIMA(close: Expr, timeperiod: int = 30) -> Expr:  # ['real']
+    """ TRIMA(real[, timeperiod=?])
+
+    Triangular Moving Average (Overlap Studies)
+
+    Inputs:
+        real: (any ndarray)
+    Parameters:
+        timeperiod: 30
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.TRIMA, timeperiod))
 
 
 def WMA(close: Expr, timeperiod: int = 30) -> Expr:  # ['real']
+    """ WMA(real[, timeperiod=?])
+
+    Weighted Moving Average (Overlap Studies)
+
+    Inputs:
+        real: (any ndarray)
+    Parameters:
+        timeperiod: 30
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.WMA, timeperiod))
 
 
 def CDL2CROWS(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDL2CROWS(open, high, low, close)
+
+    Two Crows (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDL2CROWS))
 
 
 def CDL3BLACKCROWS(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDL3BLACKCROWS(open, high, low, close)
+
+    Three Black Crows (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDL3BLACKCROWS))
 
 
 def CDL3INSIDE(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDL3INSIDE(open, high, low, close)
+
+    Three Inside Up/Down (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDL3INSIDE))
 
 
 def CDL3LINESTRIKE(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDL3LINESTRIKE(open, high, low, close)
+
+    Three-Line Strike  (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDL3LINESTRIKE))
 
 
 def CDL3OUTSIDE(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDL3OUTSIDE(open, high, low, close)
+
+    Three Outside Up/Down (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDL3OUTSIDE))
 
 
 def CDL3STARSINSOUTH(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDL3STARSINSOUTH(open, high, low, close)
+
+    Three Stars In The South (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDL3STARSINSOUTH))
 
 
 def CDL3WHITESOLDIERS(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDL3WHITESOLDIERS(open, high, low, close)
+
+    Three Advancing White Soldiers (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDL3WHITESOLDIERS))
 
 
 def CDLABANDONEDBABY(open: Expr, high: Expr, low: Expr, close: Expr, penetration: float = 0.3) -> Expr:  # ['integer']
+    """ CDLABANDONEDBABY(open, high, low, close[, penetration=?])
+
+    Abandoned Baby (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Parameters:
+        penetration: 0.3
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLABANDONEDBABY, penetration))
 
 
 def CDLADVANCEBLOCK(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLADVANCEBLOCK(open, high, low, close)
+
+    Advance Block (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLADVANCEBLOCK))
 
 
 def CDLBELTHOLD(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLBELTHOLD(open, high, low, close)
+
+    Belt-hold (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLBELTHOLD))
 
 
 def CDLBREAKAWAY(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLBREAKAWAY(open, high, low, close)
+
+    Breakaway (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLBREAKAWAY))
 
 
 def CDLCLOSINGMARUBOZU(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLCLOSINGMARUBOZU(open, high, low, close)
+
+    Closing Marubozu (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLCLOSINGMARUBOZU))
 
 
 def CDLCONCEALBABYSWALL(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLCONCEALBABYSWALL(open, high, low, close)
+
+    Concealing Baby Swallow (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLCONCEALBABYSWALL))
 
 
 def CDLCOUNTERATTACK(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLCOUNTERATTACK(open, high, low, close)
+
+    Counterattack (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLCOUNTERATTACK))
 
 
 def CDLDARKCLOUDCOVER(open: Expr, high: Expr, low: Expr, close: Expr, penetration: float = 0.5) -> Expr:  # ['integer']
+    """ CDLDARKCLOUDCOVER(open, high, low, close[, penetration=?])
+
+    Dark Cloud Cover (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Parameters:
+        penetration: 0.5
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLDARKCLOUDCOVER, penetration))
 
 
 def CDLDOJI(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLDOJI(open, high, low, close)
+
+    Doji (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLDOJI))
 
 
 def CDLDOJISTAR(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLDOJISTAR(open, high, low, close)
+
+    Doji Star (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLDOJISTAR))
 
 
 def CDLDRAGONFLYDOJI(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLDRAGONFLYDOJI(open, high, low, close)
+
+    Dragonfly Doji (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLDRAGONFLYDOJI))
 
 
 def CDLENGULFING(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLENGULFING(open, high, low, close)
+
+    Engulfing Pattern (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLENGULFING))
 
 
 def CDLEVENINGDOJISTAR(open: Expr, high: Expr, low: Expr, close: Expr, penetration: float = 0.3) -> Expr:  # ['integer']
+    """ CDLEVENINGDOJISTAR(open, high, low, close[, penetration=?])
+
+    Evening Doji Star (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Parameters:
+        penetration: 0.3
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLEVENINGDOJISTAR, penetration))
 
 
 def CDLEVENINGSTAR(open: Expr, high: Expr, low: Expr, close: Expr, penetration: float = 0.3) -> Expr:  # ['integer']
+    """ CDLEVENINGSTAR(open, high, low, close[, penetration=?])
+
+    Evening Star (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Parameters:
+        penetration: 0.3
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLEVENINGSTAR, penetration))
 
 
 def CDLGAPSIDESIDEWHITE(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLGAPSIDESIDEWHITE(open, high, low, close)
+
+    Up/Down-gap side-by-side white lines (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLGAPSIDESIDEWHITE))
 
 
 def CDLGRAVESTONEDOJI(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLGRAVESTONEDOJI(open, high, low, close)
+
+    Gravestone Doji (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLGRAVESTONEDOJI))
 
 
 def CDLHAMMER(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLHAMMER(open, high, low, close)
+
+    Hammer (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLHAMMER))
 
 
 def CDLHANGINGMAN(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLHANGINGMAN(open, high, low, close)
+
+    Hanging Man (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLHANGINGMAN))
 
 
 def CDLHARAMI(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLHARAMI(open, high, low, close)
+
+    Harami Pattern (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLHARAMI))
 
 
 def CDLHARAMICROSS(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLHARAMICROSS(open, high, low, close)
+
+    Harami Cross Pattern (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLHARAMICROSS))
 
 
 def CDLHIGHWAVE(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLHIGHWAVE(open, high, low, close)
+
+    High-Wave Candle (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLHIGHWAVE))
 
 
 def CDLHIKKAKE(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLHIKKAKE(open, high, low, close)
+
+    Hikkake Pattern (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLHIKKAKE))
 
 
 def CDLHIKKAKEMOD(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLHIKKAKEMOD(open, high, low, close)
+
+    Modified Hikkake Pattern (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLHIKKAKEMOD))
 
 
 def CDLHOMINGPIGEON(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLHOMINGPIGEON(open, high, low, close)
+
+    Homing Pigeon (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLHOMINGPIGEON))
 
 
 def CDLIDENTICAL3CROWS(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLIDENTICAL3CROWS(open, high, low, close)
+
+    Identical Three Crows (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLIDENTICAL3CROWS))
 
 
 def CDLINNECK(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLINNECK(open, high, low, close)
+
+    In-Neck Pattern (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLINNECK))
 
 
 def CDLINVERTEDHAMMER(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLINVERTEDHAMMER(open, high, low, close)
+
+    Inverted Hammer (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLINVERTEDHAMMER))
 
 
 def CDLKICKING(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLKICKING(open, high, low, close)
+
+    Kicking (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLKICKING))
 
 
 def CDLKICKINGBYLENGTH(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLKICKINGBYLENGTH(open, high, low, close)
+
+    Kicking - bull/bear determined by the longer marubozu (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLKICKINGBYLENGTH))
 
 
 def CDLLADDERBOTTOM(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLLADDERBOTTOM(open, high, low, close)
+
+    Ladder Bottom (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLLADDERBOTTOM))
 
 
 def CDLLONGLEGGEDDOJI(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLLONGLEGGEDDOJI(open, high, low, close)
+
+    Long Legged Doji (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLLONGLEGGEDDOJI))
 
 
 def CDLLONGLINE(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLLONGLINE(open, high, low, close)
+
+    Long Line Candle (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLLONGLINE))
 
 
 def CDLMARUBOZU(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLMARUBOZU(open, high, low, close)
+
+    Marubozu (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLMARUBOZU))
 
 
 def CDLMATCHINGLOW(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLMATCHINGLOW(open, high, low, close)
+
+    Matching Low (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLMATCHINGLOW))
 
 
 def CDLMATHOLD(open: Expr, high: Expr, low: Expr, close: Expr, penetration: float = 0.5) -> Expr:  # ['integer']
+    """ CDLMATHOLD(open, high, low, close[, penetration=?])
+
+    Mat Hold (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Parameters:
+        penetration: 0.5
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLMATHOLD, penetration))
 
 
 def CDLMORNINGDOJISTAR(open: Expr, high: Expr, low: Expr, close: Expr, penetration: float = 0.3) -> Expr:  # ['integer']
+    """ CDLMORNINGDOJISTAR(open, high, low, close[, penetration=?])
+
+    Morning Doji Star (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Parameters:
+        penetration: 0.3
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLMORNINGDOJISTAR, penetration))
 
 
 def CDLMORNINGSTAR(open: Expr, high: Expr, low: Expr, close: Expr, penetration: float = 0.3) -> Expr:  # ['integer']
+    """ CDLMORNINGSTAR(open, high, low, close[, penetration=?])
+
+    Morning Star (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Parameters:
+        penetration: 0.3
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLMORNINGSTAR, penetration))
 
 
 def CDLONNECK(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLONNECK(open, high, low, close)
+
+    On-Neck Pattern (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLONNECK))
 
 
 def CDLPIERCING(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLPIERCING(open, high, low, close)
+
+    Piercing Pattern (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLPIERCING))
 
 
 def CDLRICKSHAWMAN(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLRICKSHAWMAN(open, high, low, close)
+
+    Rickshaw Man (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLRICKSHAWMAN))
 
 
 def CDLRISEFALL3METHODS(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLRISEFALL3METHODS(open, high, low, close)
+
+    Rising/Falling Three Methods (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLRISEFALL3METHODS))
 
 
 def CDLSEPARATINGLINES(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLSEPARATINGLINES(open, high, low, close)
+
+    Separating Lines (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLSEPARATINGLINES))
 
 
 def CDLSHOOTINGSTAR(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLSHOOTINGSTAR(open, high, low, close)
+
+    Shooting Star (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLSHOOTINGSTAR))
 
 
 def CDLSHORTLINE(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLSHORTLINE(open, high, low, close)
+
+    Short Line Candle (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLSHORTLINE))
 
 
 def CDLSPINNINGTOP(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLSPINNINGTOP(open, high, low, close)
+
+    Spinning Top (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLSPINNINGTOP))
 
 
 def CDLSTALLEDPATTERN(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLSTALLEDPATTERN(open, high, low, close)
+
+    Stalled Pattern (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLSTALLEDPATTERN))
 
 
 def CDLSTICKSANDWICH(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLSTICKSANDWICH(open, high, low, close)
+
+    Stick Sandwich (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLSTICKSANDWICH))
 
 
 def CDLTAKURI(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLTAKURI(open, high, low, close)
+
+    Takuri (Dragonfly Doji with very long lower shadow) (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLTAKURI))
 
 
 def CDLTASUKIGAP(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLTASUKIGAP(open, high, low, close)
+
+    Tasuki Gap (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLTASUKIGAP))
 
 
 def CDLTHRUSTING(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLTHRUSTING(open, high, low, close)
+
+    Thrusting Pattern (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLTHRUSTING))
 
 
 def CDLTRISTAR(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLTRISTAR(open, high, low, close)
+
+    Tristar Pattern (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLTRISTAR))
 
 
 def CDLUNIQUE3RIVER(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLUNIQUE3RIVER(open, high, low, close)
+
+    Unique 3 River (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLUNIQUE3RIVER))
 
 
 def CDLUPSIDEGAP2CROWS(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLUPSIDEGAP2CROWS(open, high, low, close)
+
+    Upside Gap Two Crows (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLUPSIDEGAP2CROWS))
 
 
 def CDLXSIDEGAP3METHODS(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
+    """ CDLXSIDEGAP3METHODS(open, high, low, close)
+
+    Upside/Downside Gap Three Methods (Pattern Recognition)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        integer (values are -100, 0 or 100)
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CDLXSIDEGAP3METHODS))
 
 
 def AVGPRICE(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['real']
+    """ AVGPRICE(open, high, low, close)
+
+    Average Price (Price Transform)
+
+    Inputs:
+        prices: ['open', 'high', 'low', 'close']
+    Outputs:
+        real
+    """
     return map_batches([open, high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.AVGPRICE))
 
 
 def MEDPRICE(high: Expr, low: Expr) -> Expr:  # ['real']
+    """ MEDPRICE(high, low)
+
+    Median Price (Price Transform)
+
+    Inputs:
+        prices: ['high', 'low']
+    Outputs:
+        real
+    """
     return map_batches([high, low], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.MEDPRICE))
 
 
 def TYPPRICE(high: Expr, low: Expr, close: Expr) -> Expr:  # ['real']
+    """ TYPPRICE(high, low, close)
+
+    Typical Price (Price Transform)
+
+    Inputs:
+        prices: ['high', 'low', 'close']
+    Outputs:
+        real
+    """
     return map_batches([high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.TYPPRICE))
 
 
 def WCLPRICE(high: Expr, low: Expr, close: Expr) -> Expr:  # ['real']
+    """ WCLPRICE(high, low, close)
+
+    Weighted Close Price (Price Transform)
+
+    Inputs:
+        prices: ['high', 'low', 'close']
+    Outputs:
+        real
+    """
     return map_batches([high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.WCLPRICE))
 
 
 def BETA(high: Expr, low: Expr, timeperiod: int = 5) -> Expr:  # ['real']
+    """ BETA(real0, real1[, timeperiod=?])
+
+    Beta (Statistic Functions)
+
+    Inputs:
+        real0: (any ndarray)
+        real1: (any ndarray)
+    Parameters:
+        timeperiod: 5
+    Outputs:
+        real
+    """
     return map_batches([high, low], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.BETA, timeperiod))
 
 
 def CORREL(high: Expr, low: Expr, timeperiod: int = 30) -> Expr:  # ['real']
+    """ CORREL(real0, real1[, timeperiod=?])
+
+    Pearson's Correlation Coefficient (r) (Statistic Functions)
+
+    Inputs:
+        real0: (any ndarray)
+        real1: (any ndarray)
+    Parameters:
+        timeperiod: 30
+    Outputs:
+        real
+    """
     return map_batches([high, low], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.CORREL, timeperiod))
 
 
 def LINEARREG(close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
+    """ LINEARREG(real[, timeperiod=?])
+
+    Linear Regression (Statistic Functions)
+
+    Inputs:
+        real: (any ndarray)
+    Parameters:
+        timeperiod: 14
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.LINEARREG, timeperiod))
 
 
 def LINEARREG_ANGLE(close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
+    """ LINEARREG_ANGLE(real[, timeperiod=?])
+
+    Linear Regression Angle (Statistic Functions)
+
+    Inputs:
+        real: (any ndarray)
+    Parameters:
+        timeperiod: 14
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.LINEARREG_ANGLE, timeperiod))
 
 
 def LINEARREG_INTERCEPT(close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
+    """ LINEARREG_INTERCEPT(real[, timeperiod=?])
+
+    Linear Regression Intercept (Statistic Functions)
+
+    Inputs:
+        real: (any ndarray)
+    Parameters:
+        timeperiod: 14
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.LINEARREG_INTERCEPT, timeperiod))
 
 
 def LINEARREG_SLOPE(close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
+    """ LINEARREG_SLOPE(real[, timeperiod=?])
+
+    Linear Regression Slope (Statistic Functions)
+
+    Inputs:
+        real: (any ndarray)
+    Parameters:
+        timeperiod: 14
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.LINEARREG_SLOPE, timeperiod))
 
 
 def STDDEV(close: Expr, timeperiod: int = 5, nbdev: float = 1.0) -> Expr:  # ['real']
+    """ STDDEV(real[, timeperiod=?, nbdev=?])
+
+    Standard Deviation (Statistic Functions)
+
+    Inputs:
+        real: (any ndarray)
+    Parameters:
+        timeperiod: 5
+        nbdev: 1.0
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.STDDEV, timeperiod, nbdev))
 
 
 def TSF(close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
+    """ TSF(real[, timeperiod=?])
+
+    Time Series Forecast (Statistic Functions)
+
+    Inputs:
+        real: (any ndarray)
+    Parameters:
+        timeperiod: 14
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.TSF, timeperiod))
 
 
 def VAR(close: Expr, timeperiod: int = 5, nbdev: float = 1.0) -> Expr:  # ['real']
+    """ VAR(real[, timeperiod=?, nbdev=?])
+
+    Variance (Statistic Functions)
+
+    Inputs:
+        real: (any ndarray)
+    Parameters:
+        timeperiod: 5
+        nbdev: 1.0
+    Outputs:
+        real
+    """
     return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.VAR, timeperiod, nbdev))
 
 
 def ATR(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
+    """ ATR(high, low, close[, timeperiod=?])
+
+    Average True Range (Volatility Indicators)
+
+    Inputs:
+        prices: ['high', 'low', 'close']
+    Parameters:
+        timeperiod: 14
+    Outputs:
+        real
+    """
     return map_batches([high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.ATR, timeperiod))
 
 
 def NATR(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
+    """ NATR(high, low, close[, timeperiod=?])
+
+    Normalized Average True Range (Volatility Indicators)
+
+    Inputs:
+        prices: ['high', 'low', 'close']
+    Parameters:
+        timeperiod: 14
+    Outputs:
+        real
+    """
     return map_batches([high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.NATR, timeperiod))
 
 
 def TRANGE(high: Expr, low: Expr, close: Expr) -> Expr:  # ['real']
+    """ TRANGE(high, low, close)
+
+    True Range (Volatility Indicators)
+
+    Inputs:
+        prices: ['high', 'low', 'close']
+    Outputs:
+        real
+    """
     return map_batches([high, low, close], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.TRANGE))
 
 
 def AD(high: Expr, low: Expr, close: Expr, volume: Expr) -> Expr:  # ['real']
+    """ AD(high, low, close, volume)
+
+    Chaikin A/D Line (Volume Indicators)
+
+    Inputs:
+        prices: ['high', 'low', 'close', 'volume']
+    Outputs:
+        real
+    """
     return map_batches([high, low, close, volume], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.AD))
 
 
 def ADOSC(high: Expr, low: Expr, close: Expr, volume: Expr, fastperiod: int = 3, slowperiod: int = 10) -> Expr:  # ['real']
+    """ ADOSC(high, low, close, volume[, fastperiod=?, slowperiod=?])
+
+    Chaikin A/D Oscillator (Volume Indicators)
+
+    Inputs:
+        prices: ['high', 'low', 'close', 'volume']
+    Parameters:
+        fastperiod: 3
+        slowperiod: 10
+    Outputs:
+        real
+    """
     return map_batches([high, low, close, volume], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.ADOSC, fastperiod, slowperiod))
 
 
 def OBV(close: Expr, volume: Expr) -> Expr:  # ['real']
+    """ OBV(real, volume)
+
+    On Balance Volume (Volume Indicators)
+
+    Inputs:
+        real: (any ndarray)
+        prices: ['volume']
+    Outputs:
+        real
+    """
     return map_batches([close, volume], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _ta.OBV))

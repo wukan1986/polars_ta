@@ -16,21 +16,25 @@ from talib import abstract as _abstract
 from tools.prefix import save
 
 
-def _codegen_func(name, input_names, parameters, output_names):
+def _codegen_func(name, input_names, parameters, output_names, doc):
     tpl11 = """
 def {name}({aa}) -> Expr:  # {output_names}
+    \"\"\"{doc}\"\"\"
     return {bb}.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), {cc}))
 """
     tpl12 = """
 def {name}({aa}) -> Expr:  # {output_names}
+    \"\"\"{doc}\"\"\"
     return {bb}.map_batches(lambda x1: batches_i1_o2(x1.to_numpy().astype(float), {cc}))
 """
     tpl21 = """
 def {name}({aa}) -> Expr:  # {output_names}
+    \"\"\"{doc}\"\"\"
     return map_batches([{bb}], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], {cc}))
 """
     tpl22 = """
 def {name}({aa}) -> Expr:  # {output_names}
+    \"\"\"{doc}\"\"\"
     return map_batches([{bb}], lambda xx: batches_i2_o2([x1.to_numpy().astype(float) for x1 in xx], {cc}))
 """
     if len(output_names) > 1:
@@ -54,13 +58,13 @@ def {name}({aa}) -> Expr:  # {output_names}
     cc = ', '.join(c1 + c2 + c3)
 
     if len(input_names) == 1 and len(output_names) == 1:
-        return tpl11.format(name=name, aa=aa, bb=bb, cc=cc, output_names=output_names)
+        return tpl11.format(name=name, aa=aa, bb=bb, cc=cc, output_names=output_names, doc=doc)
     elif len(input_names) == 1 and len(output_names) > 1:
-        return tpl12.format(name=name, aa=aa, bb=bb, cc=cc, output_names=output_names)
+        return tpl12.format(name=name, aa=aa, bb=bb, cc=cc, output_names=output_names, doc=doc)
     elif len(input_names) > 1 and len(output_names) == 1:
-        return tpl21.format(name=name, aa=aa, bb=bb, cc=cc, output_names=output_names)
+        return tpl21.format(name=name, aa=aa, bb=bb, cc=cc, output_names=output_names, doc=doc)
     else:
-        return tpl22.format(name=name, aa=aa, bb=bb, cc=cc, output_names=output_names)
+        return tpl22.format(name=name, aa=aa, bb=bb, cc=cc, output_names=output_names, doc=doc)
 
 
 def codegen():
@@ -85,7 +89,7 @@ from polars_ta.utils.numba_ import batches_i1_o1, batches_i1_o2, batches_i2_o1, 
                 input_names.append(in_names)
         parameters = info['parameters']
         output_names = info['output_names']
-        txt = _codegen_func(name, input_names, parameters, output_names)
+        txt = _codegen_func(name, input_names, parameters, output_names, getattr(_talib, name).__doc__)
         txts.append(txt)
 
     return txts
