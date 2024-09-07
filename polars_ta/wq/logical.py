@@ -14,7 +14,7 @@ def equal(input1: Expr, input2: Expr) -> Expr:
     return input1 == input2
 
 
-def if_else(input1: Expr, input2: Expr, input3: Expr) -> Expr:
+def if_else(input1: Expr, input2: Expr, input3: Expr = None) -> Expr:
     """If input1 is true then return input2 else return input3."""
     return when(input1).then(input2).otherwise(input3)
 
