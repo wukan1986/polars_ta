@@ -114,7 +114,7 @@ This is required to use in `expr_codegen`.
 - https://github.com/peerchemist/finta
 - https://github.com/wukan1986/ta_cn
 - https://support.worldquantbrain.com/hc/en-us/community/posts/20278408956439-从价量看技术指标总结-Technical-Indicator-
-
+- https://platform.worldquantbrain.com/learn/operators/operators
 
 
 

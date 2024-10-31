@@ -1,5 +1,5 @@
 from polars import Expr, all_horizontal, any_horizontal
-from polars import when
+from polars import when, Int8, Boolean
 
 
 # TODO 本文件返回bool时是否有必要转换成 0/1 ?
@@ -52,3 +52,13 @@ def negate(input1: Expr) -> Expr:
 def or_(a: Expr, b: Expr, *args) -> Expr:
     """Logical OR operator returns true if either or both inputs are true and returns false otherwise"""
     return any_horizontal(a, b, *args)
+
+
+def int_(a: Expr) -> Expr:
+    """convert bool to int"""
+    return a.cast(Int8)
+
+
+def bool_(a: Expr) -> Expr:
+    """convert int to bool"""
+    return a.cast(Boolean)
