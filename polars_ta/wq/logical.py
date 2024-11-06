@@ -2,8 +2,6 @@ from polars import Expr, all_horizontal, any_horizontal
 from polars import when, Int8, Boolean
 
 
-# TODO 本文件返回bool时是否有必要转换成 0/1 ?
-
 def and_(a: Expr, b: Expr, *args) -> Expr:
     """Logical AND operator, returns true if both operands are true and returns false otherwise"""
     return all_horizontal(a, b, *args)
@@ -52,6 +50,11 @@ def negate(input1: Expr) -> Expr:
 def or_(a: Expr, b: Expr, *args) -> Expr:
     """Logical OR operator returns true if either or both inputs are true and returns false otherwise"""
     return any_horizontal(a, b, *args)
+
+
+def xor(a: Expr, b: Expr) -> Expr:
+    """Logical XOR operator returns true if exactly one of the inputs is true and returns false otherwise"""
+    return a.xor(b)
 
 
 def int_(a: Expr) -> Expr:
