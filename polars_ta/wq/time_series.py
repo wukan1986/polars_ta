@@ -1,5 +1,5 @@
 import polars_ols as pls
-from polars import Expr, Int32, UInt16, map_batches
+from polars import Expr, Int32, UInt16, struct
 from polars import arange, repeat
 from polars import rolling_corr, rolling_cov
 from polars_ols import RollingKwargs
@@ -19,11 +19,11 @@ def ts_arg_min(x: Expr, d: int = 5, reverse: bool = True) -> Expr:
 
 
 def ts_co_kurtosis(x: Expr, y: Expr, d: int = 5, ddof: int = 0) -> Expr:
-    return map_batches([x, y], lambda xx: batches_i2_o1([x1.to_numpy() for x1 in xx], roll_co_kurtosis, d))
+    return struct([x, y]).map_batches(lambda xx: batches_i2_o1([xx.struct[i].to_numpy() for i in range(2)], roll_co_kurtosis, d))
 
 
 def ts_co_skewness(x: Expr, y: Expr, d: int = 5, ddof: int = 0) -> Expr:
-    return map_batches([x, y], lambda xx: batches_i2_o1([x1.to_numpy() for x1 in xx], roll_co_skewness, d))
+    return struct([x, y]).map_batches(lambda xx: batches_i2_o1([xx.struct[i].to_numpy() for i in range(2)], roll_co_skewness, d))
 
 
 def ts_corr(x: Expr, y: Expr, d: int = 5, ddof: int = 1) -> Expr:
@@ -149,7 +149,7 @@ def ts_moment(x: Expr, d: int, k: int = 0) -> Expr:
 
 def ts_partial_corr(x: Expr, y: Expr, z: Expr, d: int) -> Expr:
     """Returns partial correlation of x, y, z for the past d days."""
-    return map_batches([x, y, z], lambda xx: batches_i2_o1([x1.to_numpy() for x1 in xx], roll_partial_corr, d))
+    return struct([x, y, z]).map_batches(lambda xx: batches_i2_o1([xx.struct[i].to_numpy() for i in range(3)], roll_partial_corr, d))
 
 
 def ts_percentage(x: Expr, d: int, percentage: float = 0.5) -> Expr:
@@ -194,7 +194,7 @@ def ts_sum(x: Expr, d: int = 30) -> Expr:
 
 def ts_triple_corr(x: Expr, y: Expr, z: Expr, d: int) -> Expr:
     """Returns triple correlation of x, y, z for the past d days."""
-    return map_batches([x, y, z], lambda xx: batches_i2_o1([x1.to_numpy() for x1 in xx], roll_triple_corr, d))
+    return struct([x, y, z]).map_batches(lambda xx: batches_i2_o1([xx.struct[i].to_numpy() for i in range(3)], roll_triple_corr, d))
 
 
 def ts_weighted_delay(x: Expr, k: float = 0.5) -> Expr:
@@ -207,12 +207,12 @@ def ts_zscore(x: Expr, d: int = 5) -> Expr:
 
 def ts_zip_prod(v: Expr, r: Expr) -> Expr:
     """z字形累乘。可用于市值累乘日收益率的情况，如成份股权重按行情更新"""
-    return map_batches([v, r], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _zip_prod))
+    return struct([v, r]).map_batches(lambda xx: batches_i2_o1([xx.struct[i].to_numpy() for i in range(2)], _zip_prod))
 
 
 def ts_zip_sum(x: Expr, y: Expr) -> Expr:
     """z字形累加"""
-    return map_batches([x, y], lambda xx: batches_i2_o1([x1.to_numpy().astype(float) for x1 in xx], _zip_sum))
+    return struct([x, y]).map_batches(lambda xx: batches_i2_o1([xx.struct[i].to_numpy() for i in range(2)], _zip_sum))
 
 
 def ts_regression_resid(y: Expr, x: Expr, d: int) -> Expr:
@@ -263,5 +263,4 @@ def ts_signals_to_amount(long_entry: Expr, long_exit: Expr,
                          short_entry: Expr, short_exit: Expr,
                          accumulate: bool = False, action: bool = False) -> Expr:
     """多空信号转持仓"""
-    return map_batches([long_entry, long_exit, short_entry, short_exit],
-                       lambda xx: batches_i2_o1([x1.to_numpy().astype(bool) for x1 in xx], signals_to_amount, accumulate, action))
+    return struct([long_entry, long_exit, short_entry, short_exit]).map_batches(lambda xx: batches_i2_o1([xx.struct[i].to_numpy().astype(float) for i in range(4)], signals_to_amount, accumulate, action))

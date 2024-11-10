@@ -7,7 +7,7 @@ from typing import List
 import numpy as np
 from numba import jit
 from numpy.lib.stride_tricks import sliding_window_view
-from polars import Series, Expr, map_batches
+from polars import Series, Expr, struct
 
 """
 Series.to_numpy的操作在调用之前做，这样可控一些
@@ -63,7 +63,7 @@ def roll_sum(x: Expr, n: int) -> Expr:
 
 
 def roll_cov(a: Expr, b: Expr, n: int) -> Expr:
-    return map_batches([a, b], lambda xx: batches_i2_o1([x1.to_numpy() for x1 in xx], nb_roll_cov, n))
+    return struct([a, b]).map_batches(lambda xx: batches_i2_o1([xx.struct[i].to_numpy() for i in range(2)], nb_roll_cov, n))
 
 
 @jit(nopython=True, nogil=True, cache=True)
@@ -100,16 +100,10 @@ def nb_split_o2(x1, x2, window=10, n=2):
 
 def roll_split_i2_o1(a: Expr, b: Expr, d: int, n: int) -> Expr:
     """切割论的示例。只输出一个结果"""
-    return map_batches(
-        [a, b],
-        lambda xx: batches_i2_o1([x1.to_numpy() for x1 in xx], nb_split_o1, d, n)
-    )
+    return struct([a, b]).map_batches(lambda xx: batches_i2_o1([xx.struct[i].to_numpy() for i in range(2)], nb_split_o1, d, n))
 
 
 def roll_split_i2_o2(a: Expr, b: Expr, d: int, n: int) -> Expr:
     """切割论的示例。两输出，由用户自己进行后期处理"""
     # !!!输出为struct时的特殊写法，使用其它写法都会导致之后想struct.field失败
-    return map_batches(
-        [a, b],
-        lambda xx: batches_i2_o1([x1.to_numpy() for x1 in xx], nb_split_o2, d, n).list.to_struct()
-    ).struct.rename_fields(['split_a', 'split_b'])
+    return struct([a, b]).map_batches(lambda xx: batches_i2_o1([xx.struct[i].to_numpy() for i in range(2)], nb_split_o2, d, n).list.to_struct()).struct.rename_fields(['split_a', 'split_b'])

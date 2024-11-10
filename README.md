@@ -85,7 +85,7 @@ See [nan_to_null](nan_to_null.md)
   - Pros: Can be input into our implementation of genetic algorithms
   - Cons: `__getattribute__` dynamic method call is very flexible, but loses `IDE` support.
 4. Code generation.
-  - Implementation [codegen_talib2.py](tools/codegen_talib2.py)
+  - Implementation [codegen_talib.py](tools/codegen_talib.py)
   - Generated result will be at [\_\_init\_\_.py](polars_ta/talib/__init__.py)
   - Usage demo [demo_ta3.py](examples/demo_ta3.py)
   - Pros:
@@ -204,7 +204,7 @@ df = df.with_columns([
     - 优点：可以输入到遗传算法
     - 不足：`__getattribute__`动态方法调用非常灵活，但失去了`IDE`智能提示
 4. 代码自动生成。
-    - 实现代码[codegen_talib2.py](tools/codegen_talib2.py)
+    - 实现代码[codegen_talib.py](tools/codegen_talib.py)
     - 生成结果[\_\_init\_\_.py](polars_ta/talib/__init__.py)
     - 使用演示[demo_ta3.py](examples/demo_ta3.py)
     - 优点：即可以输入到遗传算法，`IDE`还有智能提示
