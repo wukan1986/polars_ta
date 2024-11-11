@@ -1,8 +1,5 @@
-from typing import List
-
-import numpy as np
 import polars_ols as pls
-from polars import Expr, Series, Struct, map_batches
+from polars import Expr
 from polars_ols.least_squares import OLSKwargs
 
 from polars_ta import TA_EPSILON
@@ -67,37 +64,37 @@ def cs_demean(x: Expr) -> Expr:
 _ols_kwargs = OLSKwargs(null_policy='drop', solve_method='svd')
 
 
-def _residual_multiple(cols: List[Series], add_constant: bool) -> Series:
-    # 将pl.Struct转成list,这样可以实现传正则，其它也转list
-    cols = [list(c.struct) if isinstance(c.dtype, Struct) else [c] for c in cols]
-    # 二维列表转一维列表，再转np.ndarray
-    cols = [i.to_numpy() for p in cols for i in p]
-    if add_constant:
-        cols += [np.ones_like(cols[0])]
-    yx = np.vstack(cols).T
-
-    # skip nan
-    mask = np.any(np.isnan(yx), axis=1)
-    yx_ = yx[~mask, :]
-
-    y = yx_[:, 0]
-    x = yx_[:, 1:]
-    coef = np.linalg.lstsq(x, y, rcond=None)[0]
-    y_hat = np.sum(x * coef, axis=1)
-    residual = y - y_hat
-
-    # refill
-    out = np.empty_like(yx[:, 0])
-    out[~mask] = residual
-    out[mask] = np.nan
-    return Series(out, nan_to_null=True)
-
-
-def cs_resid_(y: Expr, *more_x: Expr) -> Expr:
-    """multivariate regression
-    多元回归
-    """
-    return map_batches([y, *more_x], lambda xx: _residual_multiple(xx, False))
+# def _residual_multiple(cols: List[Series], add_constant: bool) -> Series:
+#     # 将pl.Struct转成list,这样可以实现传正则，其它也转list
+#     cols = [list(c.struct) if isinstance(c.dtype, Struct) else [c] for c in cols]
+#     # 二维列表转一维列表，再转np.ndarray
+#     cols = [i.to_numpy() for p in cols for i in p]
+#     if add_constant:
+#         cols += [np.ones_like(cols[0])]
+#     yx = np.vstack(cols).T
+#
+#     # skip nan
+#     mask = np.any(np.isnan(yx), axis=1)
+#     yx_ = yx[~mask, :]
+#
+#     y = yx_[:, 0]
+#     x = yx_[:, 1:]
+#     coef = np.linalg.lstsq(x, y, rcond=None)[0]
+#     y_hat = np.sum(x * coef, axis=1)
+#     residual = y - y_hat
+#
+#     # refill
+#     out = np.empty_like(yx[:, 0])
+#     out[~mask] = residual
+#     out[mask] = np.nan
+#     return Series(out, nan_to_null=True)
+#
+#
+# def cs_resid_(y: Expr, *more_x: Expr) -> Expr:
+#     """multivariate regression
+#     多元回归
+#     """
+#     return map_batches([y, *more_x], lambda xx: _residual_multiple(xx, False))
 
 
 def cs_resid(y: Expr, *more_x: Expr) -> Expr:
