@@ -168,12 +168,36 @@ def _zip_prod(a, b):
     return a
 
 
-@jit(nopython=True, nogil=True, fastmath=False, cache=False)
+@jit(nopython=True, nogil=True, fastmath=True, cache=True)
 def _zip_sum(a, b):
     for i in range(1, a.shape[0]):
         if isnan(a[i]):
             a[i] = a[i - 1] + b[i - 1]
     return a
+
+
+@jit(nopython=True, nogil=True, fastmath=True, cache=True)
+def _cum_sum_reset(a):
+    last = 0
+    out = full(a.shape, 0, dtype=float)
+    for i in range(0, a.shape[0]):
+        curr = 0 if isnan(a[i]) else a[i]
+
+        if curr == 0:
+            out[i] = 0
+        elif curr > 0:
+            if last <= 0:
+                out[i] = curr
+            else:
+                out[i] = curr + last
+        elif curr < 0:
+            if last >= 0:
+                out[i] = curr
+            else:
+                out[i] = curr + last
+
+        last = out[i]
+    return out
 
 
 @jit(float64[:](bool_[:], bool_[:], bool_[:], bool_[:], bool_, bool_), nopython=True, fastmath=True, nogil=True, cache=True)

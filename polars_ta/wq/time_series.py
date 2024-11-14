@@ -7,7 +7,7 @@ from polars_ols import RollingKwargs
 from polars_ta import TA_EPSILON
 from polars_ta.utils.numba_ import batches_i1_o1, batches_i2_o1, roll_split_i2_o1
 from polars_ta.utils.pandas_ import roll_kurt, roll_rank
-from polars_ta.wq._nb import roll_argmax, roll_argmin, roll_prod, roll_co_kurtosis, roll_co_skewness, roll_moment, roll_partial_corr, roll_triple_corr, _zip_prod, _zip_sum, signals_to_amount
+from polars_ta.wq._nb import roll_argmax, roll_argmin, roll_prod, roll_co_kurtosis, roll_co_skewness, roll_moment, roll_partial_corr, roll_triple_corr, _zip_prod, _zip_sum, signals_to_amount, _cum_sum_reset
 
 
 def ts_arg_max(x: Expr, d: int = 5, reverse: bool = True) -> Expr:
@@ -66,6 +66,15 @@ def ts_cum_prod(x: Expr) -> Expr:
 def ts_cum_sum(x: Expr) -> Expr:
     """时序累加"""
     return x.cum_sum()
+
+
+def ts_cum_sum_reset(x: Expr) -> Expr:
+    """时序累加。遇到0、nan、相反符号时重置。可用于统计连板数
+
+    1 0 1 2 None 3 -2 -3
+    1 0 1 3 0    3 -2 -5
+    """
+    return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _cum_sum_reset))
 
 
 def ts_decay_exp_window(x: Expr, d: int = 30, factor: float = 1.0) -> Expr:
