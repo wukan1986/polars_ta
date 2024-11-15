@@ -90,8 +90,8 @@ def ts_decay_linear(x: Expr, d: int = 30) -> Expr:
     return x.rolling_mean(d, weights=weights)
 
 
-def ts_delay(x: Expr, d: int = 1) -> Expr:
-    return x.shift(d)
+def ts_delay(x: Expr, d: int = 1, fill_value=None) -> Expr:
+    return x.shift(d, fill_value=fill_value)
 
 
 def ts_delta(x: Expr, d: int = 1) -> Expr:
