@@ -79,13 +79,16 @@ from polars_ta.tdx.reference import SUMIF as ts_SUMIF  # noqa
 from polars_ta.tdx.reference import TMA as ts_TMA  # noqa
 from polars_ta.tdx.reference import TR as ts_TR  # noqa
 from polars_ta.tdx.statistic import AVEDEV as ts_AVEDEV  # noqa
+from polars_ta.tdx.statistic import COVAR as ts_COVAR  # noqa
 from polars_ta.tdx.statistic import DEVSQ as ts_DEVSQ  # noqa
+from polars_ta.tdx.statistic import RELATE as ts_RELATE  # noqa
 from polars_ta.tdx.statistic import SLOPE as ts_SLOPE  # noqa
 from polars_ta.tdx.statistic import STD as ts_STD  # noqa
 from polars_ta.tdx.statistic import STDDEV as ts_STDDEV  # noqa
 from polars_ta.tdx.statistic import STDP as ts_STDP  # noqa
 from polars_ta.tdx.statistic import VAR as ts_VAR  # noqa
 from polars_ta.tdx.statistic import VARP as ts_VARP  # noqa
+from polars_ta.tdx.statistic import ts_up_stat  # noqa
 from polars_ta.tdx.trend import ADX as ts_ADX  # noqa
 from polars_ta.tdx.trend import ADXR as ts_ADXR  # noqa
 from polars_ta.tdx.trend import DPO as ts_DPO  # noqa

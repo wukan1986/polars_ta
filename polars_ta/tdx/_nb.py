@@ -33,3 +33,37 @@ def roll_bars_since_n(x1, window):
         p = argmax(v1)
         out[i + window - 1] = window - 1 - p if p or v1[0] else window
     return out
+
+
+@jit(nopython=True, nogil=True, fastmath=True, cache=True)
+def _up_stat(a, d: int = 3):
+    """T天N板，最稀疏为5天2板"""
+    out1 = full(a.shape, 0, dtype=int)
+    out2 = full(a.shape, 0, dtype=int)
+    out3 = full(a.shape, 0, dtype=int)
+    t = 0  # T天
+    n = 0  # N板
+    k = 0  # 连续False个数
+    f = True  # 前面的False不处理
+    for i in range(0, a.shape[0]):
+        if a[i]:
+            k = 0
+            t += 1
+            n += 1
+            f = False
+            out1[i] = t
+            out2[i] = n
+            out3[i] = k
+        else:
+            if f:
+                continue
+            k += 1
+            if k > d:
+                n = 0
+                t = 0
+            else:
+                t += 1
+            out1[i] = t
+            out2[i] = 0
+            out3[i] = k
+    return out1, out2, out3

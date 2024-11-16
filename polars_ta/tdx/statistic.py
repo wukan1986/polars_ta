@@ -1,7 +1,7 @@
 from polars import Expr
 
-from polars_ta.tdx._nb import roll_avedev
-from polars_ta.utils.numba_ import batches_i1_o1
+from polars_ta.tdx._nb import roll_avedev, _up_stat
+from polars_ta.utils.numba_ import batches_i1_o1, batches_i1_o2
 from polars_ta.wq.time_series import ts_corr as RELATE  # noqa
 from polars_ta.wq.time_series import ts_covariance as COVAR  # noqa
 from polars_ta.wq.time_series import ts_std_dev as _ts_std_dev
@@ -44,3 +44,13 @@ def VAR(close: Expr, timeperiod: int = 5) -> Expr:
 
 def VARP(close: Expr, timeperiod: int = 5) -> Expr:
     return close.rolling_var(timeperiod, ddof=0)
+
+
+def ts_up_stat(x: Expr, ret_idx: int = 2) -> Expr:
+    """T天N板统计，与通达信结果一样，最简为5天2板
+
+    ret_idx = 0: T天
+    ret_idx = 1: N板
+    ret_idx = 2: 离上次涨停距离
+    """
+    return x.map_batches(lambda x1: batches_i1_o2(x1.to_numpy(), _up_stat, ret_idx=ret_idx))
