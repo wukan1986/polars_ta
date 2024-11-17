@@ -7,7 +7,7 @@ from typing import List
 import numpy as np
 from numba import jit
 from numpy.lib.stride_tricks import sliding_window_view
-from polars import Series, Expr, struct
+from polars import Series, Expr, struct, DataFrame
 
 """
 Series.to_numpy的操作在调用之前做，这样可控一些
@@ -23,12 +23,23 @@ def batches_i2_o1(xx: List[np.ndarray], func, *args, dtype=None) -> Series:
     return Series(func(*xx, *args), nan_to_null=True, dtype=dtype)
 
 
-def batches_i1_o2(x1: np.ndarray, func, *args, dtype=None, ret_idx: int = 0) -> Series:
-    return Series(func(x1, *args)[ret_idx], nan_to_null=True, dtype=dtype)
+# def batches_i1_o2(x1: np.ndarray, func, *args, dtype=None, ret_idx: int = 0) -> Series:
+#     return Series(func(x1, *args)[ret_idx], nan_to_null=True, dtype=dtype)
+#
+#
+# def batches_i2_o2(xx: List[np.ndarray], func, *args, dtype=None, ret_idx: int = 0) -> Series:
+#     return Series(func(*xx, *args)[ret_idx], nan_to_null=True, dtype=dtype)
+
+def batches_i1_o2(x1: np.ndarray, func, *args, dtype=None) -> Series:
+    out = func(x1, *args)
+    ss = [Series(x, nan_to_null=True, dtype=dtype) for x in out]
+    return DataFrame(ss).to_struct('')
 
 
-def batches_i2_o2(xx: List[np.ndarray], func, *args, dtype=None, ret_idx: int = 0) -> Series:
-    return Series(func(*xx, *args)[ret_idx], nan_to_null=True, dtype=dtype)
+def batches_i2_o2(xx: List[np.ndarray], func, *args, dtype=None) -> Series:
+    out = func(*xx, *args)
+    ss = [Series(x, nan_to_null=True, dtype=dtype) for x in out]
+    return DataFrame(ss).to_struct('')
 
 
 @jit(nopython=True, nogil=True, cache=True)

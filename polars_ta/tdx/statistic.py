@@ -46,11 +46,11 @@ def VARP(close: Expr, timeperiod: int = 5) -> Expr:
     return close.rolling_var(timeperiod, ddof=0)
 
 
-def ts_up_stat(x: Expr, ret_idx: int = 2) -> Expr:
+def ts_up_stat(x: Expr) -> Expr:
     """T天N板统计，与通达信结果一样，最简为5天2板
 
     ret_idx = 0: T天
     ret_idx = 1: N板
     ret_idx = 2: 离上次涨停距离
     """
-    return x.map_batches(lambda x1: batches_i1_o2(x1.to_numpy(), _up_stat, ret_idx=ret_idx))
+    return x.map_batches(lambda x1: batches_i1_o2(x1.to_numpy(), _up_stat))

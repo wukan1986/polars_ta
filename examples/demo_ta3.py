@@ -23,10 +23,9 @@ df = df.with_columns([
     # 多输入一输出
     ATR(pl.col('A'), pl.col('B'), pl.col('C'), 2).alias('ATR2'),
     # 原为一输入多输出，通过ret_idx指定一输出
-    BBANDS(pl.col('A'), timeperiod=2, ret_idx=1).alias('BBANDS'),
+    BBANDS(pl.col('A'), timeperiod=2).alias('BBANDS'),
     # 原为多输入多输出，通过ret_idx指定一输出
     AROON('A', 'B', timeperiod=2).alias('AROON'),
-
 ])
 
 print(df)
