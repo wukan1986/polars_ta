@@ -200,6 +200,23 @@ def _cum_sum_reset(a):
     return out
 
 
+@jit(nopython=True, nogil=True, cache=True)
+def _split_sum(x1, x2, window=10, n=2):
+    out1 = np.full(x1.shape[0], np.nan, dtype=float)
+    out2 = np.full(x1.shape[0], np.nan, dtype=float)
+    if len(x1) < window:
+        return out1, out2
+    a1 = sliding_window_view(x1, window)
+    a2 = sliding_window_view(x2, window)
+    for i, (v1, v2) in enumerate(zip(a1, a2)):
+        # 排序两次，解决nan的问题
+        b1 = np.argsort(v2)[:n]
+        b2 = np.argsort(-v2)[:n]
+        out1[i + window - 1] = np.sum(v1[b1])
+        out2[i + window - 1] = np.sum(v1[b2])
+    return out1, out2
+
+
 @jit(float64[:](bool_[:], bool_[:], bool_[:], bool_[:], bool_, bool_), nopython=True, fastmath=True, nogil=True, cache=True)
 def signals_to_amount(is_long_entry: np.ndarray, is_long_exit: np.ndarray,
                       is_short_entry: np.ndarray, is_short_exit: np.ndarray,
