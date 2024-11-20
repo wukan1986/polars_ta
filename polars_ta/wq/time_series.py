@@ -98,6 +98,11 @@ def ts_delta(x: Expr, d: int = 1) -> Expr:
     return x.diff(d)
 
 
+def ts_fill_null(x: Expr) -> Expr:
+    """ffill方式填充None"""
+    return x.forward_fill()
+
+
 def ts_ir(x: Expr, d: int = 1) -> Expr:
     return ts_mean(x, d) / ts_std_dev(x, d, 0)
 
