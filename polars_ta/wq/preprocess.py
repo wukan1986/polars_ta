@@ -113,9 +113,7 @@ def cs_mad_zscore_resid(y: Expr, *more_x: Expr) -> Expr:
 
 
 def cs_mad_rank(y: Expr) -> Expr:
-    """常用功能简化封装。去极值，排名。
-
-    适合于分层收益V型或倒V的情况"""
+    """常用功能简化封装。去极值，排名。"""
     return cs_rank(cs_mad(y))
 
 
