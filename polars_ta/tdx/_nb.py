@@ -37,7 +37,10 @@ def roll_bars_since_n(x1, window):
 
 @jit(nopython=True, nogil=True, fastmath=True, cache=True)
 def _up_stat(a, d: int = 3):
-    """T天N板，最稀疏为5天2板"""
+    """T天N板，最稀疏为5天2板
+
+    最近几天涨停但当天没涨停也会有记录，如6天2板，所以要与涨停一起使用
+    """
     out1 = full(a.shape, 0, dtype=int)
     out2 = full(a.shape, 0, dtype=int)
     out3 = full(a.shape, 0, dtype=int)
@@ -58,12 +61,12 @@ def _up_stat(a, d: int = 3):
             if f:
                 continue
             k += 1
+            t += 1
             if k > d:
-                n = 0
+                # 超过指定天数才会重置
                 t = 0
-            else:
-                t += 1
+                n = 0
             out1[i] = t
-            out2[i] = 0
+            out2[i] = n
             out3[i] = k
     return out1, out2, out3
