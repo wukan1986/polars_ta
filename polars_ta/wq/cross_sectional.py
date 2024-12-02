@@ -20,7 +20,16 @@ def cs_one_side(x: Expr, is_long: bool = True) -> Expr:
 
 
 def cs_rank(x: Expr, pct: bool = True) -> Expr:
-    """Ranks the input among all the instruments and returns an equally distributed number between 0.0 and 1.0. For precise sort, use the rate as 0."""
+    """Ranks the input among all the instruments and returns an equally distributed number between 0.0 and 1.0. For precise sort, use the rate as 0.
+
+    对所有的输入进行排名，返回一个0到1之间的均匀分布的数字
+
+    Parameters
+    ----------
+    x
+    pct
+
+    """
     if pct:
         return x.rank(method='min') / x.count()
     else:
@@ -43,9 +52,39 @@ def cs_truncate(x: Expr, max_percent: float = 0.01) -> Expr:
 
 
 def cs_fill_zero(x: Expr) -> Expr:
-    """截面不全为空时，空值填充为0，反之保持null
+    """全为`null`时，保持`null`，反之`null`填充为`0`
 
-    在权重矩阵中使用时。一定要保证所有股票都在，停牌不能被过滤了"""
+    Examples
+    --------
+
+    ```python
+    df = pl.DataFrame({
+        'a': [1, 2, None, 4, None],
+        'b': [None, None, None, None, None],
+    }).with_columns(
+        A=cs_fill_zero(pl.col('a')),
+        B=cs_fill_zero(pl.col('b')),
+    )
+
+    shape: (5, 4)
+    ┌──────┬──────┬─────┬──────┐
+    │ a    ┆ b    ┆ A   ┆ B    │
+    │ ---  ┆ ---  ┆ --- ┆ ---  │
+    │ i64  ┆ null ┆ i64 ┆ i32  │
+    ╞══════╪══════╪═════╪══════╡
+    │ 1    ┆ null ┆ 1   ┆ null │
+    │ 2    ┆ null ┆ 2   ┆ null │
+    │ null ┆ null ┆ 0   ┆ null │
+    │ 4    ┆ null ┆ 4   ┆ null │
+    │ null ┆ null ┆ 0   ┆ null │
+    └──────┴──────┴─────┴──────┘
+    ```
+
+    Notes
+    -----
+    在权重矩阵中使用时。一定要保证所有股票都在，停牌不能被过滤了
+
+    """
     return when(x.is_not_null().sum() == 0).then(x).otherwise(x.fill_null(0))
 
 

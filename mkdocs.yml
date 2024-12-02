@@ -1,0 +1,31 @@
+site_name: polars_ta API References
+nav:
+  - polars_ta.wq: wq.md
+
+theme:
+  name: material
+  features:
+    - navigation.tracking
+    - navigation.instant
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.footer
+    - navigation.indexes
+    - content.tabs.link
+    - content.code.copy
+
+
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          paths: [ . ]
+          options:
+            summary: true
+            show_root_heading: true
+            show_if_no_docstring: true
+            show_source: true
+            show_signature_annotations: true
+            docstring_style: numpy

@@ -161,19 +161,19 @@ def isnan(x):
 
 
 @jit(nopython=True, nogil=True, fastmath=True, cache=True)
-def _zip_prod(a, b):
-    for i in range(1, a.shape[0]):
-        if isnan(a[i]):
-            a[i] = a[i - 1] * b[i - 1]
-    return a
+def _cum_prod_by(r, by):
+    for i in range(1, r.shape[0]):
+        if isnan(by[i]):
+            by[i] = r[i] * by[i - 1]
+    return by
 
 
 @jit(nopython=True, nogil=True, fastmath=True, cache=True)
-def _zip_sum(a, b):
-    for i in range(1, a.shape[0]):
-        if isnan(a[i]):
-            a[i] = a[i - 1] + b[i - 1]
-    return a
+def _cum_sum_by(r, by):
+    for i in range(1, r.shape[0]):
+        if isnan(by[i]):
+            by[i] = r[i] + by[i - 1]
+    return by
 
 
 @jit(nopython=True, nogil=True, fastmath=True, cache=True)
@@ -201,7 +201,7 @@ def _cum_sum_reset(a):
 
 
 @jit(nopython=True, nogil=True, cache=True)
-def _split_sum(x1, x2, window=10, n=2):
+def _sum_split_by(x1, x2, window=10, n=2):
     out1 = np.full(x1.shape[0], np.nan, dtype=float)
     out2 = np.full(x1.shape[0], np.nan, dtype=float)
     if len(x1) < window:
@@ -218,11 +218,11 @@ def _split_sum(x1, x2, window=10, n=2):
 
 
 @jit(float64[:](bool_[:], bool_[:], bool_[:], bool_[:], bool_, bool_), nopython=True, fastmath=True, nogil=True, cache=True)
-def signals_to_amount(is_long_entry: np.ndarray, is_long_exit: np.ndarray,
-                      is_short_entry: np.ndarray, is_short_exit: np.ndarray,
-                      accumulate: bool = False,
-                      action: bool = False) -> np.ndarray:
-    """将4路信号转换成持仓状态。适合按资产分组后的长表
+def _signals_to_size(is_long_entry: np.ndarray, is_long_exit: np.ndarray,
+                     is_short_entry: np.ndarray, is_short_exit: np.ndarray,
+                     accumulate: bool = False,
+                     action: bool = False) -> np.ndarray:
+    """将4路信号转换成持仓状态。适合按资产分组后的长表,参考于`vectorbt`
 
     在`LongOnly`场景下，`is_short_entry`和`is_short_exit`输入数据值都为`False`即可
 
