@@ -1,5 +1,6 @@
 site_name: polars_ta API References
 nav:
+  - Home: index.md
   - polars_ta.wq: wq.md
 
 theme:
