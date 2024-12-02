@@ -42,12 +42,13 @@ def AROON_aroonup(high: Expr, low: Expr, timeperiod: int = 14) -> Expr:
 
 
 def MACD_macd(close: Expr, fastperiod: int = 12, slowperiod: int = 26) -> Expr:
-    """
+    """MACD
 
     Notes
     -----
     When counting how many data we have
     we refer to `slowperiod`, while `talib.MACD` refers to `fastperiod`
+
     talib.MACD有效数据按fastperiod，而本项目按slowperiod
 
     """
@@ -55,11 +56,12 @@ def MACD_macd(close: Expr, fastperiod: int = 12, slowperiod: int = 26) -> Expr:
 
 
 def MACD_macdhist(close: Expr, fastperiod: int = 12, slowperiod: int = 26, signalperiod: int = 9) -> Expr:
-    """
+    """MACD
 
     Notes
     -----
     Chinese version is multiplied by 2
+
     中国版多了乘2
 
     """
@@ -113,6 +115,7 @@ def RSV(high: Expr, low: Expr, close: Expr, timeperiod: int = 5) -> Expr:
     -----
     Also called `STOCHF_fastk`, `talib.STOCHF` is multiplied by 100,
     and it is very similar to the `WILLR` indicator
+
     又名STOCHF_fastk, talib.STOCHF版相当于多乘了100，与WILLR指标又很像
 
     """
@@ -139,12 +142,13 @@ def WILLR(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:
     Notes
     -----
     `talib.WILLR` is multiplied by -100, but I think it is unnecessary
+
     talib.WILLR版相当于多乘了-100，但个人认为没有必要
 
     References
     ----------
-    https://www.investopedia.com/terms/w/williamsr.asp
-    https://school.stockcharts.com/doku.php?id=technical_indicators:williams_r
+    - https://www.investopedia.com/terms/w/williamsr.asp
+    - https://school.stockcharts.com/doku.php?id=technical_indicators:williams_r
 
     """
     a = MAX(high, timeperiod)

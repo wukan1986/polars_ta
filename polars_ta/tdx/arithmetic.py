@@ -39,9 +39,7 @@ def ROUND2(x: Expr, decimals: int = 0) -> Expr:
 
 
 def BETWEEN(a: Expr, b: Expr, c: Expr) -> Expr:
-    """1 if B<=A<=C or C<=A<=B else 0
-
-    BETWEEN(A,B,C)表示A处于B和C之间时返回1(B<=A<=C或C<=A<=B),否则返回0"""
+    """BETWEEN(A,B,C)表示A处于B和C之间时返回1,否则返回0"""
     x1 = (b <= a) & (a <= c)
     x2 = (c <= a) & (a <= b)
     return x1 | x2

@@ -1,5 +1,5 @@
 from polars import Expr, all_horizontal, any_horizontal
-from polars import when, Int8, Boolean
+from polars import when
 
 
 def and_(a: Expr, b: Expr, *args) -> Expr:
@@ -55,13 +55,3 @@ def or_(a: Expr, b: Expr, *args) -> Expr:
 def xor(a: Expr, b: Expr) -> Expr:
     """Logical XOR operator returns true if exactly one of the inputs is true and returns false otherwise"""
     return a.xor(b)
-
-
-def int_(a: Expr) -> Expr:
-    """convert bool to int"""
-    return a.cast(Int8)
-
-
-def bool_(a: Expr) -> Expr:
-    """convert int to bool"""
-    return a.cast(Boolean)

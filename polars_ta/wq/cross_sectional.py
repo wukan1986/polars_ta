@@ -20,14 +20,42 @@ def cs_one_side(x: Expr, is_long: bool = True) -> Expr:
 
 
 def cs_rank(x: Expr, pct: bool = True) -> Expr:
-    """Ranks the input among all the instruments and returns an equally distributed number between 0.0 and 1.0. For precise sort, use the rate as 0.
-
-    对所有的输入进行排名，返回一个0到1之间的均匀分布的数字
+    """排名。Ranks the input among all the instruments and returns an equally distributed number between 0.0 and 1.0. For precise sort, use the rate as 0.
 
     Parameters
     ----------
     x
     pct
+        * True: 排名百分比。范围：(0,1]
+        * False: 排名。范围：[1,+inf)
+
+    Examples
+    --------
+
+    ```python
+    df = pl.DataFrame({
+        'a': [None, 1, 1, 1, 2, 2, 3, 10],
+    }).with_columns(
+        out1=cs_rank(pl.col('a'), True),
+        out2=cs_rank(pl.col('a'), False),
+    )
+
+    shape: (8, 3)
+    ┌──────┬──────────┬──────┐
+    │ a    ┆ out1     ┆ out2 │
+    │ ---  ┆ ---      ┆ ---  │
+    │ i64  ┆ f64      ┆ u32  │
+    ╞══════╪══════════╪══════╡
+    │ null ┆ null     ┆ null │
+    │ 1    ┆ 0.142857 ┆ 1    │
+    │ 1    ┆ 0.142857 ┆ 1    │
+    │ 1    ┆ 0.142857 ┆ 1    │
+    │ 2    ┆ 0.571429 ┆ 4    │
+    │ 2    ┆ 0.571429 ┆ 4    │
+    │ 3    ┆ 0.857143 ┆ 6    │
+    │ 10   ┆ 1.0      ┆ 7    │
+    └──────┴──────────┴──────┘
+    ```
 
     """
     if pct:
@@ -96,3 +124,48 @@ def cs_regression_neut(y: Expr, x: Expr) -> Expr:
 def cs_regression_proj(y: Expr, x: Expr) -> Expr:
     """一元回归预测"""
     return pls.compute_least_squares(y, x, add_intercept=True, mode='predictions', ols_kwargs=_ols_kwargs)
+
+
+def cs_qcut(x: Expr, q: int = 10) -> Expr:
+    """等频分箱 Convert float values into indexes for user-specified buckets. Bucket is useful for creating group values, which can be passed to group operators as input.
+
+    Parameters
+    ----------
+    x
+    q
+        按频率分成`q`份
+
+    Examples
+    --------
+
+    ```python
+    df = pl.DataFrame({
+        'a': [None, 1, 1, 1, 2, 2, 3, 10],
+    }).with_columns(
+        out1=cs_qcut(pl.col('a'), 10),
+        out2=pl.col('a').map_batches(lambda x: pd.qcut(x, 10, labels=False, duplicates='drop')),
+    )
+    shape: (8, 3)
+    ┌──────┬──────┬──────┐
+    │ a    ┆ out1 ┆ out2 │
+    │ ---  ┆ ---  ┆ ---  │
+    │ i64  ┆ u32  ┆ f64  │
+    ╞══════╪══════╪══════╡
+    │ null ┆ null ┆ NaN  │
+    │ 1    ┆ 0    ┆ 0.0  │
+    │ 1    ┆ 0    ┆ 0.0  │
+    │ 1    ┆ 0    ┆ 0.0  │
+    │ 2    ┆ 3    ┆ 1.0  │
+    │ 2    ┆ 3    ┆ 1.0  │
+    │ 3    ┆ 7    ┆ 4.0  │
+    │ 10   ┆ 8    ┆ 5.0  │
+    └──────┴──────┴──────┘
+
+    ```
+
+    Warnings
+    --------
+    目前与`pd.qcut`结果不同，等官方改进
+
+    """
+    return x.qcut(q, allow_duplicates=True).to_physical()

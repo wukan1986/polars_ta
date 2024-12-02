@@ -1,3 +1,6 @@
+"""
+基本上都来自于`polars_ta.wq.arithmetic`
+"""
 from polars_ta.wq.arithmetic import arc_cos as ACOS  # noqa
 from polars_ta.wq.arithmetic import arc_sin as ASIN  # noqa
 from polars_ta.wq.arithmetic import arc_tan as ATAN  # noqa

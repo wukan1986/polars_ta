@@ -1,0 +1,1 @@
+::: polars_ta.ta.statistic

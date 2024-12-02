@@ -106,16 +106,35 @@ def ts_cum_sum(x: Expr) -> Expr:
 def ts_cum_sum_reset(x: Expr) -> Expr:
     """时序累加。遇到0、nan、相反符号时重置
 
-    Parameters
-    ----------
-    x
+    Examples
+    --------
+
+    ```python
+    df = pl.DataFrame({
+        'a': [1, 0, 1, 2, None, 3, -2, -3],
+    }).with_columns(
+        A=ts_cum_sum_reset(pl.col('a'))
+    )
+
+    shape: (8, 2)
+    ┌──────┬──────┐
+    │ a    ┆ A    │
+    │ ---  ┆ ---  │
+    │ i64  ┆ f64  │
+    ╞══════╪══════╡
+    │ 1    ┆ 1.0  │
+    │ 0    ┆ 0.0  │
+    │ 1    ┆ 1.0  │
+    │ 2    ┆ 3.0  │
+    │ null ┆ 0.0  │
+    │ 3    ┆ 3.0  │
+    │ -2   ┆ -2.0 │
+    │ -3   ┆ -5.0 │
+    └──────┴──────┘
+
+    ```
 
     """
-    # """时序累加。遇到0、nan、相反符号时重置。可用于统计连板数
-    #
-    # 1 0 1 2 None 3 -2 -3
-    # 1 0 1 3 0    3 -2 -5
-    # """
     return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _cum_sum_reset))
 
 
@@ -152,9 +171,7 @@ def ts_decay_linear(x: Expr, d: int = 30) -> Expr:
 
 
 def ts_delay(x: Expr, d: int = 1, fill_value=None) -> Expr:
-    """shift x
-
-    时序数据移动
+    """shift x 时序数据移动
 
     Parameters
     ----------
@@ -169,27 +186,17 @@ def ts_delay(x: Expr, d: int = 1, fill_value=None) -> Expr:
 
 
 def ts_delta(x: Expr, d: int = 1) -> Expr:
-    """Calculate the first discrete difference between shifted items
-
-    差分
-
-    """
+    """差分"""
     return x.diff(d)
 
 
 def ts_fill_null(x: Expr) -> Expr:
-    """Fill missing values with the last non-null value
-
-    用上一个非空值填充空值
-
-    """
+    """用上一个非空值填充空值"""
     return x.forward_fill()
 
 
 def ts_ir(x: Expr, d: int = 1) -> Expr:
-    """rolling information ratio
-
-    时序滚动信息系数"""
+    """时序滚动信息系数rolling information ratio"""
     return ts_mean(x, d) / ts_std_dev(x, d, 0)
 
 
@@ -214,9 +221,9 @@ def ts_l2_norm(x: Expr, d: int = 5) -> Expr:
 
 
 def ts_log_diff(x: Expr, d: int = 1) -> Expr:
-    """log(current value of input or x[t] ) - log(previous value of input or x[t-1]).
+    """对数差分。log(current value of input or x[t] ) - log(previous value of input or x[t-1]).
 
-    对数差分
+
     """
     return x.log().diff(d)
 
@@ -300,12 +307,12 @@ def ts_percentage(x: Expr, d: int, percentage: float = 0.5) -> Expr:
 
 
 def ts_product(x: Expr, d: int = 5) -> Expr:
-    """时序累乘"""
+    """时序滚动乘"""
     return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy(), roll_prod, d))
 
 
 def ts_rank(x: Expr, d: int = 5) -> Expr:
-    """时序排名
+    """时序滚动排名
 
     Warnings
     --------
@@ -384,25 +391,54 @@ def ts_sum_split_by(x: Expr, by: Expr, d: int = 30, k: int = 10) -> Expr:
     Returns
     -------
     Expr
-        struct结构的两个字段
+        * top_k
+        * bottom_k
+
+    Examples
+    --------
+
+    ```python
+    df = pl.DataFrame({
+        'a': [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+        'b': [10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
+    }).with_columns(
+        A=ts_sum_split_by(pl.col('a'), pl.col('b'), 8, 3)
+    )
+
+    shape: (10, 3)
+    ┌─────┬─────┬───────────────┐
+    │ a   ┆ b   ┆ A             │
+    │ --- ┆ --- ┆ ---           │
+    │ i64 ┆ i64 ┆ struct[2]     │
+    ╞═════╪═════╪═══════════════╡
+    │ 10  ┆ 10  ┆ {null,null}   │
+    │ 20  ┆ 9   ┆ {null,null}   │
+    │ 30  ┆ 8   ┆ {null,null}   │
+    │ 40  ┆ 7   ┆ {null,null}   │
+    │ 50  ┆ 6   ┆ {null,null}   │
+    │ 60  ┆ 5   ┆ {null,null}   │
+    │ 70  ┆ 4   ┆ {null,null}   │
+    │ 80  ┆ 3   ┆ {210.0,60.0}  │
+    │ 90  ┆ 2   ┆ {240.0,90.0}  │
+    │ 100 ┆ 1   ┆ {270.0,120.0} │
+    └─────┴─────┴───────────────┘
+    ```
 
     """
     return struct([x, by]).map_batches(lambda xx: batches_i2_o2([xx.struct[i].to_numpy() for i in range(2)], _sum_split_by, d, k))
 
 
 def ts_triple_corr(x: Expr, y: Expr, z: Expr, d: int) -> Expr:
-    """Returns triple correlation of x, y, z for the past d days.
+    """时序滚动三重相关系数 Returns triple correlation of x, y, z for the past d days.
 
-    时序滚动三重相关系数
+
     """
     return struct([x, y, z]).map_batches(lambda xx: batches_i2_o1([xx.struct[i].to_numpy() for i in range(3)], roll_triple_corr, d))
 
 
 def ts_weighted_decay(x: Expr, k: float = 0.5) -> Expr:
-    """Instead of replacing today’s value with yesterday’s as in ts_delay(x, 1),
+    """加权衰减 Instead of replacing today’s value with yesterday’s as in ts_delay(x, 1),
     it assigns weighted average of today’s and yesterday’s values with weight on today’s value being k and yesterday’s being (1-k).
-
-    加权衰减
 
     Parameters
     ----------
@@ -422,7 +458,7 @@ def ts_zscore(x: Expr, d: int = 5) -> Expr:
 def ts_cum_prod_by(r: Expr, v: Expr) -> Expr:
     """带设置的累乘
 
-    可用于市值累乘日收益率得到新市值的需求.
+    可用于市值累乘日收益率得到新市值的需求
 
     Parameters
     ----------
@@ -476,7 +512,7 @@ def ts_cum_prod_by(r: Expr, v: Expr) -> Expr:
 def ts_cum_sum_by(r: Expr, v: Expr) -> Expr:
     """带设置的累加
 
-    可用于市值累加日收益得到新市值的需求.
+    可用于市值累加日收益得到新市值的需求
 
     Parameters
     ----------
@@ -545,26 +581,28 @@ def ts_regression_slope(y: Expr, x: Expr, d: int) -> Expr:
     return pls.compute_rolling_least_squares(y, x, mode='coefficients', add_intercept=True, rolling_kwargs=RollingKwargs(window_size=d, min_periods=d)).struct[0]
 
 
-def ts_resid(y: Expr, *more_x: Expr, d: int) -> Expr:
+def ts_resid(y: Expr, *more_x: Expr, d: int = 30) -> Expr:
     """多元时序滚动回归取残差
 
     Parameters
     ----------
     y
     *more_x
+        多个x
     d
 
     """
     return pls.compute_rolling_least_squares(y, *more_x, mode='residuals', rolling_kwargs=RollingKwargs(window_size=d, min_periods=d))
 
 
-def ts_pred(y: Expr, *more_x: Expr, d: int) -> Expr:
+def ts_pred(y: Expr, *more_x: Expr, d: int = 30) -> Expr:
     """多元时序滚动回归预测
 
     Parameters
     ----------
     y
     *more_x
+        多个x
     d
 
     """

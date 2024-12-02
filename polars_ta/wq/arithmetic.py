@@ -1,6 +1,6 @@
 import numpy as np
-from polars import Expr, Series, mean_horizontal
-from polars import reduce, max_horizontal, sum_horizontal, min_horizontal, Int64
+from polars import Expr, Series, fold, Int64, any_horizontal
+from polars import max_horizontal, sum_horizontal, min_horizontal, mean_horizontal
 
 
 def abs_(x: Expr) -> Expr:
@@ -10,30 +10,60 @@ def abs_(x: Expr) -> Expr:
         return np.abs(x)
 
 
-def add(a: Expr, b: Expr, *args, filter_: bool = False) -> Expr:
-    """Add all inputs (at least 2 inputs required). If filter = true, filter all input NaN to 0 before adding"""
-    if filter_:
-        return sum_horizontal(a, b, *args)
+def add(a: Expr, b: Expr, *args) -> Expr:
+    """水平多列加
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, 2, 3, 4, None],
+        'b': [5, None, 3, 2, None],
+        'c': [1, 1, None, 1, None],
+    }).with_columns(
+        out=add(pl.col('a'), pl.col('b'), pl.col('c'))
+    )
+    shape: (5, 4)
+    ┌──────┬──────┬──────┬──────┐
+    │ a    ┆ b    ┆ c    ┆ out  │
+    │ ---  ┆ ---  ┆ ---  ┆ ---  │
+    │ i64  ┆ i64  ┆ i64  ┆ i64  │
+    ╞══════╪══════╪══════╪══════╡
+    │ null ┆ 5    ┆ 1    ┆ 6    │
+    │ 2    ┆ null ┆ 1    ┆ 3    │
+    │ 3    ┆ 3    ┆ null ┆ 6    │
+    │ 4    ┆ 2    ┆ 1    ┆ 7    │
+    │ null ┆ null ┆ null ┆ null │
+    └──────┴──────┴──────┴──────┘
+
+    ```
+
+    Notes
+    -----
+    全`null`时返回`null`
+
+    """
+    # # 全null时返回0
+    # return sum_horizontal(a, b, *args)
+
     _args = [a, b] + list(args)
-    return reduce(function=lambda acc, x: acc + x, exprs=_args)
+    return fold(acc=any_horizontal(_args) - 1, function=lambda acc, x: acc + x.fill_null(0), exprs=_args)
 
 
 def arc_cos(x: Expr) -> Expr:
-    """If -1 <= x <= 1: arccos(x); else NaN"""
     return x.arccos()
 
 
 def arc_sin(x: Expr) -> Expr:
-    """If -1 <= x <= 1: arcsin(x); else NaN"""
     return x.arcsin()
 
 
 def arc_tan(x: Expr) -> Expr:
-    """This operator does inverse tangent of input. """
     return x.arctan()
 
 
 def ceiling(x: Expr) -> Expr:
+    """向上取整"""
     return x.ceil()
 
 
@@ -50,6 +80,7 @@ def densify(x: Expr) -> Expr:
 
 
 def divide(x: Expr, y: Expr) -> Expr:
+    """x/y"""
     return x / y
 
 
@@ -58,24 +89,57 @@ def exp(x: Expr) -> Expr:
 
 
 def expm1(x: Expr) -> Expr:
-    """convert log return to simple return
-    对数收益率 转 简单收益率"""
+    """对数收益率 转 简单收益率 convert log return to simple return"""
     return x.exp() - 1
 
 
 def floor(x: Expr) -> Expr:
+    """向下取整"""
     return x.floor()
 
 
 def fraction(x: Expr) -> Expr:
-    """This operator removes the whole number part and returns the remaining fraction part with sign."""
-    # 按小学时的定义，负数-1.2的整数部分是-2,小数部分是0.8，而这有所不同
-    # return x % 1
+    """小数部分 This operator removes the whole number part and returns the remaining fraction part with sign.
+
+    Examples
+    --------
+
+    ```python
+    df = pl.DataFrame({
+        'a': [-2.5, -1.2, -1., None, 2., 3.2],
+    }).with_columns(
+        out=fraction(pl.col('a'))
+    )
+
+    shape: (6, 2)
+    ┌──────┬──────┐
+    │ a    ┆ out  │
+    │ ---  ┆ ---  │
+    │ f64  ┆ f64  │
+    ╞══════╪══════╡
+    │ -2.5 ┆ -0.5 │
+    │ -1.2 ┆ -0.2 │
+    │ -1.0 ┆ -0.0 │
+    │ null ┆ null │
+    │ 2.0  ┆ 0.0  │
+    │ 3.2  ┆ 0.2  │
+    └──────┴──────┘
+    ```
+
+    Notes
+    -----
+    按小学时的定义，负数`-1.2`的整数部分是`-2`,小数部分是`0.8`，而这有所不同
+
+    References
+    ----------
+    https://platform.worldquantbrain.com/learn/operators/detailed-operator-descriptions#fractionx
+
+    """
     return x.sign() * (x.abs() % 1)
 
 
 def inverse(x: Expr) -> Expr:
-    """1 / x"""
+    """1/x"""
     return 1 / x
 
 
@@ -91,8 +155,7 @@ def log10(x: Expr) -> Expr:
 
 
 def log1p(x: Expr) -> Expr:
-    """convert simple return to log return
-    简单收益率 转 对数收益率"""
+    """简单收益率 转 对数收益率 convert simple return to log return"""
     return x.log1p()
 
 
@@ -111,25 +174,58 @@ def min_(a: Expr, b: Expr, *args) -> Expr:
 
 
 def mod(x: Expr, y: Expr) -> Expr:
+    """x%y"""
     return x % y
 
 
-def multiply(a: Expr, b: Expr, *args, filter_: bool = False) -> Expr:
-    """Multiply all inputs. At least 2 inputs are required. Filter sets the NaN values to 1"""
-    _args = [a, b] + list(args)
-    if filter_:
-        _args = [_.fill_null(1) for _ in args]
+def multiply(a: Expr, b: Expr, *args) -> Expr:
+    """水平多列乘 Multiply all inputs. At least 2 inputs are required.
 
-    return reduce(function=lambda acc, x: acc * x, exprs=_args)
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, 2, 3, 4, None],
+        'b': [5, None, 3, 2, None],
+        'c': [1, 1, None, 1, None],
+    }).with_columns(
+        out=multiply(pl.col('a'), pl.col('b'), pl.col('c'))
+    )
+
+    shape: (5, 4)
+    ┌──────┬──────┬──────┬──────┐
+    │ a    ┆ b    ┆ c    ┆ out  │
+    │ ---  ┆ ---  ┆ ---  ┆ ---  │
+    │ i64  ┆ i64  ┆ i64  ┆ i64  │
+    ╞══════╪══════╪══════╪══════╡
+    │ null ┆ 5    ┆ 1    ┆ 5    │
+    │ 2    ┆ null ┆ 1    ┆ 2    │
+    │ 3    ┆ 3    ┆ null ┆ 9    │
+    │ 4    ┆ 2    ┆ 1    ┆ 8    │
+    │ null ┆ null ┆ null ┆ null │
+    └──────┴──────┴──────┴──────┘
+
+    ```
+
+    Notes
+    -----
+    全`null`时返回`null`
+
+    """
+    _args = [a, b] + list(args)
+
+    # # 全null返回1
+    # return fold(acc=1, function=lambda acc, x: acc * x.fill_null(1), exprs=_args)
+    return fold(acc=any_horizontal(_args), function=lambda acc, x: acc * x.fill_null(1), exprs=_args)
 
 
 def power(x: Expr, y: Expr) -> Expr:
-    """x ^ y"""
+    """x ** y"""
     return x.pow(y)
 
 
 def reverse(x: Expr) -> Expr:
-    """- x"""
+    """-x"""
     return -x
 
 
@@ -148,15 +244,6 @@ def round_down(x: Expr, f: int = 1) -> Expr:
 
 def s_log_1p(x: Expr) -> Expr:
     return x.abs().log1p() * x.sign()
-
-
-def sigmoid(a: Expr) -> Expr:
-    # a<0
-    # b = a.exp()
-    # return b / (1 + b)
-
-    # a>0
-    return 1 / (1 + (-a).exp())
 
 
 def sign(x: Expr) -> Expr:
@@ -186,6 +273,7 @@ def sinh(x: Expr) -> Expr:
 
 
 def softsign(x: Expr) -> Expr:
+    """softsign是 tanh激活函数的另一个替代选择"""
     return x / (1 + x.abs())
 
 
@@ -193,13 +281,9 @@ def sqrt(x: Expr) -> Expr:
     return x.sqrt()
 
 
-def subtract(a: Expr, b: Expr, *args, filter_: bool = False) -> Expr:
-    """x-y. If filter = true, filter all input NaN to 0 before subtracting"""
-    _args = [a, b] + list(args)
-    if filter_:
-        _args = [_.fill_null(0) for _ in _args]
-
-    return reduce(function=lambda acc, x: acc - x, exprs=_args)
+def subtract(x: Expr, y: Expr) -> Expr:
+    """x-y"""
+    return x - y
 
 
 def tan(x: Expr) -> Expr:
@@ -212,13 +296,40 @@ def tanh(x: Expr) -> Expr:
 
 
 def truncate(x: Expr) -> Expr:
-    """truncate towards zero
-    向零取整"""
+    """向零取整 truncate towards zero
+
+    Examples
+    --------
+
+    ```python
+    df = pl.DataFrame({
+        'a': [-2.5, -1.2, -1., None, 2., 3.2],
+    }).with_columns(
+        out=truncate(pl.col('a'))
+    )
+
+    shape: (6, 2)
+    ┌──────┬──────┐
+    │ a    ┆ out  │
+    │ ---  ┆ ---  │
+    │ f64  ┆ i64  │
+    ╞══════╪══════╡
+    │ -2.5 ┆ -2   │
+    │ -1.2 ┆ -1   │
+    │ -1.0 ┆ -1   │
+    │ null ┆ null │
+    │ 2.0  ┆ 2    │
+    │ 3.2  ┆ 3    │
+    └──────┴──────┘
+
+    ```
+
+    """
     return x.cast(Int64)
 
 
 def var(a: Expr, b: Expr, *args) -> Expr:
-    """多列水平方差"""
+    """水平多列方差"""
     _args = [a, b] + list(args)
     _mean = mean_horizontal(_args)
     _sum = sum_horizontal([(expr - _mean) ** 2 for expr in _args])
@@ -226,5 +337,5 @@ def var(a: Expr, b: Expr, *args) -> Expr:
 
 
 def std(a: Expr, b: Expr, *args) -> Expr:
-    """多列水平标准差"""
+    """水平多列标准差"""
     return var(a, b, *args).sqrt()

@@ -1,20 +1,36 @@
 site_name: polars_ta API References
+site_url: https://polars-ta.readthedocs.io/en/latest/
+
 nav:
   - Home: index.md
-  - polars_ta.wq: wq.md
+  - polars_ta.wq:
+      - wq/arithmetic.md
+      - wq/cross_sectional.md
+      - wq/logical.md
+      - wq/preprocess.md
+      - wq/time_series.md
+      - wq/transformational.md
+      - wq/vector.md
+  - polars_ta.ta:
+      - ta/momentum.md
+      - ta/operators.md
+      - ta/overlap.md
+      - ta/price.md
+      - ta/statistic.md
+      - ta/transform.md
+      - ta/volatility.md
+      - ta/volume.md
+  - polars_ta.tdx:
+      - tdx/arithmetic.md
+  - polars_ta.talib: talib/index.md
 
 theme:
   name: material
   features:
-    - navigation.tracking
-    - navigation.instant
-    - navigation.tabs
-    - navigation.tabs.sticky
-    - navigation.footer
-    - navigation.indexes
     - content.tabs.link
     - content.code.copy
 
+strict: true
 
 plugins:
   - search

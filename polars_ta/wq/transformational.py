@@ -1,18 +1,43 @@
-from polars import Expr, when
+from polars import Expr, when, Int8, Boolean
 
-
-# def cs_bucket(x: Expr) -> Expr:
-#     """Convert float values into indexes for user-specified buckets. Bucket is useful for creating group values, which can be passed to group operators as input."""
-#     pass
 
 def cut(x: Expr, b: float, *more_bins) -> Expr:
-    """分箱"""
+    """分箱
+
+    Parameters
+    ----------
+    x
+    b
+    *more_bins
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, 1, 1, 1, 2, 2, 3, 10],
+    }).with_columns(
+        out1=cut(pl.col('a'), 2, 5, 20),
+    )
+    shape: (8, 2)
+    ┌──────┬──────┐
+    │ a    ┆ out1 │
+    │ ---  ┆ ---  │
+    │ i64  ┆ u32  │
+    ╞══════╪══════╡
+    │ null ┆ null │
+    │ 1    ┆ 0    │
+    │ 1    ┆ 0    │
+    │ 1    ┆ 0    │
+    │ 2    ┆ 0    │
+    │ 2    ┆ 0    │
+    │ 3    ┆ 1    │
+    │ 10   ┆ 2    │
+    └──────┴──────┘
+
+    ```
+
+    """
     return x.cut([b, *more_bins]).to_physical()
-
-
-def cs_qcut(x: Expr, q: int = 10) -> Expr:
-    """Convert float values into indexes for user-specified buckets. Bucket is useful for creating group values, which can be passed to group operators as input."""
-    return x.qcut(q, allow_duplicates=True).to_physical()
 
 
 def clamp(x: Expr, lower: float = 0, upper: float = 0, inverse: bool = False, mask: float = None) -> Expr:
@@ -24,9 +49,9 @@ def clamp(x: Expr, lower: float = 0, upper: float = 0, inverse: bool = False, ma
         return x.clip(lower, upper)
 
 
-def filter_(x: Expr, h: str = "1, 2, 3, 4", t: str = "0.5") -> Expr:
-    """Used to filter the value and allows to create filters like linear or exponential decay."""
-    raise
+# def filter_(x: Expr, h: str = "1, 2, 3, 4", t: str = "0.5") -> Expr:
+#     """Used to filter the value and allows to create filters like linear or exponential decay."""
+#     raise
 
 
 def keep(x: Expr, f: float, period: int = 5) -> Expr:
@@ -39,27 +64,26 @@ def left_tail(x: Expr, maximum: float = 0) -> Expr:
     return when(x <= maximum).then(x).otherwise(None)
 
 
-def pasteurize(x: Expr) -> Expr:
-    """Set to NaN if x is INF or if the underlying instrument is not in the Alpha universe"""
-    # TODO: 不在票池中的的功能无法表示
-    # TODO: 与purify好像没啥区别
-    return when(x.is_finite()).then(x).otherwise(None)
+# def pasteurize(x: Expr) -> Expr:
+#     """Set to NaN if x is INF or if the underlying instrument is not in the Alpha universe"""
+#     # TODO: 不在票池中的的功能无法表示
+#     # TODO: 与purify好像没啥区别
+#     return when(x.is_finite()).then(x).otherwise(None)
 
 
 def purify(x: Expr) -> Expr:
-    """Clear infinities (+inf, -inf) by replacing with NaN."""
+    """Clear infinities (+inf, -inf) by replacing with null."""
     return when(x.is_finite()).then(x).otherwise(None)
 
 
 def fill_nan(x: Expr) -> Expr:
-    """fill nan by null
-    填充nan为null"""
+    """填充nan为null"""
     return x.fill_nan(None)
 
 
-def fill_zero(x: Expr) -> Expr:
+def fill_null(x: Expr, value=0) -> Expr:
     """填充null为0"""
-    return x.fill_null(0)
+    return x.fill_null(value)
 
 
 def right_tail(x: Expr, minimum: float = 0) -> Expr:
@@ -76,3 +100,13 @@ def tail(x: Expr, lower: float = 0, upper: float = 0, newval: float = 0) -> Expr
     """If (x > lower AND x < upper) return newval, else return x. Lower, upper, newval should be constants. """
     # TODO 与clamp一样?
     return when((x <= lower) | (x >= upper)).then(x).otherwise(newval)
+
+
+def int_(a: Expr) -> Expr:
+    """convert bool to int"""
+    return a.cast(Int8)
+
+
+def bool_(a: Expr) -> Expr:
+    """convert int to bool"""
+    return a.cast(Boolean)
