@@ -338,8 +338,8 @@ def s_log_1p(x: Expr) -> Expr:
     -----
     从`wq`示例可以看出，log的底数是10，而不是e
 
-    Reference
-    ---------
+    References
+    ----------
     https://platform.worldquantbrain.com/learn/operators/detailed-operator-descriptions#s_log_1px
 
     """
@@ -357,8 +357,8 @@ def signed_power(x: Expr, y: Expr) -> Expr:
     """x raised to the power of y such that final result preserves sign of x.
 
 
-    Reference
-    ---------
+    References
+    ----------
     https://platform.worldquantbrain.com/learn/operators/detailed-operator-descriptions#signed_powerx-y
 
     """

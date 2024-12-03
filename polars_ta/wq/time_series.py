@@ -11,10 +11,71 @@ from polars_ta.wq._nb import roll_argmax, roll_argmin, roll_prod, roll_co_kurtos
 
 
 def ts_arg_max(x: Expr, d: int = 5, reverse: bool = True) -> Expr:
+    """Returns the relative index of the max value in the time series for the past d days.
+    If the current day has the max value for the past d days, it returns 0.
+    If previous day has the max value for the past d days, it returns 1.
+
+    Parameters
+    ----------
+    x
+    d
+    reverse
+        反向
+
+    See Also
+    --------
+    ts_arg_min
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [6, 2, 8, 5, 9, 4][::-1],
+    }).with_columns(
+        out=ts_arg_max(pl.col('a'), 6),
+    )
+    shape: (6, 2)
+    ┌─────┬──────┐
+    │ a   ┆ out  │
+    │ --- ┆ ---  │
+    │ i64 ┆ u16  │
+    ╞═════╪══════╡
+    │ 4   ┆ null │
+    │ 9   ┆ null │
+    │ 5   ┆ null │
+    │ 8   ┆ null │
+    │ 2   ┆ null │
+    │ 6   ┆ 4    │
+    └─────┴──────┘
+    ```
+
+    References
+    ----------
+    https://platform.worldquantbrain.com/learn/operators/detailed-operator-descriptions#ts_arg_maxx-d
+
+    """
     return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy(), roll_argmax, d, reverse, dtype=UInt16))
 
 
 def ts_arg_min(x: Expr, d: int = 5, reverse: bool = True) -> Expr:
+    """
+
+    Parameters
+    ----------
+    x
+    d
+    reverse
+        反向
+
+    See Also
+    --------
+    ts_arg_max
+
+    References
+    ----------
+    https://platform.worldquantbrain.com/learn/operators/detailed-operator-descriptions#ts_arg_minx-d
+
+    """
     return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy(), roll_argmin, d, reverse, dtype=UInt16))
 
 
@@ -165,13 +226,17 @@ def ts_decay_linear(x: Expr, d: int = 30) -> Expr:
     --------
     weights not yet supported on array with null values
 
+    References
+    ----------
+    https://platform.worldquantbrain.com/learn/operators/detailed-operator-descriptions#ts_decay_linearx-d-dense-false
+
     """
     weights = arange(1, d + 1, eager=True)
     return x.rolling_mean(d, weights=weights)
 
 
 def ts_delay(x: Expr, d: int = 1, fill_value=None) -> Expr:
-    """shift x 时序数据移动
+    """时序数据移动 shift x
 
     Parameters
     ----------
@@ -222,7 +287,6 @@ def ts_l2_norm(x: Expr, d: int = 5) -> Expr:
 
 def ts_log_diff(x: Expr, d: int = 1) -> Expr:
     """对数差分。log(current value of input or x[t] ) - log(previous value of input or x[t-1]).
-
 
     """
     return x.log().diff(d)

@@ -1,3 +1,9 @@
+"""
+
+```python
+```
+
+"""
 from polars import Expr
 
 from polars_ta import TA_EPSILON
@@ -77,6 +83,13 @@ def MACD_macdsignal(close: Expr, fastperiod: int = 12, slowperiod: int = 26, sig
 
 
 def MOM(close: Expr, timeperiod: int = 10) -> Expr:
+    """MOM = (price - prevPrice) [Momentum]
+
+    References
+    ----------
+    https://github.com/TA-Lib/ta-lib/blob/main/src/ta_func/ta_MOM.c#L200
+
+    """
     return ts_delta(close, timeperiod)
 
 
@@ -88,18 +101,46 @@ def PPO(close: Expr, fastperiod: int = 12, slowperiod: int = 26, matype: int = 0
 
 
 def ROC(close: Expr, timeperiod: int = 10) -> Expr:
+    """ROC = ((price/prevPrice)-1)*100 [Rate of change]
+
+    References
+    ----------
+    https://github.com/TA-Lib/ta-lib/blob/main/src/ta_func/ta_ROC.c#L200
+
+    """
     return ROCP(close, timeperiod) * 100
 
 
 def ROCP(close: Expr, timeperiod: int = 10) -> Expr:
+    """ROCP = (price-prevPrice)/prevPrice [Rate of change Percentage]
+
+    References
+    ----------
+    https://github.com/TA-Lib/ta-lib/blob/main/src/ta_func/ta_ROCP.c#L202
+
+    """
     return ts_returns(close, timeperiod)
 
 
 def ROCR(close: Expr, timeperiod: int = 10) -> Expr:
+    """ROCR = (price/prevPrice) [Rate of change ratio]
+
+    References
+    ----------
+    https://github.com/TA-Lib/ta-lib/blob/main/src/ta_func/ta_ROCR.c#L203
+
+    """
     return close / close.shift(timeperiod)
 
 
 def ROCR100(close: Expr, timeperiod: int = 10) -> Expr:
+    """ROCR100 = (price/prevPrice)*100 [Rate of change ratio 100 Scale]
+
+    References
+    ----------
+    https://github.com/TA-Lib/ta-lib/blob/main/src/ta_func/ta_ROCR100.c#L203
+
+    """
     return ROCR(close, timeperiod) * 100
 
 

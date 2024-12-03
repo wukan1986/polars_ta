@@ -1,3 +1,10 @@
+"""
+与`WorldQuant Alpha101`的区别是添加了`cs_`前缀
+
+由于截面与时序的使用方式不同，在自动化工具中如果不在名字上做区分就得手工注册，反而要麻烦些
+
+"""
+
 import polars_ols as pls
 from polars import Expr, when
 from polars_ols import OLSKwargs
@@ -12,11 +19,39 @@ _ols_kwargs = OLSKwargs(null_policy='drop', solve_method='svd')
 
 def cs_one_side(x: Expr, is_long: bool = True) -> Expr:
     """Shifts all instruments up or down so that the Alpha becomes long-only or short-only
-(if side = short), respectively."""
-    # TODO: 这里不确定，需再研究
-    # [-1, 0, 1]+1=[0, 1, 2]
-    # max([-1, 0, 1], 0)=[0,0,1]
-    raise
+(if side = short), respectively.
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, -15, -7, 0, 20],
+        'b': [None, 15, 7, 0, 20],
+    }).with_columns(
+        out1=cs_one_side(pl.col('a'), True),
+        out2=cs_one_side(pl.col('a'), False),
+        out3=cs_one_side(pl.col('b'), True),
+        out4=cs_one_side(pl.col('b'), False),
+    )
+    shape: (5, 6)
+    ┌──────┬──────┬──────┬──────┬──────┬──────┐
+    │ a    ┆ b    ┆ out1 ┆ out2 ┆ out3 ┆ out4 │
+    │ ---  ┆ ---  ┆ ---  ┆ ---  ┆ ---  ┆ ---  │
+    │ i64  ┆ i64  ┆ i64  ┆ i64  ┆ i64  ┆ i64  │
+    ╞══════╪══════╪══════╪══════╪══════╪══════╡
+    │ null ┆ null ┆ null ┆ null ┆ null ┆ null │
+    │ -15  ┆ 15   ┆ 0    ┆ -35  ┆ 15   ┆ -5   │
+    │ -7   ┆ 7    ┆ 8    ┆ -27  ┆ 7    ┆ -13  │
+    │ 0    ┆ 0    ┆ 15   ┆ -20  ┆ 0    ┆ -20  │
+    │ 20   ┆ 20   ┆ 35   ┆ 0    ┆ 20   ┆ 0    │
+    └──────┴──────┴──────┴──────┴──────┴──────┘
+    ```
+
+    """
+    if is_long:
+        return when(x.min() < 0).then(x - x.min()).otherwise(x)
+    else:
+        return when(x.max() > 0).then(x - x.max()).otherwise(x)
 
 
 def cs_rank(x: Expr, pct: bool = True) -> Expr:
@@ -26,7 +61,7 @@ def cs_rank(x: Expr, pct: bool = True) -> Expr:
     ----------
     x
     pct
-        * True: 排名百分比。范围：(0,1]
+        * True: 排名百分比。范围：[0,1]
         * False: 排名。范围：[1,+inf)
 
     Examples
@@ -47,31 +82,103 @@ def cs_rank(x: Expr, pct: bool = True) -> Expr:
     │ i64  ┆ f64      ┆ u32  │
     ╞══════╪══════════╪══════╡
     │ null ┆ null     ┆ null │
-    │ 1    ┆ 0.142857 ┆ 1    │
-    │ 1    ┆ 0.142857 ┆ 1    │
-    │ 1    ┆ 0.142857 ┆ 1    │
-    │ 2    ┆ 0.571429 ┆ 4    │
-    │ 2    ┆ 0.571429 ┆ 4    │
-    │ 3    ┆ 0.857143 ┆ 6    │
+    │ 1    ┆ 0.0      ┆ 1    │
+    │ 1    ┆ 0.0      ┆ 1    │
+    │ 1    ┆ 0.0      ┆ 1    │
+    │ 2    ┆ 0.5      ┆ 4    │
+    │ 2    ┆ 0.5      ┆ 4    │
+    │ 3    ┆ 0.833333 ┆ 6    │
     │ 10   ┆ 1.0      ┆ 7    │
     └──────┴──────────┴──────┘
     ```
 
+    References
+    ----------
+    https://platform.worldquantbrain.com/learn/operators/detailed-operator-descriptions#rankx-rate2
+
     """
     if pct:
-        return x.rank(method='min') / x.count()
+        # (x-x.min)/(x.max-x.min)
+        r = x.rank(method='min') - 1
+        return r / r.max()
     else:
         return x.rank(method='min')
 
 
 def cs_scale(x: Expr, scale_: float = 1, long_scale: float = 1, short_scale: float = 1) -> Expr:
-    """Scales input to booksize. We can also scale the long positions and short positions to separate scales by mentioning additional parameters to the operator."""
+    """Scales input to booksize. We can also scale the long positions and short positions to separate scales by mentioning additional parameters to the operator.
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, -15, -7, 0, 20],
+    }).with_columns(
+        out1=cs_scale(pl.col('a'), 1),
+        out2=cs_scale(pl.col('a'), 1, 2, 3),
+    )
+    shape: (5, 3)
+    ┌──────┬───────────┬───────────┐
+    │ a    ┆ out1      ┆ out2      │
+    │ ---  ┆ ---       ┆ ---       │
+    │ i64  ┆ f64       ┆ f64       │
+    ╞══════╪═══════════╪═══════════╡
+    │ null ┆ null      ┆ null      │
+    │ -15  ┆ -0.357143 ┆ -2.045455 │
+    │ -7   ┆ -0.166667 ┆ -0.954545 │
+    │ 0    ┆ 0.0       ┆ 0.0       │
+    │ 20   ┆ 0.47619   ┆ 2.0       │
+    └──────┴───────────┴───────────┘
+    ```
+
+    References
+    ----------
+    https://platform.worldquantbrain.com/learn/operators/detailed-operator-descriptions#scale-x-scale1-longscale1-shortscale1
+
+    """
     if long_scale != 1 or short_scale != 1:
         L = x.clip(lower_bound=0)  # 全正数
-        S = x.clip(upper_bound=0)  # 全负数，和还是负数
-        return L / L.sum() * long_scale - S / S.sum() * short_scale
+        S = x.clip(upper_bound=0)  # 全负数
+        L = when(L.sum() == 0).then(0).otherwise(L / L.sum())
+        S = when(S.sum() == 0).then(0).otherwise(S / S.sum())  # 负数/负数=正数
+        return L * long_scale - S * short_scale
     else:
         return x / x.abs().sum() * scale_
+
+
+def cs_scale_down(x: Expr, constant: int = 0) -> Expr:
+    """Scales all values in each day proportionately between 0 and 1 such that minimum value maps to 0 and maximum value maps to 1.
+    constant is the offset by which final result is subtracted
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, 15, 7, 0, 20],
+    }).with_columns(
+        out1=cs_scale_down(pl.col('a'), 0),
+        out2=cs_scale_down(pl.col('a'), 1),
+    )
+    shape: (5, 3)
+    ┌──────┬──────┬───────┐
+    │ a    ┆ out1 ┆ out2  │
+    │ ---  ┆ ---  ┆ ---   │
+    │ i64  ┆ f64  ┆ f64   │
+    ╞══════╪══════╪═══════╡
+    │ null ┆ null ┆ null  │
+    │ 15   ┆ 0.75 ┆ -0.25 │
+    │ 7    ┆ 0.35 ┆ -0.65 │
+    │ 0    ┆ 0.0  ┆ -1.0  │
+    │ 20   ┆ 1.0  ┆ 0.0   │
+    └──────┴──────┴───────┘
+    ```
+
+    References
+    ----------
+    https://platform.worldquantbrain.com/learn/operators/detailed-operator-descriptions#scale_downxconstant0
+
+    """
+    return (x - x.min()) / (x.max() - x.min()) - constant
 
 
 def cs_truncate(x: Expr, max_percent: float = 0.01) -> Expr:
@@ -98,8 +205,8 @@ def cs_truncate(x: Expr, max_percent: float = 0.01) -> Expr:
     └─────┴─────┘
     ```
 
-    Reference
-    ---------
+    References
+    ----------
     https://platform.worldquantbrain.com/learn/operators/detailed-operator-descriptions#truncatexmaxpercent001
 
     """

@@ -41,10 +41,42 @@ def cut(x: Expr, b: float, *more_bins) -> Expr:
 
 
 def clamp(x: Expr, lower: float = 0, upper: float = 0, inverse: bool = False, mask: float = None) -> Expr:
-    """Limits input value between lower and upper bound in inverse = false mode (which is default). Alternatively, when inverse = true, values between bounds are replaced with mask, while values outside bounds are left as is."""
+    """Limits input value between lower and upper bound in inverse = false mode (which is default). Alternatively, when inverse = true, values between bounds are replaced with mask, while values outside bounds are left as is.
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, 1, 2, 3, 4, 5, 6],
+    }).with_columns(
+        out1=clamp(pl.col('a'), 2, 5, False),
+        out2=clamp(pl.col('a'), 2, 5, True),
+    )
+    shape: (7, 3)
+    ┌──────┬──────┬──────┐
+    │ a    ┆ out1 ┆ out2 │
+    │ ---  ┆ ---  ┆ ---  │
+    │ i64  ┆ i64  ┆ i64  │
+    ╞══════╪══════╪══════╡
+    │ null ┆ null ┆ null │
+    │ 1    ┆ 2    ┆ 1    │
+    │ 2    ┆ 2    ┆ null │
+    │ 3    ┆ 3    ┆ null │
+    │ 4    ┆ 4    ┆ null │
+    │ 5    ┆ 5    ┆ null │
+    │ 6    ┆ 5    ┆ 6    │
+    └──────┴──────┴──────┘
+
+    ```
+
+    References
+    ----------
+    https://platform.worldquantbrain.com/learn/operators/detailed-operator-descriptions#clampx-lower-0-upper-0-inverse-false-mask
+
+    """
     if inverse:
-        # mask is one of: 'nearest_bound', 'mean', 'NAN' or any floating point number
-        return when((x < lower) | (x > upper)).then(x).otherwise(mask)
+        cond = (x >= lower) & (x <= upper)
+        return when(~cond).then(x).otherwise(mask)
     else:
         return x.clip(lower, upper)
 
@@ -85,8 +117,12 @@ def left_tail(x: Expr, maximum: float = 0) -> Expr:
     └──────┴──────┘
     ```
 
-    Reference
-    ---------
+    See Also
+    --------
+    tail
+
+    References
+    ----------
     https://platform.worldquantbrain.com/learn/operators/detailed-operator-descriptions#left_tail
 
     """
@@ -166,8 +202,8 @@ def right_tail(x: Expr, minimum: float = 0) -> Expr:
     └──────┴──────┘
     ```
 
-    Reference
-    ---------
+    References
+    ----------
     https://platform.worldquantbrain.com/learn/operators/detailed-operator-descriptions#right_tail
 
     """
@@ -206,6 +242,14 @@ def tail(x: Expr, lower: float = 0, upper: float = 0, newval: float = 0) -> Expr
     └──────┴──────┘
 
     ```
+
+    See Also
+    --------
+    clamp
+
+    References
+    ----------
+    https://platform.worldquantbrain.com/learn/operators/detailed-operator-descriptions#tail
 
     """
 

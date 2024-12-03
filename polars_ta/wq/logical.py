@@ -57,6 +57,11 @@ def negate(input1: Expr) -> Expr:
     return ~input1
 
 
+def not_(input1: Expr) -> Expr:
+    """The result is true if the converted operand is false; the result is false if the converted operand is true"""
+    return ~input1
+
+
 def or_(a: Expr, b: Expr, *args) -> Expr:
     """Logical OR operator returns true if either or both inputs are true and returns false otherwise"""
     return any_horizontal(a, b, *args)
