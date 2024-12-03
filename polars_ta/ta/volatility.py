@@ -9,7 +9,7 @@ def TRANGE(high: Expr, low: Expr, close: Expr) -> Expr:
     Notes
     -----
     the 0-th position is `x` rather than `nan` in talib
-    
+
     第0位置为max(x,nan,nan)=x,比talib多一个值
 
     """

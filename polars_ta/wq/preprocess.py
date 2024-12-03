@@ -103,17 +103,17 @@ def cs_resid(y: Expr, *more_x: Expr) -> Expr:
 
 
 def cs_mad_zscore(y: Expr) -> Expr:
-    """常用功能简化封装。去极值、标准化"""
+    """去极值、标准化"""
     return cs_zscore(cs_mad(y))
 
 
 def cs_mad_zscore_resid(y: Expr, *more_x: Expr) -> Expr:
-    """常用功能简化封装。去极值、标准化、中性化"""
+    """去极值、标准化、中性化"""
     return cs_resid(cs_zscore(cs_mad(y)), *more_x)
 
 
 def cs_mad_rank(y: Expr) -> Expr:
-    """常用功能简化封装。去极值，排名。"""
+    """去极值，排名。"""
     return cs_rank(cs_mad(y))
 
 

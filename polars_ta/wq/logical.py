@@ -18,23 +18,33 @@ def if_else(input1: Expr, input2: Expr, input3: Expr = None) -> Expr:
 
 
 def is_finite(input1: Expr) -> Expr:
-    """If (input NaN or input == INF) return 0, else return 1"""
+    """If (input NaN or input == INF) return false, else return true"""
     return input1.is_finite()
 
 
 def is_nan(input1: Expr) -> Expr:
-    """If (input == NaN) return 1 else return 0"""
+    """If (input == NaN) return true else return false"""
     return input1.is_nan()
 
 
+def is_null(input1: Expr) -> Expr:
+    """If (input == null) return true else return false"""
+    return input1.is_null()
+
+
 def is_not_finite(input1: Expr) -> Expr:
-    """If (input NAN or input == INF) return 1 else return 0"""
+    """If (input NAN or input == INF) return true else return false"""
     return input1.is_infinite()
 
 
 def is_not_nan(input1: Expr) -> Expr:
-    """If (input != NaN) return 1 else return 0"""
+    """If (input != NaN) return true else return false"""
     return input1.is_not_nan()
+
+
+def is_not_null(input1: Expr) -> Expr:
+    """If (input != null) return true else return false"""
+    return input1.is_not_null()
 
 
 def less(input1: Expr, input2: Expr) -> Expr:

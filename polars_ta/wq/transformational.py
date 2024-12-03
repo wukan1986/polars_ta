@@ -60,7 +60,36 @@ def keep(x: Expr, f: float, period: int = 5) -> Expr:
 
 
 def left_tail(x: Expr, maximum: float = 0) -> Expr:
-    """NaN everything greater than maximum, maximum should be constant."""
+    """NaN everything greater than maximum, maximum should be constant.
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, 1, 2, 3, 4, 5],
+    }).with_columns(
+        out=left_tail(pl.col('a'), 3),
+    )
+    shape: (6, 2)
+    ┌──────┬──────┐
+    │ a    ┆ out  │
+    │ ---  ┆ ---  │
+    │ i64  ┆ i64  │
+    ╞══════╪══════╡
+    │ null ┆ null │
+    │ 1    ┆ 1    │
+    │ 2    ┆ 2    │
+    │ 3    ┆ 3    │
+    │ 4    ┆ null │
+    │ 5    ┆ null │
+    └──────┴──────┘
+    ```
+
+    Reference
+    ---------
+    https://platform.worldquantbrain.com/learn/operators/detailed-operator-descriptions#left_tail
+
+    """
     return when(x <= maximum).then(x).otherwise(None)
 
 
@@ -72,22 +101,76 @@ def left_tail(x: Expr, maximum: float = 0) -> Expr:
 
 
 def purify(x: Expr) -> Expr:
-    """Clear infinities (+inf, -inf) by replacing with null."""
+    """Clear infinities (+inf, -inf) by replacing with null.
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, 1., 2., float('nan'), float('inf'), float('-inf')],
+    }).with_columns(
+        out=purify(pl.col('a')),
+    )
+    shape: (6, 2)
+    ┌──────┬──────┐
+    │ a    ┆ out  │
+    │ ---  ┆ ---  │
+    │ f64  ┆ f64  │
+    ╞══════╪══════╡
+    │ null ┆ null │
+    │ 1.0  ┆ 1.0  │
+    │ 2.0  ┆ 2.0  │
+    │ NaN  ┆ null │
+    │ inf  ┆ null │
+    │ -inf ┆ null │
+    └──────┴──────┘
+    ```
+
+    """
     return when(x.is_finite()).then(x).otherwise(None)
 
 
 def fill_nan(x: Expr) -> Expr:
-    """填充nan为null"""
+    """填充`nan`为`null`"""
     return x.fill_nan(None)
 
 
 def fill_null(x: Expr, value=0) -> Expr:
-    """填充null为0"""
+    """填充`null`为`value`"""
     return x.fill_null(value)
 
 
 def right_tail(x: Expr, minimum: float = 0) -> Expr:
-    """NaN everything less than minimum, minimum should be constant."""
+    """NaN everything less than minimum, minimum should be constant.
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, 1, 2, 3, 4, 5],
+    }).with_columns(
+        out=right_tail(pl.col('a'), 3),
+    )
+    shape: (6, 2)
+    ┌──────┬──────┐
+    │ a    ┆ out  │
+    │ ---  ┆ ---  │
+    │ i64  ┆ i64  │
+    ╞══════╪══════╡
+    │ null ┆ null │
+    │ 1    ┆ null │
+    │ 2    ┆ null │
+    │ 3    ┆ 3    │
+    │ 4    ┆ 4    │
+    │ 5    ┆ 5    │
+    └──────┴──────┘
+    ```
+
+    Reference
+    ---------
+    https://platform.worldquantbrain.com/learn/operators/detailed-operator-descriptions#right_tail
+
+    """
     return when(x >= minimum).then(x).otherwise(None)
 
 
@@ -97,9 +180,37 @@ def sigmoid(x: Expr) -> Expr:
 
 
 def tail(x: Expr, lower: float = 0, upper: float = 0, newval: float = 0) -> Expr:
-    """If (x > lower AND x < upper) return newval, else return x. Lower, upper, newval should be constants. """
-    # TODO 与clamp一样?
-    return when((x <= lower) | (x >= upper)).then(x).otherwise(newval)
+    """If (x > lower AND x < upper) return newval, else return x. Lower, upper, newval should be constants.
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, 1, 2, 3, 4, 5, 6],
+    }).with_columns(
+        out=tail(pl.col('a'), 2, 5, 1),
+    )
+    shape: (7, 2)
+    ┌──────┬──────┐
+    │ a    ┆ out  │
+    │ ---  ┆ ---  │
+    │ i64  ┆ i64  │
+    ╞══════╪══════╡
+    │ null ┆ null │
+    │ 1    ┆ 1    │
+    │ 2    ┆ 2    │
+    │ 3    ┆ 1    │
+    │ 4    ┆ 1    │
+    │ 5    ┆ 5    │
+    │ 6    ┆ 6    │
+    └──────┴──────┘
+
+    ```
+
+    """
+
+    cond = (x > lower) & (x < upper)
+    return when(~cond | x.is_null()).then(x).otherwise(newval)
 
 
 def int_(a: Expr) -> Expr:

@@ -75,12 +75,39 @@ def cs_scale(x: Expr, scale_: float = 1, long_scale: float = 1, short_scale: flo
 
 
 def cs_truncate(x: Expr, max_percent: float = 0.01) -> Expr:
-    """Operator truncates all values of x to maxPercent. Here, maxPercent is in decimal notation."""
+    """Operator truncates all values of x to maxPercent. Here, maxPercent is in decimal notation
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [3, 7, 20, 6],
+    }).with_columns(
+        out=cs_truncate(pl.col('a'), 0.5),
+    )
+    shape: (4, 2)
+    ┌─────┬─────┐
+    │ a   ┆ out │
+    │ --- ┆ --- │
+    │ i64 ┆ i64 │
+    ╞═════╪═════╡
+    │ 3   ┆ 3   │
+    │ 7   ┆ 7   │
+    │ 20  ┆ 18  │
+    │ 6   ┆ 6   │
+    └─────┴─────┘
+    ```
+
+    Reference
+    ---------
+    https://platform.worldquantbrain.com/learn/operators/detailed-operator-descriptions#truncatexmaxpercent001
+
+    """
     return x.clip(upper_bound=x.sum() * max_percent)
 
 
-def cs_fill_zero(x: Expr) -> Expr:
-    """全为`null`时，保持`null`，反之`null`填充为`0`
+def cs_fill_except_all_null(x: Expr, value=0) -> Expr:
+    """全为`null`时，保持`null`，反之`null`填充为`value`
 
     Examples
     --------
@@ -90,8 +117,8 @@ def cs_fill_zero(x: Expr) -> Expr:
         'a': [1, 2, None, 4, None],
         'b': [None, None, None, None, None],
     }).with_columns(
-        A=cs_fill_zero(pl.col('a')),
-        B=cs_fill_zero(pl.col('b')),
+        A=cs_fill_except_all_null(pl.col('a')),
+        B=cs_fill_except_all_null(pl.col('b')),
     )
 
     shape: (5, 4)
@@ -113,7 +140,7 @@ def cs_fill_zero(x: Expr) -> Expr:
     在权重矩阵中使用时。一定要保证所有股票都在，停牌不能被过滤了
 
     """
-    return when(x.is_not_null().sum() == 0).then(x).otherwise(x.fill_null(0))
+    return when(x.is_not_null().sum() == 0).then(x).otherwise(x.fill_null(value))
 
 
 def cs_regression_neut(y: Expr, x: Expr) -> Expr:

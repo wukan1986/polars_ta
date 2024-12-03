@@ -559,8 +559,7 @@ def ts_cum_sum_by(r: Expr, v: Expr) -> Expr:
 
 
 def ts_regression_resid(y: Expr, x: Expr, d: int) -> Expr:
-    """时序滚动回归取残差
-    """
+    """时序滚动回归取残差"""
     return pls.compute_rolling_least_squares(y, x, mode='residuals', add_intercept=True, rolling_kwargs=RollingKwargs(window_size=d, min_periods=d))
 
 

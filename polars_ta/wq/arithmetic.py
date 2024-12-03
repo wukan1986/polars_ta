@@ -1,9 +1,10 @@
 import numpy as np
-from polars import Expr, Series, fold, Int64, any_horizontal
+from polars import Expr, Series, fold, any_horizontal
 from polars import max_horizontal, sum_horizontal, min_horizontal, mean_horizontal
 
 
 def abs_(x: Expr) -> Expr:
+    """绝对值"""
     if isinstance(x, (Expr, Series)):
         return x.abs()
     else:
@@ -230,12 +231,77 @@ def reverse(x: Expr) -> Expr:
 
 
 def round_(x: Expr, decimals: int = 0) -> Expr:
-    """Round input to closest integer."""
+    """四舍五入 Round input to closest integer.
+
+    Parameters
+    ----------
+    x
+    decimals
+        Number of decimals to round to.
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, 3.5, 4.5, -3.5, -4.5],
+    }).with_columns(
+        out1=round_(pl.col('a'), 0),
+        out2=pl.col('a').map_elements(lambda x: round(x, 0), return_dtype=pl.Float64),
+    )
+    shape: (5, 3)
+    ┌──────┬──────┬──────┐
+    │ a    ┆ out1 ┆ out2 │
+    │ ---  ┆ ---  ┆ ---  │
+    │ f64  ┆ f64  ┆ f64  │
+    ╞══════╪══════╪══════╡
+    │ null ┆ null ┆ null │
+    │ 3.5  ┆ 4.0  ┆ 4.0  │
+    │ 4.5  ┆ 5.0  ┆ 4.0  │
+    │ -3.5 ┆ -4.0 ┆ -4.0 │
+    │ -4.5 ┆ -5.0 ┆ -4.0 │
+    └──────┴──────┴──────┘
+    ```
+
+    Notes
+    -----
+    四舍五入，不是四舍六入五取偶（银行家舍入）
+
+    """
     return x.round(decimals)
 
 
 def round_down(x: Expr, f: int = 1) -> Expr:
-    """Round input to greatest multiple of f less than input;"""
+    """舍入到小于输入的f的最大倍数 Round input to greatest multiple of f less than input
+
+    Parameters
+    ----------
+    x
+    f
+
+    Examples
+    --------
+
+    ```python
+    df = pl.DataFrame({
+        'a': [None, 3.5, 4.5, -3.5, -4.5],
+    }).with_columns(
+        out=round_down(pl.col('a'), 2),
+    )
+    shape: (5, 2)
+    ┌──────┬──────┐
+    │ a    ┆ out  │
+    │ ---  ┆ ---  │
+    │ f64  ┆ f64  │
+    ╞══════╪══════╡
+    │ null ┆ null │
+    │ 3.5  ┆ 2.0  │
+    │ 4.5  ┆ 4.0  │
+    │ -3.5 ┆ -4.0 │
+    │ -4.5 ┆ -6.0 │
+    └──────┴──────┘
+    ```
+
+    """
     if f == 1:
         return x // 1
     else:
@@ -243,7 +309,41 @@ def round_down(x: Expr, f: int = 1) -> Expr:
 
 
 def s_log_1p(x: Expr) -> Expr:
-    return x.abs().log1p() * x.sign()
+    """sign(x) * log10(1 + abs(x))
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, 9, -9, 99, -99],
+    }).with_columns(
+        out1=s_log_1p(pl.col('a')),
+    )
+    shape: (5, 2)
+    ┌──────┬──────┐
+    │ a    ┆ out1 │
+    │ ---  ┆ ---  │
+    │ i64  ┆ f64  │
+    ╞══════╪══════╡
+    │ null ┆ null │
+    │ 9    ┆ 1.0  │
+    │ -9   ┆ -1.0 │
+    │ 99   ┆ 2.0  │
+    │ -99  ┆ -2.0 │
+    └──────┴──────┘
+
+    ```
+
+    Notes
+    -----
+    从`wq`示例可以看出，log的底数是10，而不是e
+
+    Reference
+    ---------
+    https://platform.worldquantbrain.com/learn/operators/detailed-operator-descriptions#s_log_1px
+
+    """
+    return (x.abs() + 1).log10() * x.sign()
 
 
 def sign(x: Expr) -> Expr:
@@ -254,7 +354,14 @@ def sign(x: Expr) -> Expr:
 
 
 def signed_power(x: Expr, y: Expr) -> Expr:
-    """x raised to the power of y such that final result preserves sign of x."""
+    """x raised to the power of y such that final result preserves sign of x.
+
+
+    Reference
+    ---------
+    https://platform.worldquantbrain.com/learn/operators/detailed-operator-descriptions#signed_powerx-y
+
+    """
     if isinstance(y, (int, float)):
         if y == 1:
             return x.abs() * x.sign()
@@ -293,39 +400,6 @@ def tan(x: Expr) -> Expr:
 def tanh(x: Expr) -> Expr:
     """Hyperbolic tangent of x"""
     return x.tanh()
-
-
-def truncate(x: Expr) -> Expr:
-    """向零取整 truncate towards zero
-
-    Examples
-    --------
-
-    ```python
-    df = pl.DataFrame({
-        'a': [-2.5, -1.2, -1., None, 2., 3.2],
-    }).with_columns(
-        out=truncate(pl.col('a'))
-    )
-
-    shape: (6, 2)
-    ┌──────┬──────┐
-    │ a    ┆ out  │
-    │ ---  ┆ ---  │
-    │ f64  ┆ i64  │
-    ╞══════╪══════╡
-    │ -2.5 ┆ -2   │
-    │ -1.2 ┆ -1   │
-    │ -1.0 ┆ -1   │
-    │ null ┆ null │
-    │ 2.0  ┆ 2    │
-    │ 3.2  ┆ 3    │
-    └──────┴──────┘
-
-    ```
-
-    """
-    return x.cast(Int64)
 
 
 def var(a: Expr, b: Expr, *args) -> Expr:

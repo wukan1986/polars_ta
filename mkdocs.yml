@@ -12,6 +12,7 @@ nav:
       - wq/transformational.md
       - wq/vector.md
   - polars_ta.ta:
+      - ta/index.md
       - ta/momentum.md
       - ta/operators.md
       - ta/overlap.md
@@ -27,6 +28,12 @@ nav:
 theme:
   name: material
   features:
+    - navigation.tracking
+    - navigation.instant
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.footer
+    - navigation.indexes
     - content.tabs.link
     - content.code.copy
 
@@ -34,6 +41,7 @@ strict: true
 
 plugins:
   - search
+  #  - section-index
   - mkdocstrings:
       default_handler: python
       handlers:
@@ -46,3 +54,4 @@ plugins:
             show_source: true
             show_signature_annotations: true
             docstring_style: numpy
+#            docstring_section_style: list
