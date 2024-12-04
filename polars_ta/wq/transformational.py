@@ -1,4 +1,4 @@
-from polars import Expr, when, Int8, Boolean
+from polars import Expr, when, Boolean, Int32
 
 
 def cut(x: Expr, b: float, *more_bins) -> Expr:
@@ -259,7 +259,7 @@ def tail(x: Expr, lower: float = 0, upper: float = 0, newval: float = 0) -> Expr
 
 def int_(a: Expr) -> Expr:
     """convert bool to int"""
-    return a.cast(Int8)
+    return a.cast(Int32)
 
 
 def bool_(a: Expr) -> Expr:

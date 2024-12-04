@@ -1,15 +1,20 @@
+"""
+通过`import`直接导入或更名的函数
+
+```python
+from polars_ta.wq.time_series import ts_corr as CORREL  # noqa
+```
+
+"""
+
 from polars import Expr
 
-from polars_ta.wq.time_series import ts_corr
+from polars_ta.wq.time_series import ts_corr as CORREL  # noqa
 from polars_ta.wq.time_series import ts_std_dev
 
 
 def BETA(high: Expr, low: Expr, timeperiod: int = 5) -> Expr:
     raise
-
-
-def CORREL(high: Expr, low: Expr, timeperiod: int = 30) -> Expr:
-    return ts_corr(high, low, timeperiod, 1)
 
 
 def LINEARREG(close: Expr, timeperiod: int = 14) -> Expr:

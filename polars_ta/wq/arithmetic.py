@@ -52,14 +52,17 @@ def add(a: Expr, b: Expr, *args) -> Expr:
 
 
 def arc_cos(x: Expr) -> Expr:
+    """反余弦"""
     return x.arccos()
 
 
 def arc_sin(x: Expr) -> Expr:
+    """反正弦"""
     return x.arcsin()
 
 
 def arc_tan(x: Expr) -> Expr:
+    """反正切"""
     return x.arctan()
 
 
@@ -69,10 +72,12 @@ def ceiling(x: Expr) -> Expr:
 
 
 def cos(x: Expr) -> Expr:
+    """余弦"""
     return x.cos()
 
 
 def cosh(x: Expr) -> Expr:
+    """双曲余弦"""
     return x.cosh()
 
 
@@ -86,6 +91,7 @@ def divide(x: Expr, y: Expr) -> Expr:
 
 
 def exp(x: Expr) -> Expr:
+    """自然指数函数"""
     return x.exp()
 
 
@@ -100,7 +106,8 @@ def floor(x: Expr) -> Expr:
 
 
 def fraction(x: Expr) -> Expr:
-    """小数部分 This operator removes the whole number part and returns the remaining fraction part with sign.
+    """小数部分
+    This operator removes the whole number part and returns the remaining fraction part with sign.
 
     Examples
     --------
@@ -145,6 +152,7 @@ def inverse(x: Expr) -> Expr:
 
 
 def log(x: Expr) -> Expr:
+    """e为底的对数"""
     if isinstance(x, (Expr, Series)):
         return x.log()
     else:
@@ -152,25 +160,30 @@ def log(x: Expr) -> Expr:
 
 
 def log10(x: Expr) -> Expr:
+    """10为底的对数"""
     return x.log10()
 
 
 def log1p(x: Expr) -> Expr:
-    """简单收益率 转 对数收益率 convert simple return to log return"""
+    """简单收益率 转 对数收益率 convert simple return to log return
+
+    log(x+1)
+    """
     return x.log1p()
 
 
 def max_(a: Expr, b: Expr, *args) -> Expr:
-    """Maximum value of all inputs. At least 2 inputs are required."""
+    """水平多列最大值 Maximum value of all inputs. At least 2 inputs are required."""
     return max_horizontal(a, b, *args)
 
 
 def mean(a: Expr, b: Expr, *args) -> Expr:
+    """水平多列均值"""
     return mean_horizontal(a, b, *args)
 
 
 def min_(a: Expr, b: Expr, *args) -> Expr:
-    """Maximum value of all inputs. At least 2 inputs are required."""
+    """水平多列最小值 Maximum value of all inputs. At least 2 inputs are required."""
     return min_horizontal(a, b, *args)
 
 
@@ -271,7 +284,7 @@ def round_(x: Expr, decimals: int = 0) -> Expr:
 
 
 def round_down(x: Expr, f: int = 1) -> Expr:
-    """舍入到小于输入的f的最大倍数 Round input to greatest multiple of f less than input
+    """小于输入的f的最大倍数 Round input to greatest multiple of f less than input
 
     Parameters
     ----------
@@ -347,6 +360,7 @@ def s_log_1p(x: Expr) -> Expr:
 
 
 def sign(x: Expr) -> Expr:
+    """符号"""
     if isinstance(x, (Expr, Series)):
         return x.sign()
     else:
@@ -372,10 +386,12 @@ def signed_power(x: Expr, y: Expr) -> Expr:
 
 
 def sin(x: Expr) -> Expr:
+    """正弦"""
     return x.sin()
 
 
 def sinh(x: Expr) -> Expr:
+    """双曲正弦"""
     return x.sinh()
 
 
@@ -385,6 +401,7 @@ def softsign(x: Expr) -> Expr:
 
 
 def sqrt(x: Expr) -> Expr:
+    """平方根"""
     return x.sqrt()
 
 
@@ -394,11 +411,12 @@ def subtract(x: Expr, y: Expr) -> Expr:
 
 
 def tan(x: Expr) -> Expr:
+    """正切"""
     return x.tan()
 
 
 def tanh(x: Expr) -> Expr:
-    """Hyperbolic tangent of x"""
+    """双曲正切"""
     return x.tanh()
 
 

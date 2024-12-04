@@ -11,7 +11,6 @@ from polars_ta.tdx.arithmetic import COS  # noqa
 from polars_ta.tdx.arithmetic import EXP  # noqa
 from polars_ta.tdx.arithmetic import FLOOR  # noqa
 from polars_ta.tdx.arithmetic import FRACPART  # noqa
-from polars_ta.tdx.arithmetic import INTPART  # noqa
 from polars_ta.tdx.arithmetic import LN  # noqa
 from polars_ta.tdx.arithmetic import LOG  # noqa
 from polars_ta.tdx.arithmetic import MAX  # noqa

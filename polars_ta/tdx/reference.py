@@ -1,3 +1,24 @@
+"""
+通过`import`直接导入或更名的函数
+
+```python
+from polars_ta.ta.overlap import SMA as MA
+from polars_ta.ta.volatility import TRANGE as TR  # noqa
+from polars_ta.wq.arithmetic import max_ as MAX  # noqa
+from polars_ta.wq.arithmetic import min_ as MIN  # noqa
+from polars_ta.wq.time_series import ts_arg_max as HHVBARS  # noqa
+from polars_ta.wq.time_series import ts_arg_min as LLVBARS  # noqa
+from polars_ta.wq.time_series import ts_count as COUNT  # noqa
+from polars_ta.wq.time_series import ts_decay_linear as WMA  # noqa
+from polars_ta.wq.time_series import ts_delay as REF  # noqa
+from polars_ta.wq.time_series import ts_delta as DIFF  # noqa
+from polars_ta.wq.time_series import ts_max as HHV  # noqa
+from polars_ta.wq.time_series import ts_min as LLV  # noqa
+from polars_ta.wq.time_series import ts_product as MULAR  # noqa
+from polars_ta.wq.time_series import ts_sum as SUM
+```
+
+"""
 from polars import Boolean, Int32, UInt16
 from polars import Expr
 from polars import when

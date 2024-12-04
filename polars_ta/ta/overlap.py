@@ -47,10 +47,24 @@ def KAMA(close: Expr, timeperiod: int = 30) -> Expr:
 
 
 def MIDPOINT(close: Expr, timeperiod: int = 14) -> Expr:
+    """MIDPOINT = (Highest Value + Lowest Value)/2
+
+    References
+    ----------
+    https://github.com/TA-Lib/ta-lib/blob/main/src/ta_func/ta_MIDPOINT.c#L198
+
+    """
     return (MAX(close, timeperiod) + MIN(close, timeperiod)) / 2
 
 
 def MIDPRICE(high: Expr, low: Expr, timeperiod: int = 14) -> Expr:
+    """MIDPRICE = (Highest High + Lowest Low)/2
+
+    References
+    ----------
+    https://github.com/TA-Lib/ta-lib/blob/main/src/ta_func/ta_MIDPRICE.c#L202
+
+    """
     return (MAX(high, timeperiod) + MIN(low, timeperiod)) / 2
 
 

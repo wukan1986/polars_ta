@@ -23,6 +23,16 @@ nav:
       - ta/volume.md
   - polars_ta.tdx:
       - tdx/arithmetic.md
+      - tdx/choice.md
+      - tdx/energy.md
+      - tdx/logical.md
+      - tdx/moving_average.md
+      - tdx/over_bought_over_sold.md
+      - tdx/pressure_support.md
+      - tdx/reference.md
+      - tdx/statistic.md
+      - tdx/trend.md
+      - tdx/volume.md
   - polars_ta.talib: talib/index.md
 
 theme:

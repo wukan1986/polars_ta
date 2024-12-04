@@ -1,10 +1,4 @@
-"""
-
-```python
-```
-
-"""
-from polars import Expr
+from polars import Expr, when
 
 from polars_ta import TA_EPSILON
 from polars_ta.ta.operators import MAX
@@ -149,23 +143,6 @@ def RSI(close: Expr, timeperiod: int = 14) -> Expr:
     return RMA(max_(dif, 0), timeperiod) / (RMA(dif.abs(), timeperiod) + TA_EPSILON)  # * 100
 
 
-def RSV(high: Expr, low: Expr, close: Expr, timeperiod: int = 5) -> Expr:
-    """
-
-    Notes
-    -----
-    Also called `STOCHF_fastk`, `talib.STOCHF` is multiplied by 100,
-    and it is very similar to the `WILLR` indicator
-
-    又名STOCHF_fastk, talib.STOCHF版相当于多乘了100，与WILLR指标又很像
-
-    """
-    a = MAX(high, timeperiod)
-    b = MIN(low, timeperiod)
-
-    return (close - b) / (a - b + TA_EPSILON)
-
-
 def STOCHF_fastd(high: Expr, low: Expr, close: Expr, fastk_period: int = 5, fastd_period: int = 3) -> Expr:
     return SMA(RSV(high, low, close, fastk_period), fastd_period)
 
@@ -177,22 +154,46 @@ def TRIX(close: Expr, timeperiod: int = 30) -> Expr:
     return ROCP(EMA3, 1)
 
 
-def WILLR(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:
-    """
+def RSV(high: Expr, low: Expr, close: Expr, timeperiod: int = 5) -> Expr:
+    """RSV=STOCHF_FASTK
+
+                      (Today's Close - LowestLow)
+    FASTK(Kperiod) =  --------------------------- * 100
+                       (HighestHigh - LowestLow)
 
     Notes
     -----
-    `talib.WILLR` is multiplied by -100, but I think it is unnecessary
-
-    talib.WILLR版相当于多乘了-100，但个人认为没有必要
+    RSV = STOCHF_FASTK。没乘以100
 
     References
     ----------
-    - https://www.investopedia.com/terms/w/williamsr.asp
-    - https://school.stockcharts.com/doku.php?id=technical_indicators:williams_r
+    https://github.com/TA-Lib/ta-lib/blob/main/src/ta_func/ta_STOCHF.c#L279
 
     """
     a = MAX(high, timeperiod)
     b = MIN(low, timeperiod)
 
-    return (a - close) / (a - b + TA_EPSILON)
+    # return (close - b) / (a - b + TA_EPSILON)
+    return when(a != b).then((close - b) / (a - b)).otherwise(0)
+
+
+def WILLR(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:
+    """威廉指标
+
+    Notes
+    -----
+    WILLR=1-RSV
+
+    References
+    ----------
+    - https://github.com/TA-Lib/ta-lib/blob/main/src/ta_func/ta_WILLR.c#L294
+    - https://www.investopedia.com/terms/w/williamsr.asp
+    - https://school.stockcharts.com/doku.php?id=technical_indicators:williams_r
+
+
+    """
+    a = MAX(high, timeperiod)
+    b = MIN(low, timeperiod)
+
+    # return (a - close) / (a - b + TA_EPSILON)
+    return when(a != b).then((a - close) / (a - b)).otherwise(0)

@@ -1,0 +1,1 @@
+::: polars_ta.tdx.moving_average

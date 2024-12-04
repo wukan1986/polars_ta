@@ -17,6 +17,15 @@ from polars_ta.ta.momentum import RSV as ts_RSV  # noqa
 from polars_ta.ta.momentum import STOCHF_fastd as ts_STOCHF_fastd  # noqa
 from polars_ta.ta.momentum import TRIX as ts_TRIX  # noqa
 from polars_ta.ta.momentum import WILLR as ts_WILLR  # noqa
+from polars_ta.ta.operators import ADD  # noqa
+from polars_ta.ta.operators import DIV  # noqa
+from polars_ta.ta.operators import MAX as ts_MAX  # noqa
+from polars_ta.ta.operators import MAXINDEX as ts_MAXINDEX  # noqa
+from polars_ta.ta.operators import MIN as ts_MIN  # noqa
+from polars_ta.ta.operators import MININDEX as ts_MININDEX  # noqa
+from polars_ta.ta.operators import MUL  # noqa
+from polars_ta.ta.operators import SUB  # noqa
+from polars_ta.ta.operators import SUM as ts_SUM  # noqa
 from polars_ta.ta.overlap import BBANDS_upperband as ts_BBANDS_upperband  # noqa
 from polars_ta.ta.overlap import DEMA as ts_DEMA  # noqa
 from polars_ta.ta.overlap import EMA as ts_EMA  # noqa

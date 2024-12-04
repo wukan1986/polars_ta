@@ -1,12 +1,11 @@
-from polars import Expr
+from polars import Expr, when
 
-from polars_ta import TA_EPSILON
 from polars_ta.ta.overlap import EMA
 
 
 def AD(high: Expr, low: Expr, close: Expr, volume: Expr) -> Expr:
-    ad = ((close - low) - (high - close)) / (high - low + TA_EPSILON) * volume
-    return ad.cum_sum()
+    ad = when(high != low).then(((close - low) - (high - close)) / (high - low)).otherwise(0)
+    return (ad * volume).cum_sum()
 
 
 def ADOSC(high: Expr, low: Expr, close: Expr, volume: Expr, fastperiod: int = 3, slowperiod: int = 10) -> Expr:

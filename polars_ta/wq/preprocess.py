@@ -1,8 +1,7 @@
 import polars_ols as pls
-from polars import Expr
+from polars import Expr, when
 from polars_ols.least_squares import OLSKwargs
 
-from polars_ta import TA_EPSILON
 from polars_ta.wq.cross_sectional import cs_rank
 
 
@@ -15,7 +14,9 @@ def cs_zscore(x: Expr, ddof: int = 0) -> Expr:
 def cs_minmax(x: Expr) -> Expr:
     a = x.min()
     b = x.max()
-    return (x - a) / (b - a + TA_EPSILON)
+    # 这个版本在b-a为整数时，得到的结果不好看
+    # return (x - a) / (b - a + TA_EPSILON)
+    return when(a != b).then((x - a) / (b - a)).otherwise(0)
 
 
 # ======================
