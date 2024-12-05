@@ -1,5 +1,5 @@
 import polars_ols as pls
-from polars import Expr, Int32, UInt16, struct, when
+from polars import Expr, Int32, UInt16, struct, when, Struct, Field, Float64
 from polars import arange, repeat
 from polars import rolling_corr, rolling_cov
 from polars_ols import RollingKwargs
@@ -489,7 +489,8 @@ def ts_sum_split_by(x: Expr, by: Expr, d: int = 30, k: int = 10) -> Expr:
     ```
 
     """
-    return struct([x, by]).map_batches(lambda xx: batches_i2_o2([xx.struct[i].to_numpy() for i in range(2)], _sum_split_by, d, k))
+    dtype = Struct([Field(f"column_{i}", Float64) for i in range(2)])
+    return struct([x, by]).map_batches(lambda xx: batches_i2_o2([xx.struct[i].to_numpy() for i in range(2)], _sum_split_by, d, k), return_dtype=dtype)
 
 
 def ts_triple_corr(x: Expr, y: Expr, z: Expr, d: int) -> Expr:

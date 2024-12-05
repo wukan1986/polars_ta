@@ -6,7 +6,7 @@ from numpy.lib.stride_tricks import sliding_window_view
 
 @jit(nopython=True, nogil=True, cache=True)
 def roll_avedev(x1, window):
-    out = full(x1.shape, np.nan, dtype=float)
+    out = full(x1.shape, np.nan, dtype=np.float64)
     if len(x1) < window:
         return out
     a1 = sliding_window_view(x1, window)
@@ -25,7 +25,7 @@ def roll_bars_since_n(x1, window):
     TODO 如果一个周期内，都不满足，值取多少？0表当前值满足条件, window-1表示的是区间第0位置的值
     TODO 用window来表示都不满足
     """
-    out = full(x1.shape, np.nan, dtype=float)
+    out = full(x1.shape, np.nan, dtype=np.float64)
     if len(x1) < window:
         return out
     a1 = sliding_window_view(x1, window)
@@ -41,9 +41,9 @@ def _up_stat(a, d: int = 3):
 
     最近几天涨停但当天没涨停也会有记录，如6天2板，所以要与涨停一起使用
     """
-    out1 = full(a.shape, 0, dtype=int)
-    out2 = full(a.shape, 0, dtype=int)
-    out3 = full(a.shape, 0, dtype=int)
+    out1 = full(a.shape, 0, dtype=np.int64)
+    out2 = full(a.shape, 0, dtype=np.int64)
+    out3 = full(a.shape, 0, dtype=np.int64)
     t = 0  # T天
     n = 0  # N板
     k = 0  # 连续False个数

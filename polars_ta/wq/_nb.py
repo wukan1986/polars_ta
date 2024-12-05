@@ -6,7 +6,7 @@ from numpy.lib.stride_tricks import sliding_window_view
 
 @jit(nopython=True, nogil=True, fastmath=True, cache=True)
 def roll_argmax(x1, window, reverse):
-    out = full(x1.shape, np.nan, dtype=float)
+    out = full(x1.shape, np.nan, dtype=np.float64)
     if len(x1) < window:
         return out
     a1 = sliding_window_view(x1, window)
@@ -19,7 +19,7 @@ def roll_argmax(x1, window, reverse):
 
 @jit(nopython=True, nogil=True, fastmath=True, cache=True)
 def roll_argmin(x1, window, reverse):
-    out = full(x1.shape, np.nan, dtype=float)
+    out = full(x1.shape, np.nan, dtype=np.float64)
     if len(x1) < window:
         return out
     a1 = sliding_window_view(x1, window)
@@ -32,7 +32,7 @@ def roll_argmin(x1, window, reverse):
 
 @jit(nopython=True, nogil=True, fastmath=True, cache=True)
 def roll_prod(x1, window):
-    out = full(x1.shape, np.nan, dtype=float)
+    out = full(x1.shape, np.nan, dtype=np.float64)
     if len(x1) < window:
         return out
     a1 = sliding_window_view(x1, window)
@@ -52,7 +52,7 @@ def _co_kurtosis(a1, a2):
 
 @jit(nopython=True, nogil=True, fastmath=True, cache=True)
 def roll_co_kurtosis(x1, x2, window):
-    out = full(x1.shape, np.nan, dtype=float)
+    out = full(x1.shape, np.nan, dtype=np.float64)
     if len(x1) < window:
         return out
     a1 = sliding_window_view(x1, window)
@@ -73,7 +73,7 @@ def _co_skewness(a1, a2):
 
 @jit(nopython=True, nogil=True, fastmath=True, cache=True)
 def roll_co_skewness(x1, x2, window):
-    out = full(x1.shape, np.nan, dtype=float)
+    out = full(x1.shape, np.nan, dtype=np.float64)
     if len(x1) < window:
         return out
     a1 = sliding_window_view(x1, window)
@@ -92,7 +92,7 @@ def _moment(a1, k):
 
 @jit(nopython=True, nogil=True, fastmath=True, cache=True)
 def roll_moment(x1, window, k):
-    out = full(x1.shape, np.nan, dtype=float)
+    out = full(x1.shape, np.nan, dtype=np.float64)
     if len(x1) < window:
         return out
     a1 = sliding_window_view(x1, window)
@@ -116,7 +116,7 @@ def _partial_corr(a1, a2, a3):
 
 @jit(nopython=True, nogil=True, fastmath=True, cache=True)
 def roll_partial_corr(x1, x2, x3, window):
-    out = full(x1.shape, np.nan, dtype=float)
+    out = full(x1.shape, np.nan, dtype=np.float64)
     if len(x1) < window:
         return out
     a1 = sliding_window_view(x1, window)
@@ -140,7 +140,7 @@ def _triple_corr(a1, a2, a3):
 
 @jit(nopython=True, nogil=True, fastmath=True, cache=True)
 def roll_triple_corr(x1, x2, x3, window):
-    out = full(x1.shape, np.nan, dtype=float)
+    out = full(x1.shape, np.nan, dtype=np.float64)
     if len(x1) < window:
         return out
     a1 = sliding_window_view(x1, window)
@@ -179,7 +179,7 @@ def _cum_sum_by(r, by):
 @jit(nopython=True, nogil=True, fastmath=True, cache=True)
 def _cum_sum_reset(a):
     last = 0
-    out = full(a.shape, 0, dtype=float)
+    out = full(a.shape, 0, dtype=np.float64)
     for i in range(0, a.shape[0]):
         curr = 0 if isnan(a[i]) else a[i]
 
@@ -202,8 +202,8 @@ def _cum_sum_reset(a):
 
 @jit(nopython=True, nogil=True, cache=True)
 def _sum_split_by(x1, x2, window=10, n=2):
-    out1 = np.full(x1.shape[0], np.nan, dtype=float)
-    out2 = np.full(x1.shape[0], np.nan, dtype=float)
+    out1 = np.full(x1.shape[0], np.nan, dtype=np.float64)
+    out2 = np.full(x1.shape[0], np.nan, dtype=np.float64)
     if len(x1) < window:
         return out1, out2
     a1 = sliding_window_view(x1, window)
@@ -260,7 +260,7 @@ def _signals_to_size(is_long_entry: np.ndarray, is_long_exit: np.ndarray,
     """
     _amount: float = 0.0  # 持仓状态
     _action: float = 0.0  # 下单方向
-    out = np.zeros(len(is_long_entry), dtype=float)
+    out = np.zeros(len(is_long_entry), dtype=np.float64)
     for i in range(len(is_long_entry)):
         if _amount == 0.0:
             # 多头信号优先级高于空头信号
