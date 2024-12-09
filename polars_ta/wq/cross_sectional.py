@@ -4,9 +4,8 @@
 由于截面与时序的使用方式不同，在自动化工具中如果不在名字上做区分就得手工注册，反而要麻烦些
 
 """
-
 import polars_ols as pls
-from polars import Expr, when
+from polars import Expr, when, max_horizontal, UInt16, Int8
 from polars_ols import OLSKwargs
 
 # In the original version, the function names are not prefixed with `cs_`,
@@ -54,57 +53,6 @@ def cs_one_side(x: Expr, is_long: bool = True) -> Expr:
         return when(x.max() > 0).then(x - x.max()).otherwise(x)
 
 
-def cs_rank(x: Expr, pct: bool = True) -> Expr:
-    """排名。Ranks the input among all the instruments and returns an equally distributed number between 0.0 and 1.0. For precise sort, use the rate as 0.
-
-    Parameters
-    ----------
-    x
-    pct
-        * True: 排名百分比。范围：[0,1]
-        * False: 排名。范围：[1,+inf)
-
-    Examples
-    --------
-
-    ```python
-    df = pl.DataFrame({
-        'a': [None, 1, 1, 1, 2, 2, 3, 10],
-    }).with_columns(
-        out1=cs_rank(pl.col('a'), True),
-        out2=cs_rank(pl.col('a'), False),
-    )
-
-    shape: (8, 3)
-    ┌──────┬──────────┬──────┐
-    │ a    ┆ out1     ┆ out2 │
-    │ ---  ┆ ---      ┆ ---  │
-    │ i64  ┆ f64      ┆ u32  │
-    ╞══════╪══════════╪══════╡
-    │ null ┆ null     ┆ null │
-    │ 1    ┆ 0.0      ┆ 1    │
-    │ 1    ┆ 0.0      ┆ 1    │
-    │ 1    ┆ 0.0      ┆ 1    │
-    │ 2    ┆ 0.5      ┆ 4    │
-    │ 2    ┆ 0.5      ┆ 4    │
-    │ 3    ┆ 0.833333 ┆ 6    │
-    │ 10   ┆ 1.0      ┆ 7    │
-    └──────┴──────────┴──────┘
-    ```
-
-    References
-    ----------
-    https://platform.worldquantbrain.com/learn/operators/detailed-operator-descriptions#rankx-rate2
-
-    """
-    if pct:
-        # (x-x.min)/(x.max-x.min)
-        r = x.rank(method='min') - 1
-        return r / r.max()
-    else:
-        return x.rank(method='min')
-
-
 def cs_scale(x: Expr, scale_: float = 1, long_scale: float = 1, short_scale: float = 1) -> Expr:
     """Scales input to booksize. We can also scale the long positions and short positions to separate scales by mentioning additional parameters to the operator.
 
@@ -143,7 +91,7 @@ def cs_scale(x: Expr, scale_: float = 1, long_scale: float = 1, short_scale: flo
         S = when(S.sum() == 0).then(0).otherwise(S / S.sum())  # 负数/负数=正数
         return L * long_scale - S * short_scale
     else:
-        return x / x.abs().sum() * scale_
+        return x / max_horizontal(x.abs().sum(), 1) * scale_
 
 
 def cs_scale_down(x: Expr, constant: int = 0) -> Expr:
@@ -178,7 +126,7 @@ def cs_scale_down(x: Expr, constant: int = 0) -> Expr:
     https://platform.worldquantbrain.com/learn/operators/detailed-operator-descriptions#scale_downxconstant0
 
     """
-    return (x - x.min()) / (x.max() - x.min()) - constant
+    return (x - x.min()) / max_horizontal(x.max() - x.min(), 1) - constant
 
 
 def cs_truncate(x: Expr, max_percent: float = 0.01) -> Expr:
@@ -260,6 +208,101 @@ def cs_regression_proj(y: Expr, x: Expr) -> Expr:
     return pls.compute_least_squares(y, x, add_intercept=True, mode='predictions', ols_kwargs=_ols_kwargs)
 
 
+def cs_rank(x: Expr, pct: bool = True) -> Expr:
+    """排名。Ranks the input among all the instruments and returns an equally distributed number between 0.0 and 1.0. For precise sort, use the rate as 0.
+
+    Parameters
+    ----------
+    x
+    pct
+        * True: 排名百分比。范围：[0,1]
+        * False: 排名。范围：[1,+inf)
+
+    Examples
+    --------
+
+    ```python
+    df = pl.DataFrame({
+        'a': [None, 1, 1, 1, 2, 2, 3, 10],
+    }).with_columns(
+        out1=cs_rank(pl.col('a'), True),
+        out2=cs_rank(pl.col('a'), False),
+    )
+    shape: (8, 3)
+    ┌──────┬──────────┬──────┐
+    │ a    ┆ out1     ┆ out2 │
+    │ ---  ┆ ---      ┆ ---  │
+    │ i64  ┆ f64      ┆ u32  │
+    ╞══════╪══════════╪══════╡
+    │ null ┆ null     ┆ null │
+    │ 1    ┆ 0.0      ┆ 1    │
+    │ 1    ┆ 0.0      ┆ 1    │
+    │ 1    ┆ 0.0      ┆ 1    │
+    │ 2    ┆ 0.333333 ┆ 2    │
+    │ 2    ┆ 0.333333 ┆ 2    │
+    │ 3    ┆ 0.666667 ┆ 3    │
+    │ 10   ┆ 1.0      ┆ 4    │
+    └──────┴──────────┴──────┘
+    ```
+
+    References
+    ----------
+    https://platform.worldquantbrain.com/learn/operators/detailed-operator-descriptions#rankx-rate2
+
+    """
+    if pct:
+        # (x-x.min)/(x.max-x.min)
+        r = x.rank(method='dense') - 1
+        return r / max_horizontal(r.max(), 1)
+    else:
+        return x.rank(method='dense')
+
+
+def _cs_qcut_rank(x: Expr, q: int = 10) -> Expr:
+    """等频分箱
+
+    Parameters
+    ----------
+    x
+    q
+        按频率分成`q`份
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, 1, 1, 1, 2, 2, 3, 10],
+    }).with_columns(
+        out1=cs_qcut(pl.col('a'), 10),
+        out2=cs_qcut_rank(pl.col('a'), 10),
+        out3=pl.col('a').map_batches(lambda x: pd.qcut(x, 10, labels=False, duplicates='drop')),
+    )
+    shape: (8, 4)
+    ┌──────┬──────┬──────┬──────┐
+    │ a    ┆ out1 ┆ out2 ┆ out3 │
+    │ ---  ┆ ---  ┆ ---  ┆ ---  │
+    │ i64  ┆ u16  ┆ u16  ┆ f64  │
+    ╞══════╪══════╪══════╪══════╡
+    │ null ┆ null ┆ null ┆ NaN  │
+    │ 1    ┆ 0    ┆ 0    ┆ 0.0  │
+    │ 1    ┆ 0    ┆ 0    ┆ 0.0  │
+    │ 1    ┆ 0    ┆ 0    ┆ 0.0  │
+    │ 2    ┆ 4    ┆ 3    ┆ 1.0  │
+    │ 2    ┆ 4    ┆ 3    ┆ 1.0  │
+    │ 3    ┆ 8    ┆ 6    ┆ 4.0  │
+    │ 10   ┆ 9    ┆ 10   ┆ 5.0  │
+    └──────┴──────┴──────┴──────┘
+    ```
+
+    Notes
+    -----
+    使用`rank`来实现`qcut`的效果
+
+    """
+    r = x.rank(method='dense') - 1
+    return (r * q / max_horizontal(r.max(), 1)).cast(UInt16)
+
+
 def cs_qcut(x: Expr, q: int = 10) -> Expr:
     """等频分箱 Convert float values into indexes for user-specified buckets. Bucket is useful for creating group values, which can be passed to group operators as input.
 
@@ -283,16 +326,16 @@ def cs_qcut(x: Expr, q: int = 10) -> Expr:
     ┌──────┬──────┬──────┐
     │ a    ┆ out1 ┆ out2 │
     │ ---  ┆ ---  ┆ ---  │
-    │ i64  ┆ u32  ┆ f64  │
+    │ i64  ┆ u16  ┆ f64  │
     ╞══════╪══════╪══════╡
     │ null ┆ null ┆ NaN  │
     │ 1    ┆ 0    ┆ 0.0  │
     │ 1    ┆ 0    ┆ 0.0  │
     │ 1    ┆ 0    ┆ 0.0  │
-    │ 2    ┆ 3    ┆ 1.0  │
-    │ 2    ┆ 3    ┆ 1.0  │
-    │ 3    ┆ 7    ┆ 4.0  │
-    │ 10   ┆ 8    ┆ 5.0  │
+    │ 2    ┆ 4    ┆ 1.0  │
+    │ 2    ┆ 4    ┆ 1.0  │
+    │ 3    ┆ 8    ┆ 4.0  │
+    │ 10   ┆ 9    ┆ 5.0  │
     └──────┴──────┴──────┘
 
     ```
@@ -302,4 +345,45 @@ def cs_qcut(x: Expr, q: int = 10) -> Expr:
     目前与`pd.qcut`结果不同，等官方改进
 
     """
-    return x.qcut(q, allow_duplicates=True).to_physical()
+    # 实测直接to_physical()无法用于over,相当于with pl.StringCache():
+    # return x.qcut(q, allow_duplicates=True).to_physical()
+
+    return x.qcut(q, allow_duplicates=True, labels=[f'{i}' for i in range(q)]).cast(UInt16)
+
+
+def cs_top_bottom(x: Expr, k: int = 10) -> Expr:
+    """前K后K
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, 1, 2, 2, 2, 3, 5, 5, 5, 10],
+    }).with_columns(
+        out1=pl.col('a').rank(method='min'),
+        out2=pl.col('a').rank(method='dense'),
+        out3=cs_top_bottom(pl.col('a'), 2),
+    )
+    shape: (10, 4)
+    ┌──────┬──────┬──────┬──────┐
+    │ a    ┆ out1 ┆ out2 ┆ out3 │
+    │ ---  ┆ ---  ┆ ---  ┆ ---  │
+    │ i64  ┆ u32  ┆ u32  ┆ i8   │
+    ╞══════╪══════╪══════╪══════╡
+    │ null ┆ null ┆ null ┆ null │
+    │ 1    ┆ 1    ┆ 1    ┆ -1   │
+    │ 2    ┆ 2    ┆ 2    ┆ -1   │
+    │ 2    ┆ 2    ┆ 2    ┆ -1   │
+    │ 2    ┆ 2    ┆ 2    ┆ -1   │
+    │ 3    ┆ 5    ┆ 3    ┆ 0    │
+    │ 5    ┆ 6    ┆ 4    ┆ 1    │
+    │ 5    ┆ 6    ┆ 4    ┆ 1    │
+    │ 5    ┆ 6    ┆ 4    ┆ 1    │
+    │ 10   ┆ 9    ┆ 5    ┆ 1    │
+    └──────┴──────┴──────┴──────┘
+    """
+
+    # 值越小排第一，用来做空
+    a = x.rank(method='dense')
+    b = a.max() - a
+    return (b < k).cast(Int8) - (a <= k).cast(Int8)
