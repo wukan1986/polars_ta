@@ -91,7 +91,7 @@ def cs_scale(x: Expr, scale_: float = 1, long_scale: float = 1, short_scale: flo
         S = when(S.sum() == 0).then(0).otherwise(S / S.sum())  # 负数/负数=正数
         return L * long_scale - S * short_scale
     else:
-        return x / max_horizontal(x.abs().sum(), 1) * scale_
+        return (x / x.abs().sum()).fill_nan(0) * scale_
 
 
 def cs_scale_down(x: Expr, constant: int = 0) -> Expr:
@@ -126,7 +126,7 @@ def cs_scale_down(x: Expr, constant: int = 0) -> Expr:
     https://platform.worldquantbrain.com/learn/operators/detailed-operator-descriptions#scale_downxconstant0
 
     """
-    return (x - x.min()) / max_horizontal(x.max() - x.min(), 1) - constant
+    return ((x - x.min()) / (x.max() - x.min())).fill_nan(0) - constant
 
 
 def cs_truncate(x: Expr, max_percent: float = 0.01) -> Expr:

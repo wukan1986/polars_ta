@@ -1,5 +1,6 @@
 from datetime import datetime
 
+import pandas as pd
 import polars as pl
 
 from polars_ta.prefix.tdx import *
