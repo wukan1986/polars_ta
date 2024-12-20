@@ -57,6 +57,7 @@ from polars_ta.tdx.over_bought_over_sold import MTM as ts_MTM  # noqa
 from polars_ta.tdx.over_bought_over_sold import RSI as ts_RSI  # noqa
 from polars_ta.tdx.over_bought_over_sold import RSV as ts_RSV  # noqa
 from polars_ta.tdx.pressure_support import BOLL as ts_BOLL  # noqa
+from polars_ta.tdx.pressure_support import BOLL_M as ts_BOLL_M  # noqa
 from polars_ta.tdx.reference import BARSLAST as ts_BARSLAST  # noqa
 from polars_ta.tdx.reference import BARSLASTCOUNT as ts_BARSLASTCOUNT  # noqa
 from polars_ta.tdx.reference import BARSSINCE as ts_BARSSINCE  # noqa
