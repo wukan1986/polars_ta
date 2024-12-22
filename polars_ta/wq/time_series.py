@@ -1,5 +1,5 @@
 import polars_ols as pls
-from polars import Expr, Int32, UInt16, struct, when, Struct, Field, Float64
+from polars import Expr, UInt16, struct, when, Struct, Field, Float64, Boolean
 from polars import arange, repeat
 from polars import rolling_corr, rolling_cov
 from polars_ols import RollingKwargs
@@ -109,7 +109,7 @@ def ts_corr(x: Expr, y: Expr, d: int = 5, ddof: int = 1) -> Expr:
 
 def ts_count(x: Expr, d: int = 30) -> Expr:
     """时序滚动计数"""
-    return x.cast(Int32).rolling_sum(d)
+    return x.cast(Boolean).rolling_sum(d)
 
 
 def ts_count_nans(x: Expr, d: int = 5) -> Expr:
@@ -141,6 +141,11 @@ def ts_covariance(x: Expr, y: Expr, d: int = 5, ddof: int = 1) -> Expr:
 
     """
     return rolling_cov(x, y, window_size=d, ddof=ddof)
+
+
+def ts_cum_count(x: Expr) -> Expr:
+    """时序累计计数"""
+    return x.cum_count()
 
 
 def ts_cum_max(x: Expr) -> Expr:
