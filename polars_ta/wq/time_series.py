@@ -383,6 +383,28 @@ def ts_cum_sum_reset(x: Expr) -> Expr:
 def ts_decay_exp_window(x: Expr, d: int = 30, factor: float = 1.0) -> Expr:
     """指数衰减移动平均
 
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [6, 5, 4, 5, 30],
+    }).with_columns(
+        out1=ts_decay_exp_window(pl.col('a'), 5, 0.5),
+    )
+    shape: (5, 2)
+    ┌─────┬───────────┐
+    │ a   ┆ out1      │
+    │ --- ┆ ---       │
+    │ i64 ┆ f64       │
+    ╞═════╪═══════════╡
+    │ 6   ┆ null      │
+    │ 5   ┆ null      │
+    │ 4   ┆ null      │
+    │ 5   ┆ null      │
+    │ 30  ┆ 17.806452 │
+    └─────┴───────────┘
+    ```
+
     Parameters
     ----------
     x
@@ -393,21 +415,42 @@ def ts_decay_exp_window(x: Expr, d: int = 30, factor: float = 1.0) -> Expr:
     Warnings
     --------
     weights not yet supported on array with null values
-    与`over`配合使用便不会抛出异常
 
     """
     y = arange(d - 1, -1, step=-1, eager=False)
     weights = repeat(factor, d, eager=True).pow(y)
+    # print(weights)
     return x.rolling_mean(d, weights=weights)
 
 
 def ts_decay_linear(x: Expr, d: int = 30) -> Expr:
     """线性衰减移动平均
 
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [6, 5, 4, 5, 30],
+    }).with_columns(
+        out1=ts_decay_linear(pl.col('a'), 5),
+    )
+    shape: (5, 2)
+    ┌─────┬──────┐
+    │ a   ┆ out1 │
+    │ --- ┆ ---  │
+    │ i64 ┆ f64  │
+    ╞═════╪══════╡
+    │ 6   ┆ null │
+    │ 5   ┆ null │
+    │ 4   ┆ null │
+    │ 5   ┆ null │
+    │ 30  ┆ 13.2 │
+    └─────┴──────┘
+    ```
+
     Warnings
     --------
     weights not yet supported on array with null values
-    与`over`配合使用便不会抛出异常
 
     References
     ----------
@@ -415,6 +458,7 @@ def ts_decay_linear(x: Expr, d: int = 30) -> Expr:
 
     """
     weights = arange(1, d + 1, eager=True)
+    # print(weights)
     return x.rolling_mean(d, weights=weights)
 
 
