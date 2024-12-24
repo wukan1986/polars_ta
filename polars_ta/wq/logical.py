@@ -1,4 +1,4 @@
-from polars import Expr, all_horizontal, any_horizontal
+from polars import Expr, all_horizontal, any_horizontal, Boolean
 from polars import when
 
 
@@ -54,12 +54,12 @@ def less(input1: Expr, input2: Expr) -> Expr:
 
 def negate(input1: Expr) -> Expr:
     """The result is true if the converted operand is false; the result is false if the converted operand is true"""
-    return ~input1
+    return not_(input1)
 
 
 def not_(input1: Expr) -> Expr:
     """The result is true if the converted operand is false; the result is false if the converted operand is true"""
-    return ~input1
+    return ~input1.cast(Boolean)
 
 
 def or_(a: Expr, b: Expr, *args) -> Expr:

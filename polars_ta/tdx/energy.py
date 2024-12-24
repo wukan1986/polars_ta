@@ -2,7 +2,6 @@ from polars import Expr
 
 from polars_ta import TA_EPSILON
 from polars_ta.ta.price import MEDPRICE
-from polars_ta.tdx.reference import COUNT
 from polars_ta.tdx.reference import MA
 from polars_ta.tdx.reference import MAX
 from polars_ta.tdx.reference import REF
@@ -51,7 +50,7 @@ def PSY(CLOSE: Expr, N: int = 12) -> Expr:
     PSYMA:MA(PSY,M);
 
     """
-    return COUNT(CLOSE > REF(CLOSE, 1), N) / N
+    return MA(CLOSE > REF(CLOSE, 1), N)
 
 
 def MASS(HIGH: Expr, LOW: Expr, N1: int = 9, N2: int = 25) -> Expr:

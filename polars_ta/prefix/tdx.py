@@ -29,7 +29,7 @@ from polars_ta.tdx.arithmetic import TAN  # noqa
 from polars_ta.tdx.choice import IF  # noqa
 from polars_ta.tdx.choice import IFF  # noqa
 from polars_ta.tdx.choice import IFN  # noqa
-from polars_ta.tdx.choice import VALUEWHEN  # noqa
+from polars_ta.tdx.choice import VALUEWHEN as ts_VALUEWHEN  # noqa
 from polars_ta.tdx.energy import BRAR_AR as ts_BRAR_AR  # noqa
 from polars_ta.tdx.energy import BRAR_BR as ts_BRAR_BR  # noqa
 from polars_ta.tdx.energy import CR as ts_CR  # noqa

@@ -20,6 +20,9 @@ def IFN(condition: Expr, a: Expr, b: Expr) -> Expr:
 
 
 def VALUEWHEN(condition: Expr, x: Expr) -> Expr:
+    """VALUEWHEN(COND,X)
+当COND条件成立时,取X的当前值,否则取VALUEWHEN的上个值.
+"""
     return when(condition).then(x).otherwise(None).forward_fill()
 
 

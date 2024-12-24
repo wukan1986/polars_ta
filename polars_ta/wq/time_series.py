@@ -1,5 +1,5 @@
 import polars_ols as pls
-from polars import Expr, UInt16, struct, when, Struct, Field, Float64, Boolean
+from polars import Expr, UInt16, struct, when, Struct, Field, Float64, Boolean, UInt32
 from polars import arange, repeat
 from polars import rolling_corr, rolling_cov
 from polars_ols import RollingKwargs
@@ -108,18 +108,115 @@ def ts_corr(x: Expr, y: Expr, d: int = 5, ddof: int = 1) -> Expr:
 
 
 def ts_count(x: Expr, d: int = 30) -> Expr:
-    """时序滚动计数"""
-    return x.cast(Boolean).rolling_sum(d)
+    """时序滚动计数
+
+    Parameters
+    ----------
+    x
+    d
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, -1, 0, 1, 2, 3],
+        'b': [None, True, True, True, False, False],
+    }).with_columns(
+        out1=ts_count(pl.col('a'), 3),
+        out2=ts_count(pl.col('b'), 3),
+    )
+
+    shape: (6, 4)
+    ┌──────┬───────┬──────┬──────┐
+    │ a    ┆ b     ┆ out1 ┆ out2 │
+    │ ---  ┆ ---   ┆ ---  ┆ ---  │
+    │ i64  ┆ bool  ┆ u32  ┆ u32  │
+    ╞══════╪═══════╪══════╪══════╡
+    │ null ┆ null  ┆ null ┆ null │
+    │ -1   ┆ true  ┆ null ┆ null │
+    │ 0    ┆ true  ┆ null ┆ null │
+    │ 1    ┆ true  ┆ 2    ┆ 3    │
+    │ 2    ┆ false ┆ 2    ┆ 2    │
+    │ 3    ┆ false ┆ 3    ┆ 1    │
+    └──────┴───────┴──────┴──────┘
+    ```
+
+    """
+    return x.cast(Boolean).cast(UInt32).rolling_sum(d)
 
 
 def ts_count_nans(x: Expr, d: int = 5) -> Expr:
-    """时序滚动统计nan出现次数"""
-    return x.is_nan().rolling_sum(d)
+    """时序滚动统计nan出现次数
+
+    Parameters
+    ----------
+    x
+    d
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, float('nan'), -1, 0, 1, 2, 3],
+    }).with_columns(
+        out1=ts_count_nans(pl.col('a'), 3),
+    )
+
+    shape: (7, 2)
+    ┌──────┬──────┐
+    │ a    ┆ out1 │
+    │ ---  ┆ ---  │
+    │ f64  ┆ u32  │
+    ╞══════╪══════╡
+    │ null ┆ null │
+    │ NaN  ┆ null │
+    │ -1.0 ┆ null │
+    │ 0.0  ┆ 1    │
+    │ 1.0  ┆ 0    │
+    │ 2.0  ┆ 0    │
+    │ 3.0  ┆ 0    │
+    └──────┴──────┘
+    ```
+
+    """
+    return x.is_nan().cast(UInt32).rolling_sum(d)
 
 
 def ts_count_nulls(x: Expr, d: int = 5) -> Expr:
-    """时序滚动统计null出现次数"""
-    return x.is_null().rolling_sum(d)
+    """时序滚动统计null出现次数
+
+    Parameters
+    ----------
+    x
+    d
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, -1, 0, 1, 2, 3],
+        'b': [None, True, True, True, False, False],
+    }).with_columns(
+        out1=ts_count_nulls(pl.col('a'), 3),
+        out2=ts_count_nulls(pl.col('b'), 3),
+    )
+    shape: (6, 4)
+    ┌──────┬───────┬──────┬──────┐
+    │ a    ┆ b     ┆ out1 ┆ out2 │
+    │ ---  ┆ ---   ┆ ---  ┆ ---  │
+    │ i64  ┆ bool  ┆ u32  ┆ u32  │
+    ╞══════╪═══════╪══════╪══════╡
+    │ null ┆ null  ┆ null ┆ null │
+    │ -1   ┆ true  ┆ null ┆ null │
+    │ 0    ┆ true  ┆ 1    ┆ 1    │
+    │ 1    ┆ true  ┆ 0    ┆ 0    │
+    │ 2    ┆ false ┆ 0    ┆ 0    │
+    │ 3    ┆ false ┆ 0    ┆ 0    │
+    └──────┴───────┴──────┴──────┘
+    ```
+
+    """
+    return x.is_null().cast(UInt32).rolling_sum(d)
 
 
 def ts_covariance(x: Expr, y: Expr, d: int = 5, ddof: int = 1) -> Expr:
@@ -144,17 +241,97 @@ def ts_covariance(x: Expr, y: Expr, d: int = 5, ddof: int = 1) -> Expr:
 
 
 def ts_cum_count(x: Expr) -> Expr:
-    """时序累计计数"""
+    """时序累计计数
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, None, -1, 0, 1, 2],
+        'b': [None, None, True, True, True, False],
+    }).with_columns(
+        out1=ts_cum_count(pl.col('a')),
+        out2=ts_cum_count(pl.col('b')),
+    )
+    shape: (6, 4)
+    ┌──────┬───────┬──────┬──────┐
+    │ a    ┆ b     ┆ out1 ┆ out2 │
+    │ ---  ┆ ---   ┆ ---  ┆ ---  │
+    │ i64  ┆ bool  ┆ u32  ┆ u32  │
+    ╞══════╪═══════╪══════╪══════╡
+    │ null ┆ null  ┆ 0    ┆ 0    │
+    │ null ┆ null  ┆ 0    ┆ 0    │
+    │ -1   ┆ true  ┆ 1    ┆ 1    │
+    │ 0    ┆ true  ┆ 2    ┆ 2    │
+    │ 1    ┆ true  ┆ 3    ┆ 3    │
+    │ 2    ┆ false ┆ 4    ┆ 4    │
+    └──────┴───────┴──────┴──────┘
+    ```
+
+    """
     return x.cum_count()
 
 
 def ts_cum_max(x: Expr) -> Expr:
-    """时序累计最大"""
+    """时序累计最大
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, None, -1, 0, 2, 1],
+        'b': [None, None, True, False, False, True],
+    }).with_columns(
+        out1=ts_cum_max(pl.col('a')),
+        out2=ts_cum_max(pl.col('b')),
+    )
+    shape: (6, 4)
+    ┌──────┬───────┬──────┬──────┐
+    │ a    ┆ b     ┆ out1 ┆ out2 │
+    │ ---  ┆ ---   ┆ ---  ┆ ---  │
+    │ i64  ┆ bool  ┆ i64  ┆ bool │
+    ╞══════╪═══════╪══════╪══════╡
+    │ null ┆ null  ┆ null ┆ null │
+    │ null ┆ null  ┆ null ┆ null │
+    │ -1   ┆ true  ┆ -1   ┆ true │
+    │ 0    ┆ false ┆ 0    ┆ true │
+    │ 2    ┆ false ┆ 2    ┆ true │
+    │ 1    ┆ true  ┆ 2    ┆ true │
+    └──────┴───────┴──────┴──────┘
+    ```
+
+    """
     return x.cum_max()
 
 
 def ts_cum_min(x: Expr) -> Expr:
-    """时序累计最小"""
+    """时序累计最小
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, None, -1, 0, -2, 1],
+        'b': [None, None, True, False, False, True],
+    }).with_columns(
+        out1=ts_cum_min(pl.col('a')),
+        out2=ts_cum_min(pl.col('b')),
+    )
+    shape: (6, 4)
+    ┌──────┬───────┬──────┬───────┐
+    │ a    ┆ b     ┆ out1 ┆ out2  │
+    │ ---  ┆ ---   ┆ ---  ┆ ---   │
+    │ i64  ┆ bool  ┆ i64  ┆ bool  │
+    ╞══════╪═══════╪══════╪═══════╡
+    │ null ┆ null  ┆ null ┆ null  │
+    │ null ┆ null  ┆ null ┆ null  │
+    │ -1   ┆ true  ┆ -1   ┆ true  │
+    │ 0    ┆ false ┆ -1   ┆ false │
+    │ -2   ┆ false ┆ -2   ┆ false │
+    │ 1    ┆ true  ┆ -2   ┆ false │
+    └──────┴───────┴──────┴───────┘
+    ```
+    """
     return x.cum_min()
 
 
