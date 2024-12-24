@@ -1,12 +1,11 @@
 import polars_ols as pls
 from polars import Expr, UInt16, struct, when, Struct, Field, Float64, Boolean, UInt32
-from polars import arange, repeat
 from polars import rolling_corr, rolling_cov
 from polars_ols import RollingKwargs
 
 from polars_ta.utils.numba_ import batches_i1_o1, batches_i2_o1, batches_i2_o2
 from polars_ta.utils.pandas_ import roll_kurt, roll_rank
-from polars_ta.wq._nb import roll_argmax, roll_argmin, roll_prod, roll_co_kurtosis, roll_co_skewness, roll_moment, roll_partial_corr, roll_triple_corr, _cum_prod_by, _cum_sum_by, _signals_to_size, _cum_sum_reset, _sum_split_by
+from polars_ta.wq._nb import roll_argmax, roll_argmin, roll_prod, roll_co_kurtosis, roll_co_skewness, roll_moment, roll_partial_corr, roll_triple_corr, _cum_prod_by, _cum_sum_by, _signals_to_size, _cum_sum_reset, _sum_split_by, roll_decay_linear, roll_decay_exp_window
 
 
 def ts_arg_max(x: Expr, d: int = 5, reverse: bool = True) -> Expr:
@@ -387,22 +386,24 @@ def ts_decay_exp_window(x: Expr, d: int = 30, factor: float = 1.0) -> Expr:
     --------
     ```python
     df = pl.DataFrame({
-        'a': [6, 5, 4, 5, 30],
+        'a': [None, 6, 5, 4, 5, 30],
     }).with_columns(
-        out1=ts_decay_exp_window(pl.col('a'), 5, 0.5),
+        out1=ts_decay_linear(pl.col('a'), 5),
+        out2=ts_decay_exp_window(pl.col('a'), 5, 0.5),
     )
-    shape: (5, 2)
-    ┌─────┬───────────┐
-    │ a   ┆ out1      │
-    │ --- ┆ ---       │
-    │ i64 ┆ f64       │
-    ╞═════╪═══════════╡
-    │ 6   ┆ null      │
-    │ 5   ┆ null      │
-    │ 4   ┆ null      │
-    │ 5   ┆ null      │
-    │ 30  ┆ 17.806452 │
-    └─────┴───────────┘
+    shape: (6, 3)
+    ┌──────┬──────┬───────────┐
+    │ a    ┆ out1 ┆ out2      │
+    │ ---  ┆ ---  ┆ ---       │
+    │ i64  ┆ f64  ┆ f64       │
+    ╞══════╪══════╪═══════════╡
+    │ null ┆ null ┆ null      │
+    │ 6    ┆ null ┆ null      │
+    │ 5    ┆ null ┆ null      │
+    │ 4    ┆ null ┆ null      │
+    │ 5    ┆ null ┆ null      │
+    │ 30   ┆ 13.2 ┆ 17.806452 │
+    └──────┴──────┴───────────┘
     ```
 
     Parameters
@@ -412,15 +413,16 @@ def ts_decay_exp_window(x: Expr, d: int = 30, factor: float = 1.0) -> Expr:
     factor
         衰减系数
 
-    Warnings
-    --------
-    weights not yet supported on array with null values
+    References
+    ----------
+    https://platform.worldquantbrain.com/learn/operators/detailed-operator-descriptions#ts_decay_exp_windowx-d-factor-10-nan-true
 
     """
-    y = arange(d - 1, -1, step=-1, eager=False)
-    weights = repeat(factor, d, eager=True).pow(y)
+    # y = arange(d - 1, -1, step=-1, eager=False)
+    # weights = repeat(factor, d, eager=True).pow(y)
     # print(weights)
-    return x.rolling_mean(d, weights=weights)
+    # return x.rolling_mean(d, weights=weights)
+    return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), roll_decay_exp_window, d, factor))
 
 
 def ts_decay_linear(x: Expr, d: int = 30) -> Expr:
@@ -430,36 +432,36 @@ def ts_decay_linear(x: Expr, d: int = 30) -> Expr:
     --------
     ```python
     df = pl.DataFrame({
-        'a': [6, 5, 4, 5, 30],
+        'a': [None, 6, 5, 4, 5, 30],
     }).with_columns(
         out1=ts_decay_linear(pl.col('a'), 5),
+        out2=ts_WMA(pl.col('a'), 5),
     )
-    shape: (5, 2)
-    ┌─────┬──────┐
-    │ a   ┆ out1 │
-    │ --- ┆ ---  │
-    │ i64 ┆ f64  │
-    ╞═════╪══════╡
-    │ 6   ┆ null │
-    │ 5   ┆ null │
-    │ 4   ┆ null │
-    │ 5   ┆ null │
-    │ 30  ┆ 13.2 │
-    └─────┴──────┘
+    shape: (6, 3)
+    ┌──────┬──────┬──────┐
+    │ a    ┆ out1 ┆ out2 │
+    │ ---  ┆ ---  ┆ ---  │
+    │ i64  ┆ f64  ┆ f64  │
+    ╞══════╪══════╪══════╡
+    │ null ┆ null ┆ null │
+    │ 6    ┆ null ┆ null │
+    │ 5    ┆ null ┆ null │
+    │ 4    ┆ null ┆ null │
+    │ 5    ┆ null ┆ null │
+    │ 30   ┆ 13.2 ┆ 13.2 │
+    └──────┴──────┴──────┘
     ```
-
-    Warnings
-    --------
-    weights not yet supported on array with null values
 
     References
     ----------
     https://platform.worldquantbrain.com/learn/operators/detailed-operator-descriptions#ts_decay_linearx-d-dense-false
 
     """
-    weights = arange(1, d + 1, eager=True)
-    # print(weights)
-    return x.rolling_mean(d, weights=weights)
+    # # weights not yet supported on array with null values
+    # weights = arange(1, d + 1, eager=True)
+    # # print(weights)
+    # return x.rolling_mean(d, weights=weights)
+    return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), roll_decay_linear, d))
 
 
 def ts_delay(x: Expr, d: int = 1, fill_value=None) -> Expr:

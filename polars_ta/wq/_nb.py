@@ -287,3 +287,29 @@ def _signals_to_size(is_long_entry: np.ndarray, is_long_exit: np.ndarray,
 
         out[i] = _action if action else _amount
     return out
+
+
+@jit(nopython=True, nogil=True, fastmath=True, cache=True)
+def roll_decay_linear(x1, window):
+    out = full(x1.shape, np.nan, dtype=np.float64)
+    if len(x1) < window:
+        return out
+    weights = np.arange(1., window + 1)
+    # print(weights)
+    a1 = sliding_window_view(x1, window)
+    for i, v1 in enumerate(a1):
+        out[i + window - 1] = np.average(v1, weights=weights)
+    return out
+
+
+@jit(nopython=True, nogil=True, fastmath=True, cache=True)
+def roll_decay_exp_window(x1, window, factor):
+    out = full(x1.shape, np.nan, dtype=np.float64)
+    if len(x1) < window:
+        return out
+    weights = factor ** np.arange(window - 1, -1, -1)
+    # print(weights)
+    a1 = sliding_window_view(x1, window)
+    for i, v1 in enumerate(a1):
+        out[i + window - 1] = np.average(v1, weights=weights)
+    return out
