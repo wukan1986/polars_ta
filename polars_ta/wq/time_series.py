@@ -393,6 +393,7 @@ def ts_decay_exp_window(x: Expr, d: int = 30, factor: float = 1.0) -> Expr:
     Warnings
     --------
     weights not yet supported on array with null values
+    与`over`配合使用便不会抛出异常
 
     """
     y = arange(d - 1, -1, step=-1, eager=False)
@@ -406,6 +407,7 @@ def ts_decay_linear(x: Expr, d: int = 30) -> Expr:
     Warnings
     --------
     weights not yet supported on array with null values
+    与`over`配合使用便不会抛出异常
 
     References
     ----------
