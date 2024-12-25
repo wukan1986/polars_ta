@@ -154,7 +154,7 @@ def SMA_CN(X: Expr, N: int, M: int) -> Expr:
 
 
 def SUMIF(condition: Expr, close: Expr, N: int = 30) -> Expr:
-    return SUM(condition.cast(Int32) * close, N)
+    return SUM(condition.cast(Boolean).cast(Int32) * close, N)
 
 
 def TMA(close: Expr, N: int = 30) -> Expr:
@@ -164,3 +164,8 @@ def TMA(close: Expr, N: int = 30) -> Expr:
 
 def FILTER(close: Expr, N: int = 30) -> Expr:
     raise
+
+
+def REFX(close: Expr, N: int = 30) -> Expr:
+    """属于未来函数,引用若干周期后的数据"""
+    return REF(close, -N)

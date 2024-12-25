@@ -15,22 +15,25 @@ def CROSS(a: Expr, b: Expr) -> Expr:
         'a': [None, -1, 1, 1, 2],
         'b': [None, -1, 0, 1, 2],
         'c': [None, 0, 0, 0, 0],
+        'd': [None, False, False, True, True],
     }).with_columns(
         out1=CROSS(pl.col('a'), pl.col('c')),
         out2=CROSS(pl.col('b'), pl.col('c')),
+        out3=CROSS(0, pl.col('b')),
+        out4=CROSS(pl.col('d'), 0.5),
     )
-    shape: (5, 5)
-    ┌──────┬──────┬──────┬───────┬───────┐
-    │ a    ┆ b    ┆ c    ┆ out1  ┆ out2  │
-    │ ---  ┆ ---  ┆ ---  ┆ ---   ┆ ---   │
-    │ i64  ┆ i64  ┆ i64  ┆ bool  ┆ bool  │
-    ╞══════╪══════╪══════╪═══════╪═══════╡
-    │ null ┆ null ┆ null ┆ null  ┆ null  │
-    │ -1   ┆ -1   ┆ 0    ┆ false ┆ false │
-    │ 1    ┆ 0    ┆ 0    ┆ true  ┆ false │
-    │ 1    ┆ 1    ┆ 0    ┆ false ┆ true  │
-    │ 2    ┆ 2    ┆ 0    ┆ false ┆ false │
-    └──────┴──────┴──────┴───────┴───────┘
+    shape: (5, 8)
+    ┌──────┬──────┬──────┬───────┬───────┬───────┬───────┬───────┐
+    │ a    ┆ b    ┆ c    ┆ d     ┆ out1  ┆ out2  ┆ out3  ┆ out4  │
+    │ ---  ┆ ---  ┆ ---  ┆ ---   ┆ ---   ┆ ---   ┆ ---   ┆ ---   │
+    │ i64  ┆ i64  ┆ i64  ┆ bool  ┆ bool  ┆ bool  ┆ bool  ┆ bool  │
+    ╞══════╪══════╪══════╪═══════╪═══════╪═══════╪═══════╪═══════╡
+    │ null ┆ null ┆ null ┆ null  ┆ null  ┆ null  ┆ null  ┆ null  │
+    │ -1   ┆ -1   ┆ 0    ┆ false ┆ false ┆ false ┆ null  ┆ false │
+    │ 1    ┆ 0    ┆ 0    ┆ false ┆ true  ┆ false ┆ false ┆ false │
+    │ 1    ┆ 1    ┆ 0    ┆ true  ┆ false ┆ true  ┆ false ┆ true  │
+    │ 2    ┆ 2    ┆ 0    ┆ true  ┆ false ┆ false ┆ false ┆ false │
+    └──────┴──────┴──────┴───────┴───────┴───────┴───────┴───────┘
     ```
 
     """

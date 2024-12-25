@@ -56,28 +56,41 @@ from polars_ta.tdx.over_bought_over_sold import MFI as ts_MFI  # noqa
 from polars_ta.tdx.over_bought_over_sold import MTM as ts_MTM  # noqa
 from polars_ta.tdx.over_bought_over_sold import RSI as ts_RSI  # noqa
 from polars_ta.tdx.over_bought_over_sold import RSV as ts_RSV  # noqa
+from polars_ta.tdx.pattern import ts_WINNER_COST  # noqa
 from polars_ta.tdx.pressure_support import BOLL as ts_BOLL  # noqa
 from polars_ta.tdx.pressure_support import BOLL_M as ts_BOLL_M  # noqa
 from polars_ta.tdx.reference import BARSLAST as ts_BARSLAST  # noqa
 from polars_ta.tdx.reference import BARSLASTCOUNT as ts_BARSLASTCOUNT  # noqa
 from polars_ta.tdx.reference import BARSSINCE as ts_BARSSINCE  # noqa
 from polars_ta.tdx.reference import BARSSINCEN as ts_BARSSINCEN  # noqa
+from polars_ta.tdx.reference import COUNT as ts_COUNT  # noqa
 from polars_ta.tdx.reference import CUMSUM as ts_CUMSUM  # noqa
+from polars_ta.tdx.reference import DIFF as ts_DIFF  # noqa
 from polars_ta.tdx.reference import DMA as ts_DMA  # noqa
 from polars_ta.tdx.reference import EMA as ts_EMA  # noqa
 from polars_ta.tdx.reference import EXPMA as ts_EXPMA  # noqa
 from polars_ta.tdx.reference import EXPMEMA as ts_EXPMEMA  # noqa
 from polars_ta.tdx.reference import FILTER as ts_FILTER  # noqa
+from polars_ta.tdx.reference import HHV as ts_HHV  # noqa
+from polars_ta.tdx.reference import HHVBARS as ts_HHVBARS  # noqa
 from polars_ta.tdx.reference import HOD as ts_HOD  # noqa
+from polars_ta.tdx.reference import LLV as ts_LLV  # noqa
+from polars_ta.tdx.reference import LLVBARS as ts_LLVBARS  # noqa
 from polars_ta.tdx.reference import LOD as ts_LOD  # noqa
+from polars_ta.tdx.reference import MA as ts_MA  # noqa
 from polars_ta.tdx.reference import MAX  # noqa
 from polars_ta.tdx.reference import MEMA as ts_MEMA  # noqa
 from polars_ta.tdx.reference import MIN  # noqa
+from polars_ta.tdx.reference import MULAR as ts_MULAR  # noqa
 from polars_ta.tdx.reference import RANGE  # noqa
+from polars_ta.tdx.reference import REF as ts_REF  # noqa
+from polars_ta.tdx.reference import REFX as ts_REFX  # noqa
 from polars_ta.tdx.reference import SMA_CN as ts_SMA_CN  # noqa
+from polars_ta.tdx.reference import SUM as ts_SUM  # noqa
 from polars_ta.tdx.reference import SUMIF as ts_SUMIF  # noqa
 from polars_ta.tdx.reference import TMA as ts_TMA  # noqa
 from polars_ta.tdx.reference import TR as ts_TR  # noqa
+from polars_ta.tdx.reference import WMA as ts_WMA  # noqa
 from polars_ta.tdx.statistic import AVEDEV as ts_AVEDEV  # noqa
 from polars_ta.tdx.statistic import COVAR as ts_COVAR  # noqa
 from polars_ta.tdx.statistic import DEVSQ as ts_DEVSQ  # noqa
