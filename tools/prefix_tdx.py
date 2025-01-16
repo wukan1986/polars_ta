@@ -13,5 +13,6 @@ lines += codegen_import_as('polars_ta.tdx.pressure_support', include_parameter=[
 lines += codegen_import_as('polars_ta.tdx.reference', include_modules=['polars_ta.ta.overlap', 'polars_ta.ta.volatility', 'polars_ta.wq.arithmetic', 'polars_ta.wq.time_series'], include_func=['BARSLAST', 'BARSLASTCOUNT', 'BARSSINCE', 'DMA', 'CUMSUM', 'TR'], include_parameter=['N', 'd', 'timeperiod'])
 lines += codegen_import_as('polars_ta.tdx.statistic', include_modules=['polars_ta.wq.time_series'], include_parameter=['timeperiod', 'd'])
 lines += codegen_import_as('polars_ta.tdx.trend', include_parameter=['N'])
+lines += codegen_import_as('polars_ta.tdx.trend_feature', include_parameter=['N', 'M', 'N1'], include_func=['下跌多日再放量上涨', '价量渐低后阳包阴', '单日放量', '跳空高开或低开'])
 lines += codegen_import_as('polars_ta.tdx.volume', include_func=['OBV'], include_parameter=['N'])
 save(lines, module='polars_ta.prefix.tdx', write=True)

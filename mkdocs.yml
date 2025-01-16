@@ -33,6 +33,7 @@ nav:
       - tdx/reference.md
       - tdx/statistic.md
       - tdx/trend.md
+      - tdx/trend_feature.md
       - tdx/volume.md
   - polars_ta.talib: talib/index.md
 

@@ -9,4 +9,5 @@ from polars_ta.tdx.pressure_support import *  # noqa
 from polars_ta.tdx.reference import *  # noqa
 from polars_ta.tdx.statistic import *  # noqa
 from polars_ta.tdx.trend import *  # noqa
+from polars_ta.tdx.trend_feature import *  # noqa
 from polars_ta.tdx.volume import *  # noqa

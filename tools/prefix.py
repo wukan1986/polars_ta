@@ -61,7 +61,7 @@ def codegen_import_as(module: str, prefix: str = 'ts_',
                 if n in p:
                     if p[n].annotation == int:
                         add_prefix = True
-                    break
+                        break
 
         if add_prefix:
             txts.append(f'from {module} import {name} as {prefix}{name}  # noqa')
