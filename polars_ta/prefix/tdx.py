@@ -57,6 +57,31 @@ from polars_ta.tdx.over_bought_over_sold import MTM as ts_MTM  # noqa
 from polars_ta.tdx.over_bought_over_sold import RSI as ts_RSI  # noqa
 from polars_ta.tdx.over_bought_over_sold import RSV as ts_RSV  # noqa
 from polars_ta.tdx.pattern import ts_WINNER_COST  # noqa
+from polars_ta.tdx.pattern_feature import 仙人指路 as ts_仙人指路  # noqa
+from polars_ta.tdx.pattern_feature import 低开大阳线 as ts_低开大阳线  # noqa
+from polars_ta.tdx.pattern_feature import 低点搜寻 as ts_低点搜寻  # noqa
+from polars_ta.tdx.pattern_feature import 出水芙蓉 as ts_出水芙蓉  # noqa
+from polars_ta.tdx.pattern_feature import 出水芙蓉II as ts_出水芙蓉II  # noqa
+from polars_ta.tdx.pattern_feature import 剑 as ts_剑  # noqa
+from polars_ta.tdx.pattern_feature import 单阳不破选股 as ts_单阳不破选股  # noqa
+from polars_ta.tdx.pattern_feature import 四串阳 as ts_四串阳  # noqa
+from polars_ta.tdx.pattern_feature import 四串阴 as ts_四串阴  # noqa
+from polars_ta.tdx.pattern_feature import 回补跳空向上缺口 as ts_回补跳空向上缺口  # noqa
+from polars_ta.tdx.pattern_feature import 均线多头排列 as ts_均线多头排列  # noqa
+from polars_ta.tdx.pattern_feature import 均线空头排列 as ts_均线空头排列  # noqa
+from polars_ta.tdx.pattern_feature import 天量法则 as ts_天量法则  # noqa
+from polars_ta.tdx.pattern_feature import 强势整理 as ts_强势整理  # noqa
+from polars_ta.tdx.pattern_feature import 揉搓线 as ts_揉搓线  # noqa
+from polars_ta.tdx.pattern_feature import 早晨之星 as ts_早晨之星  # noqa
+from polars_ta.tdx.pattern_feature import 旭日初升 as ts_旭日初升  # noqa
+from polars_ta.tdx.pattern_feature import 突破 as ts_突破  # noqa
+from polars_ta.tdx.pattern_feature import 老鸭头 as ts_老鸭头  # noqa
+from polars_ta.tdx.pattern_feature import 蜻蜓点水 as ts_蜻蜓点水  # noqa
+from polars_ta.tdx.pattern_feature import 跳空缺口选股 as ts_跳空缺口选股  # noqa
+from polars_ta.tdx.pattern_feature import 近日创历史新低 as ts_近日创历史新低  # noqa
+from polars_ta.tdx.pattern_feature import 近日创历史新高 as ts_近日创历史新高  # noqa
+from polars_ta.tdx.pattern_feature import 高开大阴线 as ts_高开大阴线  # noqa
+from polars_ta.tdx.pattern_feature import 鸳鸯底 as ts_鸳鸯底  # noqa
 from polars_ta.tdx.pressure_support import BOLL as ts_BOLL  # noqa
 from polars_ta.tdx.pressure_support import BOLL_M as ts_BOLL_M  # noqa
 from polars_ta.tdx.reference import BARSLAST as ts_BARSLAST  # noqa
@@ -77,6 +102,7 @@ from polars_ta.tdx.reference import HOD as ts_HOD  # noqa
 from polars_ta.tdx.reference import LLV as ts_LLV  # noqa
 from polars_ta.tdx.reference import LLVBARS as ts_LLVBARS  # noqa
 from polars_ta.tdx.reference import LOD as ts_LOD  # noqa
+from polars_ta.tdx.reference import LOWRANGE  # noqa
 from polars_ta.tdx.reference import MA as ts_MA  # noqa
 from polars_ta.tdx.reference import MAX  # noqa
 from polars_ta.tdx.reference import MEMA as ts_MEMA  # noqa
@@ -113,6 +139,7 @@ from polars_ta.tdx.trend import PLUS_DM as ts_PLUS_DM  # noqa
 from polars_ta.tdx.trend_feature import N天内出现以涨停收盘 as ts_N天内出现以涨停收盘  # noqa
 from polars_ta.tdx.trend_feature import N天内出现涨停 as ts_N天内出现涨停  # noqa
 from polars_ta.tdx.trend_feature import N天内有跳空向上缺口 as ts_N天内有跳空向上缺口  # noqa
+from polars_ta.tdx.trend_feature import N天内经常涨停 as ts_N天内经常涨停  # noqa
 from polars_ta.tdx.trend_feature import N日内上涨多于下跌 as ts_N日内上涨多于下跌  # noqa
 from polars_ta.tdx.trend_feature import N日内下跌多于上涨 as ts_N日内下跌多于上涨  # noqa
 from polars_ta.tdx.trend_feature import N日内创新低 as ts_N日内创新低  # noqa

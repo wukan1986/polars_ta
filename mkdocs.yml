@@ -29,6 +29,7 @@ nav:
       - tdx/moving_average.md
       - tdx/over_bought_over_sold.md
       - tdx/pattern.md
+      - tdx/pattern_feature.md
       - tdx/pressure_support.md
       - tdx/reference.md
       - tdx/statistic.md

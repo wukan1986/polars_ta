@@ -5,6 +5,7 @@ from polars_ta.tdx.logical import *  # noqa
 from polars_ta.tdx.moving_average import *  # noqa
 from polars_ta.tdx.over_bought_over_sold import *  # noqa
 from polars_ta.tdx.pattern import *  # noqa
+from polars_ta.tdx.pattern_feature import *  # noqa
 from polars_ta.tdx.pressure_support import *  # noqa
 from polars_ta.tdx.reference import *  # noqa
 from polars_ta.tdx.statistic import *  # noqa

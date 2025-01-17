@@ -128,6 +128,12 @@ def LOD(close: Expr, N: int = 30) -> Expr:
     return close.map_batches(lambda a: roll_rank(a, N, pct=False, ascending=True))
 
 
+def LOWRANGE(close: Expr) -> Expr:
+    """rolling rank of each data in ascending order
+    LOD(X,N):求当前X数据是N周期内的第几个低值"""
+    raise
+
+
 def MEMA(close: Expr, N: int = 30) -> Expr:
     """Exponential moving average given N
     Y = X / N + last_Y * (N-1) / N
