@@ -1,10 +1,36 @@
 import numpy as np
-from polars import Expr, Series, fold, any_horizontal
+from polars import Expr, Series, fold, any_horizontal, Float64
 from polars import max_horizontal, sum_horizontal, min_horizontal, mean_horizontal
 
 
 def abs_(x: Expr) -> Expr:
-    """绝对值"""
+    """绝对值
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, -1, 0, 1, 2],
+        'b': [None, -1, 0, 1, 2],
+    }).with_columns(
+        out1=abs_(pl.col('a')),
+        out2=abs_(-1),
+    )
+    shape: (5, 4)
+    ┌──────┬──────┬──────┬──────┐
+    │ a    ┆ b    ┆ out1 ┆ out2 │
+    │ ---  ┆ ---  ┆ ---  ┆ ---  │
+    │ i64  ┆ i64  ┆ i64  ┆ i32  │
+    ╞══════╪══════╪══════╪══════╡
+    │ null ┆ null ┆ null ┆ 1    │
+    │ -1   ┆ -1   ┆ 1    ┆ 1    │
+    │ 0    ┆ 0    ┆ 0    ┆ 1    │
+    │ 1    ┆ 1    ┆ 1    ┆ 1    │
+    │ 2    ┆ 2    ┆ 2    ┆ 1    │
+    └──────┴──────┴──────┴──────┘
+    ```
+
+    """
     if isinstance(x, (Expr, Series)):
         return x.abs()
     else:
@@ -86,17 +112,92 @@ def densify(x: Expr) -> Expr:
 
 
 def divide(x: Expr, y: Expr) -> Expr:
-    """x/y"""
+    """x/y
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, -1, 0, 1, 2],
+        'b': [None, -1, 0, 1, 2],
+    }).with_columns(
+        out1=divide(pl.col('a'), 0),
+        out2=divide(pl.col('a'), 1),
+        out3=divide(pl.col('a'), pl.col('b')),
+    )
+    shape: (5, 5)
+    ┌──────┬──────┬──────┬──────┬──────┐
+    │ a    ┆ b    ┆ out1 ┆ out2 ┆ out3 │
+    │ ---  ┆ ---  ┆ ---  ┆ ---  ┆ ---  │
+    │ i64  ┆ i64  ┆ f64  ┆ f64  ┆ f64  │
+    ╞══════╪══════╪══════╪══════╪══════╡
+    │ null ┆ null ┆ null ┆ null ┆ null │
+    │ -1   ┆ -1   ┆ -inf ┆ -1.0 ┆ 1.0  │
+    │ 0    ┆ 0    ┆ NaN  ┆ 0.0  ┆ NaN  │
+    │ 1    ┆ 1    ┆ inf  ┆ 1.0  ┆ 1.0  │
+    │ 2    ┆ 2    ┆ inf  ┆ 2.0  ┆ 1.0  │
+    └──────┴──────┴──────┴──────┴──────┘
+    ```
+
+    """
     return x / y
 
 
 def exp(x: Expr) -> Expr:
-    """自然指数函数"""
+    """自然指数函数
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, -1, 0, 1, 2],
+    }).with_columns(
+        out1=expm1(pl.col('a')),
+    )
+    shape: (5, 2)
+    ┌──────┬──────────┐
+    │ a    ┆ out1     │
+    │ ---  ┆ ---      │
+    │ i64  ┆ f64      │
+    ╞══════╪══════════╡
+    │ null ┆ null     │
+    │ -1   ┆ 0.367879 │
+    │ 0    ┆ 1.0      │
+    │ 1    ┆ 2.718282 │
+    │ 2    ┆ 7.389056 │
+    └──────┴──────────┘
+    ```
+
+    """
     return x.exp()
 
 
 def expm1(x: Expr) -> Expr:
-    """对数收益率 转 简单收益率 convert log return to simple return"""
+    """对数收益率 转 简单收益率 convert log return to simple return
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, -1, 0, 1, 2],
+    }).with_columns(
+        out1=expm1(pl.col('a')),
+    )
+    shape: (5, 2)
+    ┌──────┬───────────┐
+    │ a    ┆ out1      │
+    │ ---  ┆ ---       │
+    │ i64  ┆ f64       │
+    ╞══════╪═══════════╡
+    │ null ┆ null      │
+    │ -1   ┆ -0.632121 │
+    │ 0    ┆ 0.0       │
+    │ 1    ┆ 1.718282  │
+    │ 2    ┆ 6.389056  │
+    └──────┴───────────┘
+    ```
+
+    """
     return x.exp() - 1
 
 
@@ -147,12 +248,60 @@ def fraction(x: Expr) -> Expr:
 
 
 def inverse(x: Expr) -> Expr:
-    """1/x"""
+    """1/x
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, -1, 0, 1, 2],
+    }).with_columns(
+        out1=inverse(pl.col('a')),
+    )
+    shape: (5, 2)
+    ┌──────┬──────┐
+    │ a    ┆ out1 │
+    │ ---  ┆ ---  │
+    │ i64  ┆ f64  │
+    ╞══════╪══════╡
+    │ null ┆ null │
+    │ -1   ┆ -1.0 │
+    │ 0    ┆ inf  │
+    │ 1    ┆ 1.0  │
+    │ 2    ┆ 0.5  │
+    └──────┴──────┘
+    ```
+
+    """
     return 1 / x
 
 
 def log(x: Expr) -> Expr:
-    """e为底的对数"""
+    """e为底的对数
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, -1, 0, 1, 2],
+    }).with_columns(
+        out1=log(pl.col('a')),
+    )
+    shape: (5, 2)
+    ┌──────┬──────────┐
+    │ a    ┆ out1     │
+    │ ---  ┆ ---      │
+    │ i64  ┆ f64      │
+    ╞══════╪══════════╡
+    │ null ┆ null     │
+    │ -1   ┆ NaN      │
+    │ 0    ┆ -inf     │
+    │ 1    ┆ 0.0      │
+    │ 2    ┆ 0.693147 │
+    └──────┴──────────┘
+    ```
+
+    """
     if isinstance(x, (Expr, Series)):
         return x.log()
     else:
@@ -160,7 +309,31 @@ def log(x: Expr) -> Expr:
 
 
 def log10(x: Expr) -> Expr:
-    """10为底的对数"""
+    """10为底的对数
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, -1, 0, 1, 2],
+    }).with_columns(
+        out1=log10(pl.col('a')),
+    )
+    shape: (5, 2)
+    ┌──────┬─────────┐
+    │ a    ┆ out1    │
+    │ ---  ┆ ---     │
+    │ i64  ┆ f64     │
+    ╞══════╪═════════╡
+    │ null ┆ null    │
+    │ -1   ┆ NaN     │
+    │ 0    ┆ -inf    │
+    │ 1    ┆ 0.0     │
+    │ 2    ┆ 0.30103 │
+    └──────┴─────────┘
+    ```
+
+    """
     return x.log10()
 
 
@@ -168,6 +341,29 @@ def log1p(x: Expr) -> Expr:
     """简单收益率 转 对数收益率 convert simple return to log return
 
     log(x+1)
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, -1, 0, 1, 2],
+    }).with_columns(
+        out1=log1p(pl.col('a')),
+    )
+    shape: (5, 2)
+    ┌──────┬──────────┐
+    │ a    ┆ out1     │
+    │ ---  ┆ ---      │
+    │ i64  ┆ f64      │
+    ╞══════╪══════════╡
+    │ null ┆ null     │
+    │ -1   ┆ -inf     │
+    │ 0    ┆ 0.0      │
+    │ 1    ┆ 0.693147 │
+    │ 2    ┆ 1.098612 │
+    └──────┴──────────┘
+    ```
+
     """
     return x.log1p()
 
@@ -178,7 +374,33 @@ def max_(a: Expr, b: Expr, *args) -> Expr:
 
 
 def mean(a: Expr, b: Expr, *args) -> Expr:
-    """水平多列均值"""
+    """水平多列均值
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, -1, 0, 1, 2],
+        'b': [None, -1, 0, 0, 2],
+    }).with_columns(
+        out2=mean(pl.col('a'), 2),
+        out3=mean(pl.col('a'), pl.col('b')),
+    )
+    shape: (5, 4)
+    ┌──────┬──────┬──────┬──────┐
+    │ a    ┆ b    ┆ out2 ┆ out3 │
+    │ ---  ┆ ---  ┆ ---  ┆ ---  │
+    │ i64  ┆ i64  ┆ f64  ┆ f64  │
+    ╞══════╪══════╪══════╪══════╡
+    │ null ┆ null ┆ 2.0  ┆ null │
+    │ -1   ┆ -1   ┆ 0.5  ┆ -1.0 │
+    │ 0    ┆ 0    ┆ 1.0  ┆ 0.0  │
+    │ 1    ┆ 0    ┆ 1.5  ┆ 0.5  │
+    │ 2    ┆ 2    ┆ 2.0  ┆ 2.0  │
+    └──────┴──────┴──────┴──────┘
+    ```
+
+    """
     return mean_horizontal(a, b, *args)
 
 
@@ -188,7 +410,33 @@ def min_(a: Expr, b: Expr, *args) -> Expr:
 
 
 def mod(x: Expr, y: Expr) -> Expr:
-    """x%y"""
+    """x%y
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, -1, 0, 1, 2],
+        'b': [None, -1, 0, 0, 2],
+    }).with_columns(
+        out2=mod(pl.col('a'), 2),
+        out3=mod(pl.col('a'), pl.col('b')),
+    )
+    shape: (5, 4)
+    ┌──────┬──────┬──────┬──────┐
+    │ a    ┆ b    ┆ out2 ┆ out3 │
+    │ ---  ┆ ---  ┆ ---  ┆ ---  │
+    │ i64  ┆ i64  ┆ i64  ┆ i64  │
+    ╞══════╪══════╪══════╪══════╡
+    │ null ┆ null ┆ null ┆ null │
+    │ -1   ┆ -1   ┆ 1    ┆ 0    │
+    │ 0    ┆ 0    ┆ 0    ┆ null │
+    │ 1    ┆ 0    ┆ 1    ┆ null │
+    │ 2    ┆ 2    ┆ 0    ┆ 0    │
+    └──────┴──────┴──────┴──────┘
+    ```
+
+    """
     return x % y
 
 
@@ -234,8 +482,37 @@ def multiply(a: Expr, b: Expr, *args) -> Expr:
 
 
 def power(x: Expr, y: Expr) -> Expr:
-    """x ** y"""
-    return x.pow(y)
+    """x ** y
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, -1, 0, 1, 2],
+        'b': [None, -1, 0, 1, 2],
+    }).with_columns(
+        out2=power(pl.col('a'), 1),
+        out3=power(pl.col('a'), pl.col('b')),
+    )
+    shape: (5, 4)
+    ┌──────┬──────┬──────┬──────┐
+    │ a    ┆ b    ┆ out2 ┆ out3 │
+    │ ---  ┆ ---  ┆ ---  ┆ ---  │
+    │ i64  ┆ i64  ┆ i64  ┆ f64  │
+    ╞══════╪══════╪══════╪══════╡
+    │ null ┆ null ┆ null ┆ null │
+    │ -1   ┆ -1   ┆ -1   ┆ -1.0 │
+    │ 0    ┆ 0    ┆ 0    ┆ 1.0  │
+    │ 1    ┆ 1    ┆ 1    ┆ 1.0  │
+    │ 2    ┆ 2    ┆ 2    ┆ 4.0  │
+    └──────┴──────┴──────┴──────┘
+    ```
+
+    """
+    if isinstance(y, (int, float)):
+        return x.pow(y)
+
+    return x.pow(y.cast(Float64))
 
 
 def reverse(x: Expr) -> Expr:
@@ -370,6 +647,31 @@ def sign(x: Expr) -> Expr:
 def signed_power(x: Expr, y: Expr) -> Expr:
     """x raised to the power of y such that final result preserves sign of x.
 
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, -1, 0, 1, 2],
+        'b': [None, -1, 0, 1, 2],
+    }).with_columns(
+        out1=signed_power(pl.col('a'), 0),
+        out2=signed_power(pl.col('a'), 1),
+        out3=signed_power(pl.col('a'), pl.col('b')),
+    )
+
+    shape: (5, 5)
+    ┌──────┬──────┬──────┬──────┬──────┐
+    │ a    ┆ b    ┆ out1 ┆ out2 ┆ out3 │
+    │ ---  ┆ ---  ┆ ---  ┆ ---  ┆ ---  │
+    │ i64  ┆ i64  ┆ i64  ┆ i64  ┆ f64  │
+    ╞══════╪══════╪══════╪══════╪══════╡
+    │ null ┆ null ┆ null ┆ null ┆ null │
+    │ -1   ┆ -1   ┆ -1   ┆ -1   ┆ -1.0 │
+    │ 0    ┆ 0    ┆ 0    ┆ 0    ┆ 0.0  │
+    │ 1    ┆ 1    ┆ 1    ┆ 1    ┆ 1.0  │
+    │ 2    ┆ 2    ┆ 1    ┆ 2    ┆ 4.0  │
+    └──────┴──────┴──────┴──────┴──────┘
+    ```
 
     References
     ----------
@@ -382,7 +684,7 @@ def signed_power(x: Expr, y: Expr) -> Expr:
         elif y == 0:
             return x.sign()
 
-    return x.abs().pow(y) * x.sign()
+    return x.abs().pow(y.cast(Float64)) * x.sign()
 
 
 def sin(x: Expr) -> Expr:
@@ -396,7 +698,32 @@ def sinh(x: Expr) -> Expr:
 
 
 def softsign(x: Expr) -> Expr:
-    """softsign是 tanh激活函数的另一个替代选择"""
+    """softsign是 tanh激活函数的另一个替代选择
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, -1, 0, 1, 2],
+    }).with_columns(
+        out1=softsign(pl.col('a')),
+    )
+
+    shape: (5, 2)
+    ┌──────┬──────────┐
+    │ a    ┆ out1     │
+    │ ---  ┆ ---      │
+    │ i64  ┆ f64      │
+    ╞══════╪══════════╡
+    │ null ┆ null     │
+    │ -1   ┆ -0.5     │
+    │ 0    ┆ 0.0      │
+    │ 1    ┆ 0.5      │
+    │ 2    ┆ 0.666667 │
+    └──────┴──────────┘
+    ```
+
+    """
     return x / (1 + x.abs())
 
 
@@ -411,23 +738,126 @@ def subtract(x: Expr, y: Expr) -> Expr:
 
 
 def tan(x: Expr) -> Expr:
-    """正切"""
+    """正切
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, -1, 0, 1, 2],
+    }).with_columns(
+        out1=tan(pl.col('a')),
+    )
+
+    shape: (5, 2)
+    ┌──────┬───────────┐
+    │ a    ┆ out1      │
+    │ ---  ┆ ---       │
+    │ i64  ┆ f64       │
+    ╞══════╪═══════════╡
+    │ null ┆ null      │
+    │ -1   ┆ -1.557408 │
+    │ 0    ┆ 0.0       │
+    │ 1    ┆ 1.557408  │
+    │ 2    ┆ -2.18504  │
+    └──────┴───────────┘
+    ```
+
+    """
     return x.tan()
 
 
 def tanh(x: Expr) -> Expr:
-    """双曲正切"""
+    """双曲正切
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, -1, 0, 1, 2],
+    }).with_columns(
+        out1=tanh(pl.col('a')),
+    )
+
+    shape: (5, 2)
+    ┌──────┬───────────┐
+    │ a    ┆ out1      │
+    │ ---  ┆ ---       │
+    │ i64  ┆ f64       │
+    ╞══════╪═══════════╡
+    │ null ┆ null      │
+    │ -1   ┆ -0.761594 │
+    │ 0    ┆ 0.0       │
+    │ 1    ┆ 0.761594  │
+    │ 2    ┆ 0.964028  │
+    └──────┴───────────┘
+    ```
+
+    """
     return x.tanh()
 
 
 def var(a: Expr, b: Expr, *args) -> Expr:
-    """水平多列方差"""
+    """水平多列方差
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, -1, 1, 1, 2],
+        'b': [None, -1, 0, 1, 2],
+        'c': [None, -1, 0, 2, None],
+    }).with_columns(
+        out1=var(pl.col('a'), pl.col('b'), pl.col('c')),
+    )
+
+    shape: (5, 4)
+    ┌──────┬──────┬──────┬──────────┐
+    │ a    ┆ b    ┆ c    ┆ out1     │
+    │ ---  ┆ ---  ┆ ---  ┆ ---      │
+    │ i64  ┆ i64  ┆ i64  ┆ f64      │
+    ╞══════╪══════╪══════╪══════════╡
+    │ null ┆ null ┆ null ┆ 0.0      │
+    │ -1   ┆ -1   ┆ -1   ┆ 0.0      │
+    │ 1    ┆ 0    ┆ 0    ┆ 0.666667 │
+    │ 1    ┆ 1    ┆ 2    ┆ 0.666667 │
+    │ 2    ┆ 2    ┆ null ┆ 0.0      │
+    └──────┴──────┴──────┴──────────┘
+    ```
+
+    """
     _args = [a, b] + list(args)
     _mean = mean_horizontal(_args)
-    _sum = sum_horizontal([(expr - _mean) ** 2 for expr in _args])
-    return _sum
+    return sum_horizontal([(expr - _mean) ** 2 for expr in _args])
 
 
 def std(a: Expr, b: Expr, *args) -> Expr:
-    """水平多列标准差"""
+    """水平多列标准差
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, -1, 1, 1, 2],
+        'b': [None, -1, 0, 1, 2],
+        'c': [None, -1, 0, 2, None],
+    }).with_columns(
+        out2=std(pl.col('a'), pl.col('b'), pl.col('c')),
+    )
+
+    shape: (5, 4)
+    ┌──────┬──────┬──────┬──────────┐
+    │ a    ┆ b    ┆ c    ┆ out2     │
+    │ ---  ┆ ---  ┆ ---  ┆ ---      │
+    │ i64  ┆ i64  ┆ i64  ┆ f64      │
+    ╞══════╪══════╪══════╪══════════╡
+    │ null ┆ null ┆ null ┆ 0.0      │
+    │ -1   ┆ -1   ┆ -1   ┆ 0.0      │
+    │ 1    ┆ 0    ┆ 0    ┆ 0.816497 │
+    │ 1    ┆ 1    ┆ 2    ┆ 0.816497 │
+    │ 2    ┆ 2    ┆ null ┆ 0.0      │
+    └──────┴──────┴──────┴──────────┘
+    ```
+
+    """
     return var(a, b, *args).sqrt()
