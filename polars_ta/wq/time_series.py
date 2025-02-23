@@ -484,9 +484,42 @@ def ts_delta(x: Expr, d: int = 1) -> Expr:
     return x.diff(d)
 
 
-def ts_fill_null(x: Expr) -> Expr:
-    """用上一个非空值填充空值"""
-    return x.forward_fill()
+def ts_fill_null(x: Expr, limit: int = None) -> Expr:
+    """用上一个非空值填充空值
+
+    Parameters
+    ----------
+    x
+    limit
+        最大填充次数
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, -1, 1, None, None],
+        'b': [None, True, False, None, None],
+    }).with_columns(
+        out1=ts_fill_null(pl.col('a')),
+        out2=ts_fill_null(pl.col('b'), 1),
+    )
+
+    shape: (5, 4)
+    ┌──────┬───────┬──────┬───────┐
+    │ a    ┆ b     ┆ out1 ┆ out2  │
+    │ ---  ┆ ---   ┆ ---  ┆ ---   │
+    │ i64  ┆ bool  ┆ i64  ┆ bool  │
+    ╞══════╪═══════╪══════╪═══════╡
+    │ null ┆ null  ┆ null ┆ null  │
+    │ -1   ┆ true  ┆ -1   ┆ true  │
+    │ 1    ┆ false ┆ 1    ┆ false │
+    │ null ┆ null  ┆ 1    ┆ false │
+    │ null ┆ null  ┆ 1    ┆ null  │
+    └──────┴───────┴──────┴───────┘
+    ```
+
+    """
+    return x.forward_fill(limit)
 
 
 def ts_ir(x: Expr, d: int = 1) -> Expr:

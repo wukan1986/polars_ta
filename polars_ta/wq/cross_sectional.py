@@ -198,6 +198,16 @@ def cs_fill_except_all_null(x: Expr, value=0) -> Expr:
     return when(x.is_not_null().sum() == 0).then(x).otherwise(x.fill_null(value))
 
 
+def cs_fill_mean(x: Expr) -> Expr:
+    """填充`null`为均值"""
+    return x.fill_null(strategy='mean')
+
+
+def cs_fill_null(x: Expr, value=0) -> Expr:
+    """填充`null`为`value`"""
+    return x.fill_null(value)
+
+
 def cs_regression_neut(y: Expr, x: Expr) -> Expr:
     """一元回归残差"""
     return pls.compute_least_squares(y, x, add_intercept=True, mode='residuals', ols_kwargs=_ols_kwargs)
