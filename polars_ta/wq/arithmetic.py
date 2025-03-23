@@ -683,7 +683,10 @@ def signed_power(x: Expr, y: Expr) -> Expr:
             return x.abs() * x.sign()
         elif y == 0:
             return x.sign()
-
+    
+    # Hi, now when we added .cast(Float64), alpha_001 and alpha_084 fails. 
+    # Because inside _x_0 we pass 2.0, but should now pass expression for .cast : _x_0 = ... signed_power(if_else(RETURNS < 0, ts_std_dev(RETURNS, 20), CLOSE), 2.0) ...
+    # I assume some changes need to be made in expr_codegen?
     return x.abs().pow(y.cast(Float64)) * x.sign()
 
 
