@@ -656,21 +656,22 @@ def signed_power(x: Expr, y: Expr) -> Expr:
     }).with_columns(
         out1=signed_power(pl.col('a'), 0),
         out2=signed_power(pl.col('a'), 1),
-        out3=signed_power(pl.col('a'), pl.col('b')),
+        out3=signed_power(pl.col('a'), 2),
+        out4=signed_power(pl.col('a'), pl.col('b')),
     )
 
-    shape: (5, 5)
-    ┌──────┬──────┬──────┬──────┬──────┐
-    │ a    ┆ b    ┆ out1 ┆ out2 ┆ out3 │
-    │ ---  ┆ ---  ┆ ---  ┆ ---  ┆ ---  │
-    │ i64  ┆ i64  ┆ i64  ┆ i64  ┆ f64  │
-    ╞══════╪══════╪══════╪══════╪══════╡
-    │ null ┆ null ┆ null ┆ null ┆ null │
-    │ -1   ┆ -1   ┆ -1   ┆ -1   ┆ -1.0 │
-    │ 0    ┆ 0    ┆ 0    ┆ 0    ┆ 0.0  │
-    │ 1    ┆ 1    ┆ 1    ┆ 1    ┆ 1.0  │
-    │ 2    ┆ 2    ┆ 1    ┆ 2    ┆ 4.0  │
-    └──────┴──────┴──────┴──────┴──────┘
+    shape: (5, 6)
+    ┌──────┬──────┬──────┬──────┬──────┬──────┐
+    │ a    ┆ b    ┆ out1 ┆ out2 ┆ out3 ┆ out4 │
+    │ ---  ┆ ---  ┆ ---  ┆ ---  ┆ ---  ┆ ---  │
+    │ i64  ┆ i64  ┆ i64  ┆ i64  ┆ i64  ┆ f64  │
+    ╞══════╪══════╪══════╪══════╪══════╪══════╡
+    │ null ┆ null ┆ null ┆ null ┆ null ┆ null │
+    │ -1   ┆ -1   ┆ -1   ┆ -1   ┆ -1   ┆ -1.0 │
+    │ 0    ┆ 0    ┆ 0    ┆ 0    ┆ 0    ┆ 0.0  │
+    │ 1    ┆ 1    ┆ 1    ┆ 1    ┆ 1    ┆ 1.0  │
+    │ 2    ┆ 2    ┆ 1    ┆ 2    ┆ 4    ┆ 4.0  │
+    └──────┴──────┴──────┴──────┴──────┴──────┘
     ```
 
     References
@@ -683,6 +684,8 @@ def signed_power(x: Expr, y: Expr) -> Expr:
             return x.abs() * x.sign()
         elif y == 0:
             return x.sign()
+        else:
+            return x.abs().pow(y) * x.sign()
 
     return x.abs().pow(y.cast(Float64)) * x.sign()
 
