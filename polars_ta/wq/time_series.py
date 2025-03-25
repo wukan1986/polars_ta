@@ -3,9 +3,10 @@ from polars import Expr, UInt16, struct, when, Struct, Field, Float64, Boolean, 
 from polars import rolling_corr, rolling_cov
 from polars_ols import RollingKwargs
 
+import polars_ta
 from polars_ta.utils.numba_ import batches_i1_o1, batches_i2_o1, batches_i2_o2
 from polars_ta.utils.pandas_ import roll_kurt, roll_rank
-from polars_ta.wq._nb import roll_argmax, roll_argmin, roll_prod, roll_co_kurtosis, roll_co_skewness, roll_moment, roll_partial_corr, roll_triple_corr, _cum_prod_by, _cum_sum_by, _signals_to_size, _cum_sum_reset, _sum_split_by, roll_decay_linear, roll_decay_exp_window
+from polars_ta.wq._nb import roll_argmax, roll_argmin, roll_co_kurtosis, roll_co_skewness, roll_moment, roll_partial_corr, roll_triple_corr, _cum_prod_by, _cum_sum_by, _signals_to_size, _cum_sum_reset, _sum_split_by, roll_decay_linear, roll_decay_exp_window, roll_prod
 
 
 def ts_arg_max(x: Expr, d: int = 5, reverse: bool = True) -> Expr:
@@ -52,7 +53,7 @@ def ts_arg_max(x: Expr, d: int = 5, reverse: bool = True) -> Expr:
     https://platform.worldquantbrain.com/learn/operators/detailed-operator-descriptions#ts_arg_maxx-d
 
     """
-    return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy(), roll_argmax, d, reverse, dtype=UInt16))
+    return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy(), roll_argmax, d, polars_ta.MIN_PERIODS or d, reverse, dtype=UInt16))
 
 
 def ts_arg_min(x: Expr, d: int = 5, reverse: bool = True) -> Expr:
@@ -74,15 +75,15 @@ def ts_arg_min(x: Expr, d: int = 5, reverse: bool = True) -> Expr:
     https://platform.worldquantbrain.com/learn/operators/detailed-operator-descriptions#ts_arg_minx-d
 
     """
-    return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy(), roll_argmin, d, reverse, dtype=UInt16))
+    return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy(), roll_argmin, d, polars_ta.MIN_PERIODS or d, reverse, dtype=UInt16))
 
 
 def ts_co_kurtosis(x: Expr, y: Expr, d: int = 5, ddof: int = 0) -> Expr:
-    return struct([x, y]).map_batches(lambda xx: batches_i2_o1([xx.struct[i].to_numpy() for i in range(2)], roll_co_kurtosis, d))
+    return struct([x, y]).map_batches(lambda xx: batches_i2_o1([xx.struct[i].to_numpy() for i in range(2)], roll_co_kurtosis, d, polars_ta.MIN_PERIODS or d))
 
 
 def ts_co_skewness(x: Expr, y: Expr, d: int = 5, ddof: int = 0) -> Expr:
-    return struct([x, y]).map_batches(lambda xx: batches_i2_o1([xx.struct[i].to_numpy() for i in range(2)], roll_co_skewness, d))
+    return struct([x, y]).map_batches(lambda xx: batches_i2_o1([xx.struct[i].to_numpy() for i in range(2)], roll_co_skewness, d, polars_ta.MIN_PERIODS or d))
 
 
 def ts_corr(x: Expr, y: Expr, d: int = 5, ddof: int = 1) -> Expr:
@@ -103,7 +104,7 @@ def ts_corr(x: Expr, y: Expr, d: int = 5, ddof: int = 1) -> Expr:
     x、y不区分先后
 
     """
-    return rolling_corr(x, y, window_size=d, ddof=ddof)
+    return rolling_corr(x, y, window_size=d, ddof=ddof, min_samples=polars_ta.MIN_PERIODS)
 
 
 def ts_count(x: Expr, d: int = 30) -> Expr:
@@ -141,7 +142,7 @@ def ts_count(x: Expr, d: int = 30) -> Expr:
     ```
 
     """
-    return x.cast(Boolean).cast(UInt32).rolling_sum(d)
+    return x.cast(Boolean).cast(UInt32).rolling_sum(d, min_samples=polars_ta.MIN_PERIODS)
 
 
 def ts_count_nans(x: Expr, d: int = 5) -> Expr:
@@ -178,7 +179,7 @@ def ts_count_nans(x: Expr, d: int = 5) -> Expr:
     ```
 
     """
-    return x.is_nan().cast(UInt32).rolling_sum(d)
+    return x.is_nan().cast(UInt32).rolling_sum(d, min_samples=polars_ta.MIN_PERIODS)
 
 
 def ts_count_nulls(x: Expr, d: int = 5) -> Expr:
@@ -215,7 +216,7 @@ def ts_count_nulls(x: Expr, d: int = 5) -> Expr:
     ```
 
     """
-    return x.is_null().cast(UInt32).rolling_sum(d)
+    return x.is_null().cast(UInt32).rolling_sum(d, min_samples=polars_ta.MIN_PERIODS)
 
 
 def ts_covariance(x: Expr, y: Expr, d: int = 5, ddof: int = 1) -> Expr:
@@ -236,7 +237,7 @@ def ts_covariance(x: Expr, y: Expr, d: int = 5, ddof: int = 1) -> Expr:
     x、y不区分先后
 
     """
-    return rolling_cov(x, y, window_size=d, ddof=ddof)
+    return rolling_cov(x, y, window_size=d, ddof=ddof, min_samples=polars_ta.MIN_PERIODS)
 
 
 def ts_cum_count(x: Expr) -> Expr:
@@ -385,6 +386,8 @@ def ts_decay_exp_window(x: Expr, d: int = 30, factor: float = 1.0) -> Expr:
     Examples
     --------
     ```python
+    from polars_ta.wq.time_series import ts_decay_linear, ts_decay_exp_window
+
     df = pl.DataFrame({
         'a': [None, 6, 5, 4, 5, 30],
     }).with_columns(
@@ -422,7 +425,7 @@ def ts_decay_exp_window(x: Expr, d: int = 30, factor: float = 1.0) -> Expr:
     # weights = repeat(factor, d, eager=True).pow(y)
     # print(weights)
     # return x.rolling_mean(d, weights=weights)
-    return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), roll_decay_exp_window, d, factor))
+    return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), roll_decay_exp_window, d, polars_ta.MIN_PERIODS or d, factor))
 
 
 def ts_decay_linear(x: Expr, d: int = 30) -> Expr:
@@ -431,12 +434,16 @@ def ts_decay_linear(x: Expr, d: int = 30) -> Expr:
     Examples
     --------
     ```python
+    from polars_ta.talib import WMA as ts_WMA
+    from polars_ta.wq.time_series import ts_decay_linear
+
     df = pl.DataFrame({
         'a': [None, 6, 5, 4, 5, 30],
     }).with_columns(
         out1=ts_decay_linear(pl.col('a'), 5),
         out2=ts_WMA(pl.col('a'), 5),
     )
+
     shape: (6, 3)
     ┌──────┬──────┬──────┐
     │ a    ┆ out1 ┆ out2 │
@@ -461,7 +468,7 @@ def ts_decay_linear(x: Expr, d: int = 30) -> Expr:
     # weights = arange(1, d + 1, eager=True)
     # # print(weights)
     # return x.rolling_mean(d, weights=weights)
-    return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), roll_decay_linear, d))
+    return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), roll_decay_linear, d, polars_ta.MIN_PERIODS or d))
 
 
 def ts_delay(x: Expr, d: int = 1, fill_value=None) -> Expr:
@@ -537,14 +544,14 @@ def ts_kurtosis(x: Expr, d: int = 5) -> Expr:
     等待polars官方出rolling_kurt
 
     """
-    return x.map_batches(lambda a: roll_kurt(a, d))
+    return x.map_batches(lambda a: roll_kurt(a, d, polars_ta.MIN_PERIODS or d))
 
 
 def ts_l2_norm(x: Expr, d: int = 5) -> Expr:
     """Euclidean norm
 
     欧几里得范数"""
-    return x.pow(2).rolling_sum(d).sqrt()
+    return x.pow(2).rolling_sum(d, min_samples=polars_ta.MIN_PERIODS).sqrt()
 
 
 def ts_log_diff(x: Expr, d: int = 1) -> Expr:
@@ -556,7 +563,7 @@ def ts_log_diff(x: Expr, d: int = 1) -> Expr:
 
 def ts_max(x: Expr, d: int = 30) -> Expr:
     """时序滚动最大值"""
-    return x.rolling_max(d)
+    return x.rolling_max(d, min_samples=polars_ta.MIN_PERIODS)
 
 
 def ts_max_diff(x: Expr, d: int = 30) -> Expr:
@@ -566,17 +573,17 @@ def ts_max_diff(x: Expr, d: int = 30) -> Expr:
 
 def ts_mean(x: Expr, d: int = 5) -> Expr:
     """简单移动平均"""
-    return x.rolling_mean(d)
+    return x.rolling_mean(d, min_samples=polars_ta.MIN_PERIODS)
 
 
 def ts_median(x: Expr, d: int = 5) -> Expr:
     """时序滚动中位数"""
-    return x.rolling_median(d)
+    return x.rolling_median(d, min_samples=polars_ta.MIN_PERIODS)
 
 
 def ts_min(x: Expr, d: int = 30) -> Expr:
     """时序滚动最小值"""
-    return x.rolling_min(d)
+    return x.rolling_min(d, min_samples=polars_ta.MIN_PERIODS)
 
 
 def ts_min_diff(x: Expr, d: int = 30) -> Expr:
@@ -606,7 +613,7 @@ def ts_moment(x: Expr, d: int, k: int = 0) -> Expr:
     k
 
     """
-    return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy(), roll_moment, d, k))
+    return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy(), roll_moment, d, polars_ta.MIN_PERIODS or d, k))
 
 
 def ts_partial_corr(x: Expr, y: Expr, z: Expr, d: int) -> Expr:
@@ -614,7 +621,7 @@ def ts_partial_corr(x: Expr, y: Expr, z: Expr, d: int) -> Expr:
 
     滚动偏相关
     """
-    return struct([x, y, z]).map_batches(lambda xx: batches_i2_o1([xx.struct[i].to_numpy() for i in range(3)], roll_partial_corr, d))
+    return struct([x, y, z]).map_batches(lambda xx: batches_i2_o1([xx.struct[i].to_numpy() for i in range(3)], roll_partial_corr, d, polars_ta.MIN_PERIODS or d))
 
 
 def ts_percentage(x: Expr, d: int, percentage: float = 0.5) -> Expr:
@@ -629,12 +636,12 @@ def ts_percentage(x: Expr, d: int, percentage: float = 0.5) -> Expr:
     percentage
 
     """
-    return x.rolling_quantile(percentage, window_size=d)
+    return x.rolling_quantile(percentage, window_size=d, min_samples=polars_ta.MIN_PERIODS)
 
 
 def ts_product(x: Expr, d: int = 5) -> Expr:
     """时序滚动乘"""
-    return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy(), roll_prod, d))
+    return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy(), roll_prod, d, polars_ta.MIN_PERIODS or d))
 
 
 def ts_rank(x: Expr, d: int = 5) -> Expr:
@@ -645,7 +652,7 @@ def ts_rank(x: Expr, d: int = 5) -> Expr:
     等待polars官方出rolling_rank
 
     """
-    return x.map_batches(lambda a: roll_rank(a, d, True))
+    return x.map_batches(lambda a: roll_rank(a, d, polars_ta.MIN_PERIODS or d, True))
 
 
 def ts_returns(x: Expr, d: int = 1) -> Expr:
@@ -695,12 +702,12 @@ def ts_std_dev(x: Expr, d: int = 5, ddof: int = 0) -> Expr:
         自由度
 
     """
-    return x.rolling_std(d, ddof=ddof)
+    return x.rolling_std(d, ddof=ddof, min_samples=polars_ta.MIN_PERIODS)
 
 
 def ts_sum(x: Expr, d: int = 30) -> Expr:
     """时序滚动求和"""
-    return x.rolling_sum(d)
+    return x.rolling_sum(d, min_samples=polars_ta.MIN_PERIODS)
 
 
 def ts_sum_split_by(x: Expr, by: Expr, d: int = 30, k: int = 10) -> Expr:
@@ -761,7 +768,7 @@ def ts_triple_corr(x: Expr, y: Expr, z: Expr, d: int) -> Expr:
 
 
     """
-    return struct([x, y, z]).map_batches(lambda xx: batches_i2_o1([xx.struct[i].to_numpy() for i in range(3)], roll_triple_corr, d))
+    return struct([x, y, z]).map_batches(lambda xx: batches_i2_o1([xx.struct[i].to_numpy() for i in range(3)], roll_triple_corr, d, polars_ta.MIN_PERIODS or d))
 
 
 def ts_weighted_decay(x: Expr, k: float = 0.5) -> Expr:
@@ -775,7 +782,7 @@ def ts_weighted_decay(x: Expr, k: float = 0.5) -> Expr:
         衰减系数
 
     """
-    return x.rolling_sum(2, weights=[1 - k, k])
+    return x.rolling_sum(2, weights=[1 - k, k], min_samples=polars_ta.MIN_PERIODS)
 
 
 def ts_zscore(x: Expr, d: int = 5) -> Expr:
@@ -938,12 +945,12 @@ def ts_pred(y: Expr, *more_x: Expr, d: int = 30) -> Expr:
 
 def ts_weighted_mean(x: Expr, w: Expr, d: int) -> Expr:
     """时序滚动加权平均"""
-    return (x * w).rolling_sum(d) / w.rolling_sum(d)
+    return (x * w).rolling_sum(d, min_samples=polars_ta.MIN_PERIODS) / w.rolling_sum(d, min_samples=polars_ta.MIN_PERIODS)
 
 
 def ts_weighted_sum(x: Expr, w: Expr, d: int) -> Expr:
     """时序滚动加权求和"""
-    return (x * w).rolling_sum(d)
+    return (x * w).rolling_sum(d, min_samples=polars_ta.MIN_PERIODS)
 
 
 def ts_signals_to_size(long_entry: Expr, long_exit: Expr,

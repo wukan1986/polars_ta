@@ -35,7 +35,7 @@ def get_window_bounds(
     return start, end
 
 
-def roll_rank(x: Series, d: int, pct: bool = True, method: str = 'average', ascending: bool = True):
+def roll_rank(x: Series, d: int, minp: int, pct: bool = True, method: str = 'average', ascending: bool = True):
     start, end = get_window_bounds(len(x), d)
     """
     https://github.com/pandas-dev/pandas/blob/main/pandas/_libs/window/aggregations.pyx#L1281
@@ -46,11 +46,11 @@ def roll_rank(x: Series, d: int, pct: bool = True, method: str = 'average', asce
 
     O(N log(window)) implementation using skip list
     """
-    ret = _roll_rank(x.to_numpy().astype(float), start, end, d, pct, method, ascending)
+    ret = _roll_rank(x.to_numpy().astype(float), start, end, minp, pct, method, ascending)
     return Series(ret, nan_to_null=True)
 
 
-def roll_kurt(x, d):
+def roll_kurt(x, d: int, minp: int):
     start, end = get_window_bounds(len(x), d)
     """
     https://github.com/pandas-dev/pandas/blob/main/pandas/_libs/window/aggregations.pyx#L803
@@ -58,5 +58,5 @@ def roll_kurt(x, d):
     def roll_kurt(ndarray[float64_t] values, ndarray[int64_t] start,
               ndarray[int64_t] end, int64_t minp) -> np.ndarray:
     """
-    ret = _roll_kurt(x.to_numpy().astype(float), start, end, d)
+    ret = _roll_kurt(x.to_numpy().astype(float), start, end, minp)
     return Series(ret, nan_to_null=True)

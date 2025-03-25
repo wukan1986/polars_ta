@@ -1,3 +1,6 @@
+from typing import Optional
+
 from ._version import __version__
 
-TA_EPSILON = 1e-8
+TA_EPSILON: float = 1e-8
+MIN_PERIODS: Optional[int] = None

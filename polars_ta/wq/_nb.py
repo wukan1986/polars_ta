@@ -1,107 +1,121 @@
 import numpy as np
-from numba import jit, float64, bool_
-from numpy import argmax, argmin, prod, mean, std, full, vstack, corrcoef
+from numba import jit, float64, boolean
+from numpy import argmax, argmin, full, vstack, corrcoef, nanprod, nanmean, nanstd
 from numpy.lib.stride_tricks import sliding_window_view
 
+from polars_ta.utils.numba_ import isnan, full_with_window_size, sliding_window_with_min_periods
 
-@jit(nopython=True, nogil=True, fastmath=True, cache=True)
-def roll_argmax(x1, window, reverse):
-    out = full(x1.shape, np.nan, dtype=np.float64)
-    if len(x1) < window:
-        return out
-    a1 = sliding_window_view(x1, window)
+
+@jit(nopython=True, nogil=True, cache=True)
+def roll_argmax(x1, window, min_periods, reverse):
+    out1 = full_with_window_size(x1, np.nan, dtype=np.float64, window_size=window)
+    a1 = sliding_window_with_min_periods(out1, window, min_periods)
+    out1[:] = np.nan
     if reverse:
         a1 = a1[:, ::-1]
     for i, v1 in enumerate(a1):
-        out[i + window - 1] = argmax(v1)
-    return out
+        if np.isnan(v1).all():
+            continue
+        out1[i] = argmax(v1)
+    return out1[:x1.shape[0]]
 
 
-@jit(nopython=True, nogil=True, fastmath=True, cache=True)
-def roll_argmin(x1, window, reverse):
-    out = full(x1.shape, np.nan, dtype=np.float64)
-    if len(x1) < window:
-        return out
-    a1 = sliding_window_view(x1, window)
+@jit(nopython=True, nogil=True, cache=True)
+def roll_argmin(x1, window, min_periods, reverse):
+    out1 = full_with_window_size(x1, np.nan, dtype=np.float64, window_size=window)
+    a1 = sliding_window_with_min_periods(out1, window, min_periods)
+    out1[:] = np.nan
     if reverse:
         a1 = a1[:, ::-1]
     for i, v1 in enumerate(a1):
-        out[i + window - 1] = argmin(v1)
-    return out
+        if np.isnan(v1).all():
+            continue
+        out1[i] = argmin(v1)
+    return out1[:x1.shape[0]]
 
 
-@jit(nopython=True, nogil=True, fastmath=True, cache=True)
-def roll_prod(x1, window):
-    out = full(x1.shape, np.nan, dtype=np.float64)
-    if len(x1) < window:
-        return out
-    a1 = sliding_window_view(x1, window)
+@jit(nopython=True, nogil=True, cache=True)
+def roll_prod(x1, window, min_periods):
+    out1 = full_with_window_size(x1, np.nan, dtype=np.float64, window_size=window)
+    a1 = sliding_window_with_min_periods(out1, window, min_periods)
+    out1[:] = np.nan
     for i, v1 in enumerate(a1):
-        out[i + window - 1] = prod(v1)
-    return out
+        if np.isnan(v1).all():
+            continue
+        out1[i] = nanprod(v1)
+    return out1[:x1.shape[0]]
 
 
-@jit(nopython=True, nogil=True, fastmath=True, cache=True)
+@jit(nopython=True, nogil=True, cache=True)
 def _co_kurtosis(a1, a2):
-    t1 = a1 - mean(a1)
-    t2 = a2 - mean(a2)
-    t3 = std(a1)
-    t4 = std(a2)
-    return mean(t1 * (t2 ** 3)) / (t3 * (t4 ** 3))
+    t1 = a1 - nanmean(a1)
+    t2 = a2 - nanmean(a2)
+    t3 = nanstd(a1)
+    t4 = nanstd(a2)
+    return nanmean(t1 * (t2 ** 3)) / (t3 * (t4 ** 3))
 
 
-@jit(nopython=True, nogil=True, fastmath=True, cache=True)
-def roll_co_kurtosis(x1, x2, window):
-    out = full(x1.shape, np.nan, dtype=np.float64)
-    if len(x1) < window:
-        return out
-    a1 = sliding_window_view(x1, window)
-    a2 = sliding_window_view(x2, window)
+@jit(nopython=True, nogil=True, cache=True)
+def roll_co_kurtosis(x1, x2, window, min_periods):
+    out1 = full_with_window_size(x1, np.nan, dtype=np.float64, window_size=window)
+    out2 = full_with_window_size(x2, np.nan, dtype=np.float64, window_size=window)
+    a1 = sliding_window_with_min_periods(out1, window, min_periods)
+    a2 = sliding_window_with_min_periods(out2, window, min_periods)
+    out1[:] = np.nan
     for i, (v1, v2) in enumerate(zip(a1, a2)):
-        out[i + window - 1] = _co_kurtosis(v1, v2)
-    return out
+        if np.isnan(v1).all():
+            continue
+        if np.isnan(v2).all():
+            continue
+        out1[i] = _co_kurtosis(v1, v2)
+    return out1[:x1.shape[0]]
 
 
-@jit(nopython=True, nogil=True, fastmath=True, cache=True)
+@jit(nopython=True, nogil=True, cache=True)
 def _co_skewness(a1, a2):
-    t1 = a1 - mean(a1)
-    t2 = a2 - mean(a2)
-    t3 = std(a1)
-    t4 = std(a2)
-    return mean(t1 * (t2 ** 2)) / (t3 * (t4 ** 2))
+    t1 = a1 - nanmean(a1)
+    t2 = a2 - nanmean(a2)
+    t3 = nanstd(a1)
+    t4 = nanstd(a2)
+    return nanmean(t1 * (t2 ** 2)) / (t3 * (t4 ** 2))
 
 
-@jit(nopython=True, nogil=True, fastmath=True, cache=True)
-def roll_co_skewness(x1, x2, window):
-    out = full(x1.shape, np.nan, dtype=np.float64)
-    if len(x1) < window:
-        return out
-    a1 = sliding_window_view(x1, window)
-    a2 = sliding_window_view(x2, window)
+@jit(nopython=True, nogil=True, cache=True)
+def roll_co_skewness(x1, x2, window, min_periods):
+    out1 = full_with_window_size(x1, np.nan, dtype=np.float64, window_size=window)
+    out2 = full_with_window_size(x2, np.nan, dtype=np.float64, window_size=window)
+    a1 = sliding_window_with_min_periods(out1, window, min_periods)
+    a2 = sliding_window_with_min_periods(out2, window, min_periods)
+    out1[:] = np.nan
     for i, (v1, v2) in enumerate(zip(a1, a2)):
-        out[i + window - 1] = _co_skewness(v1, v2)
-    return out
+        if np.isnan(v1).all():
+            continue
+        if np.isnan(v2).all():
+            continue
+        out1[i] = _co_skewness(v1, v2)
+    return out1[:x1.shape[0]]
 
 
-@jit(nopython=True, nogil=True, fastmath=True, cache=True)
+@jit(nopython=True, nogil=True, cache=True)
 def _moment(a1, k):
     """centeral moment
     中心矩阵"""
-    return mean((a1 - mean(a1)) ** k)
+    return nanmean((a1 - nanmean(a1)) ** k)
 
 
-@jit(nopython=True, nogil=True, fastmath=True, cache=True)
-def roll_moment(x1, window, k):
-    out = full(x1.shape, np.nan, dtype=np.float64)
-    if len(x1) < window:
-        return out
-    a1 = sliding_window_view(x1, window)
+@jit(nopython=True, nogil=True, cache=True)
+def roll_moment(x1, window, min_periods, k):
+    out1 = full_with_window_size(x1, np.nan, dtype=np.float64, window_size=window)
+    a1 = sliding_window_with_min_periods(out1, window, min_periods)
+    out1[:] = np.nan
     for i, v1 in enumerate(a1):
-        out[i + window - 1] = _moment(v1, k)
-    return out
+        if np.isnan(v1).all():
+            continue
+        out1[i] = _moment(v1, k)
+    return out1[:x1.shape[0]]
 
 
-@jit(nopython=True, nogil=True, fastmath=True, cache=True)
+@jit(nopython=True, nogil=True, cache=True)
 def _partial_corr(a1, a2, a3):
     """TODO 不知是否正确，需要检查"""
     c = corrcoef(vstack((a1, a2, a3)))
@@ -114,50 +128,55 @@ def _partial_corr(a1, a2, a3):
     return t1 / (t2 * t3)
 
 
-@jit(nopython=True, nogil=True, fastmath=True, cache=True)
-def roll_partial_corr(x1, x2, x3, window):
-    out = full(x1.shape, np.nan, dtype=np.float64)
-    if len(x1) < window:
-        return out
-    a1 = sliding_window_view(x1, window)
-    a2 = sliding_window_view(x2, window)
-    a3 = sliding_window_view(x3, window)
+@jit(nopython=True, nogil=True, cache=True)
+def roll_partial_corr(x1, x2, x3, window, min_periods):
+    out1 = full_with_window_size(x1, np.nan, dtype=np.float64, window_size=window)
+    out2 = full_with_window_size(x2, np.nan, dtype=np.float64, window_size=window)
+    out3 = full_with_window_size(x3, np.nan, dtype=np.float64, window_size=window)
+    a1 = sliding_window_with_min_periods(out1, window, min_periods)
+    a2 = sliding_window_with_min_periods(out2, window, min_periods)
+    a3 = sliding_window_with_min_periods(out3, window, min_periods)
+    out1[:] = np.nan
     for i, (v1, v2, v3) in enumerate(zip(a1, a2, a3)):
-        out[i + window - 1] = _partial_corr(v1, v2, v3)
-    return out
+        if np.isnan(v1).all():
+            continue
+        if np.isnan(v2).all():
+            continue
+        if np.isnan(v3).all():
+            continue
+        out1[i] = _partial_corr(v1, v2, v3)
+    return out1[:x1.shape[0]]
 
 
-@jit(nopython=True, nogil=True, fastmath=True, cache=True)
+@jit(nopython=True, nogil=True, cache=True)
 def _triple_corr(a1, a2, a3):
-    t1 = a1 - mean(a1)
-    t2 = a2 - mean(a2)
-    t3 = a3 - mean(a3)
-    t4 = std(a1)
-    t5 = std(a2)
-    t6 = std(a3)
-    return mean(t1 * t2 * t3) / (t4 * t5 * t6)
+    t1 = a1 - nanmean(a1)
+    t2 = a2 - nanmean(a2)
+    t3 = a3 - nanmean(a3)
+    t4 = nanstd(a1)
+    t5 = nanstd(a2)
+    t6 = nanstd(a3)
+    return nanmean(t1 * t2 * t3) / (t4 * t5 * t6)
 
 
-@jit(nopython=True, nogil=True, fastmath=True, cache=True)
-def roll_triple_corr(x1, x2, x3, window):
-    out = full(x1.shape, np.nan, dtype=np.float64)
-    if len(x1) < window:
-        return out
-    a1 = sliding_window_view(x1, window)
-    a2 = sliding_window_view(x2, window)
-    a3 = sliding_window_view(x3, window)
+@jit(nopython=True, nogil=True, cache=True)
+def roll_triple_corr(x1, x2, x3, window, min_periods):
+    out1 = full_with_window_size(x1, np.nan, dtype=np.float64, window_size=window)
+    out2 = full_with_window_size(x2, np.nan, dtype=np.float64, window_size=window)
+    out3 = full_with_window_size(x3, np.nan, dtype=np.float64, window_size=window)
+    a1 = sliding_window_with_min_periods(out1, window, min_periods)
+    a2 = sliding_window_with_min_periods(out2, window, min_periods)
+    a3 = sliding_window_with_min_periods(out3, window, min_periods)
+    out1[:] = np.nan
     for i, (v1, v2, v3) in enumerate(zip(a1, a2, a3)):
-        out[i + window - 1] = _triple_corr(v1, v2, v3)
-    return out
-
-
-@jit(nopython=True, nogil=True, fastmath=True, cache=True)
-def isnan(x):
-    # https://github.com/numba/numba/issues/2919#issuecomment-747377615
-    if int(x) == -9223372036854775808:
-        return True
-    else:
-        return False
+        if np.isnan(v1).all():
+            continue
+        if np.isnan(v2).all():
+            continue
+        if np.isnan(v3).all():
+            continue
+        out1[i] = _triple_corr(v1, v2, v3)
+    return out1[:x1.shape[0]]
 
 
 @jit(nopython=True, nogil=True, fastmath=True, cache=True)
@@ -217,7 +236,8 @@ def _sum_split_by(x1, x2, window=10, n=2):
     return out1, out2
 
 
-@jit(float64[:](bool_[:], bool_[:], bool_[:], bool_[:], bool_, bool_), nopython=True, fastmath=True, nogil=True, cache=True)
+@jit(float64[:](boolean[:], boolean[:], boolean[:], boolean[:], boolean, boolean),
+     nopython=True, nogil=True, cache=True)
 def _signals_to_size(is_long_entry: np.ndarray, is_long_exit: np.ndarray,
                      is_short_entry: np.ndarray, is_short_exit: np.ndarray,
                      accumulate: bool = False,
@@ -289,27 +309,31 @@ def _signals_to_size(is_long_entry: np.ndarray, is_long_exit: np.ndarray,
     return out
 
 
-@jit(nopython=True, nogil=True, fastmath=True, cache=True)
-def roll_decay_linear(x1, window):
-    out = full(x1.shape, np.nan, dtype=np.float64)
-    if len(x1) < window:
-        return out
+@jit(nopython=True, nogil=True, cache=True)
+def roll_decay_linear(x1, window, min_periods):
     weights = np.arange(1., window + 1)
-    # print(weights)
-    a1 = sliding_window_view(x1, window)
+
+    out1 = full_with_window_size(x1, np.nan, dtype=np.float64, window_size=window)
+    a1 = sliding_window_with_min_periods(out1, window, min_periods)
+    out1[:] = np.nan
     for i, v1 in enumerate(a1):
-        out[i + window - 1] = np.average(v1, weights=weights)
-    return out
+        if np.isnan(v1).all():
+            continue
+        mask = ~np.isnan(v1)
+        out1[i] = np.average(v1[mask], weights=weights[mask])
+    return out1[:x1.shape[0]]
 
 
-@jit(nopython=True, nogil=True, fastmath=True, cache=True)
-def roll_decay_exp_window(x1, window, factor):
-    out = full(x1.shape, np.nan, dtype=np.float64)
-    if len(x1) < window:
-        return out
+@jit(nopython=True, nogil=True, cache=True)
+def roll_decay_exp_window(x1, window, min_periods, factor):
     weights = factor ** np.arange(window - 1, -1, -1)
-    # print(weights)
-    a1 = sliding_window_view(x1, window)
+
+    out1 = full_with_window_size(x1, np.nan, dtype=np.float64, window_size=window)
+    a1 = sliding_window_with_min_periods(out1, window, min_periods)
+    out1[:] = np.nan
     for i, v1 in enumerate(a1):
-        out[i + window - 1] = np.average(v1, weights=weights)
-    return out
+        if np.isnan(v1).all():
+            continue
+        mask = ~np.isnan(v1)
+        out1[i] = np.average(v1[mask], weights=weights[mask])
+    return out1[:x1.shape[0]]
