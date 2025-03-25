@@ -31,13 +31,13 @@ def {name}({aa}) -> Expr:  # {output_names}
     tpl21 = """
 def {name}({aa}) -> Expr:  # {output_names}
     \"\"\"{doc}\"\"\"
-    return struct([{bb}]).map_batches(lambda xx: batches_i2_o1([xx.struct[i].to_numpy().astype(float) for i in range({dd})], {cc}))
+    return struct([{bb}]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, {dd}, dtype=float), {cc}))
 """
     tpl22 = """
 def {name}({aa}) -> Expr:  # {output_names}
     \"\"\"{doc}\"\"\"
     dtype = Struct([Field(f"column_{{i}}", Float64) for i in range({ee})])
-    return struct([{bb}]).map_batches(lambda xx: batches_i2_o2([xx.struct[i].to_numpy().astype(float) for i in range({dd})], {cc}), return_dtype=dtype)
+    return struct([{bb}]).map_batches(lambda xx: batches_i2_o2(struct_to_numpy(xx, {dd}, dtype=float), {cc}), return_dtype=dtype)
 """
     if len(output_names) > 42:
         extra_args = {'ret_idx': len(output_names) - 1}
@@ -74,7 +74,7 @@ def codegen():
 import talib as _ta
 from polars import Expr, struct, Struct, Field, Float64
 
-from polars_ta.utils.numba_ import batches_i1_o1, batches_i1_o2, batches_i2_o1, batches_i2_o2
+from polars_ta.utils.numba_ import batches_i1_o1, batches_i1_o2, batches_i2_o1, batches_i2_o2, struct_to_numpy
 """
 
     txts = [head_v2]

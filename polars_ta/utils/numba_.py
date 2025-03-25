@@ -93,6 +93,13 @@ def _roll_3(x1, x2, x3, window, min_periods, func):
     return out1[:x1.shape[0]]
 
 
+def struct_to_numpy(xx, n: int, dtype=None):
+    if dtype is None:
+        return [xx.struct[i].to_numpy() for i in range(n)]
+    else:
+        return [xx.struct[i].to_numpy().astype(dtype) for i in range(n)]
+
+
 def batches_i1_o1(x1: np.ndarray, func, *args, dtype=None) -> Series:
     return Series(func(x1, *args), nan_to_null=True, dtype=dtype)
 
@@ -150,4 +157,4 @@ def roll_sum(x: Expr, n: int) -> Expr:
 
 
 def roll_cov(a: Expr, b: Expr, n: int) -> Expr:
-    return struct([a, b]).map_batches(lambda xx: batches_i2_o1([xx.struct[i].to_numpy() for i in range(2)], nb_roll_cov, n))
+    return struct([a, b]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2), nb_roll_cov, n))

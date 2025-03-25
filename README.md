@@ -51,12 +51,16 @@ df = df.with_columns([
 ])
 ```
 
-support `min_periods`
+When both `min_periods` and `MIN_SAMPLES` are set, `min_periods` takes precedence. default value is `None`.
 
 ```python
 import polars_ta
 
-polars_ta.MIN_PERIODS = 1
+# Global settings. Priority Low
+polars_ta.MIN_SAMPLES = 1
+
+# High priority
+ts_mean(CLOSE, 10, min_periods=1)
 ```
 
 ## How We Designed This
@@ -150,12 +154,17 @@ df = df.with_columns([
 ])
 ```
 
-支持`min_periods`参数
+当`min_periods`和`MIN_SAMPLES`都设置时，以`min_periods`为准，默认值为`None`
 
 ```python
 import polars_ta
 
-polars_ta.MIN_PERIODS = 1
+# 全局设置。优先级低
+polars_ta.MIN_SAMPLES = 1
+
+# 指定函数。优先级高
+ts_mean(CLOSE, 10, min_periods=1)
+
 ```
 
 ## 设计原则
