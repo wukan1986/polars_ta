@@ -24,6 +24,7 @@ pip install polars_ta-0.1.2-py3-none-any.whl
 ```
 
 ### How to Install TA-Lib
+
 Non-official `TA-Lib` wheels can be downloaded from `https://github.com/cgohlke/talib-build/releases`
 
 ## Usage
@@ -50,6 +51,14 @@ df = df.with_columns([
 ])
 ```
 
+support `min_periods`
+
+```python
+import polars_ta
+
+polars_ta.MIN_PERIODS = 1
+```
+
 ## How We Designed This
 
 1. We use `Expr` instead of `Series` to avoid using `Series` in the calculation. Functions are no longer methods of class.
@@ -66,32 +75,6 @@ See [compare](compare.md)
 ## Handling Null/NaN Values
 
 See [nan_to_null](nan_to_null.md)
-
-## Evolve of Our TA-Lib Wrappers
-
-1. `Expr.map_batches` can be used to call third-party libraries, such as `TA-Lib, bottleneck`. But because of the input and output format requirements, you need to wrap the third-party API with a function.
-  - Both input and output can only be one column. If you want to support multiple columns, you need to convert them to `pl.Struct`. After that, you need to use `unnest` to split `pl.Struct`.
-  - The output must be `pl.Series`
-2. Start to use `register_expr_namespace` to simplify the code
-  - Implementation [helper.py](polars_ta/utils/helper.py)
-  - Usage demo [demo_ta1.py](examples/demo_ta1.py)
-  - Pros: Easy to use
-  - Cons:
-    - The `member function call mode` is not convenient for inputting into genetic algorithms for factor mining
-    - `__getattribute__` dynamic method call is very flexible, but loses `IDE` support.
-3. Prefix expression. Convert all member functions into formulas
-  - Implementation [wrapper.py](polars_ta/utils/wrapper.py)
-  - Usage demo [demo_ta2.py](examples/demo_ta2.py)
-  - Pros: Can be input into our implementation of genetic algorithms
-  - Cons: `__getattribute__` dynamic method call is very flexible, but loses `IDE` support.
-4. Code generation.
-  - Implementation [codegen_talib.py](tools/codegen_talib.py)
-  - Generated result will be at [\_\_init\_\_.py](polars_ta/talib/__init__.py)
-  - Usage demo [demo_ta3.py](examples/demo_ta3.py)
-  - Pros:
-    - Can be input into our implementation of genetic algorithms
-    - `IDE` support
-
 
 ## Debugging
 
@@ -115,10 +98,6 @@ This is required to use in `expr_codegen`.
 - https://github.com/wukan1986/ta_cn
 - https://support.worldquantbrain.com/hc/en-us/community/posts/20278408956439-从价量看技术指标总结-Technical-Indicator-
 - https://platform.worldquantbrain.com/learn/operators/operators
-
-
-
-
 
 # polars_ta
 
@@ -144,6 +123,7 @@ pip install polars_ta-0.1.2-py3-none-any.whl
 ```
 
 ### TA-Lib安装
+
 Windows用户不会安装可从`https://github.com/cgohlke/talib-build/releases` 下载对应版本whl文件
 
 ## 使用方法
@@ -170,6 +150,14 @@ df = df.with_columns([
 ])
 ```
 
+支持`min_periods`参数
+
+```python
+import polars_ta
+
+polars_ta.MIN_PERIODS = 1
+```
+
 ## 设计原则
 
 1. 调用方法由`成员函数`换成`独立函数`。输入输出使用`Expr`，避免使用`Series`
@@ -186,28 +174,6 @@ df = df.with_columns([
 ## 空值处理
 
 请参考[nan_to_null](nan_to_null.md)
-
-## TA-Lib封装的演化
-
-1. `Expr.map_batches`可以实现调用第三方库，如`TA-Lib, bottleneck`。但因为对输入与输出格式有要求，所以还需要用函数对第三方API封装一下。
-    - 输入输出都只能是一列，如要支持多列需转换成`pl.Struct`。事后`pl.Struct`要拆分需使用`unnest`
-    - 输出必须是`pl.Series`
-2. 参数多，代码长。开始使用`register_expr_namespace`来简化代码
-    - 实现代码[helper.py](polars_ta/utils/helper.py)
-    - 使用演示[demo_ta1.py](examples/demo_ta1.py)
-    - 优点：使用简单
-    - 不足：`成员函数调用模式`不便于输入到遗传算法中进行因子挖掘
-    - 不足：`__getattribute__`动态方法调用非常灵活，但失去了`IDE`智能提示
-3. 前缀表达式。将所有的成员函数都转换成公式
-    - 实现代码[wrapper.py](polars_ta/utils/wrapper.py)
-    - 使用演示[demo_ta2.py](examples/demo_ta2.py)
-    - 优点：可以输入到遗传算法
-    - 不足：`__getattribute__`动态方法调用非常灵活，但失去了`IDE`智能提示
-4. 代码自动生成。
-    - 实现代码[codegen_talib.py](tools/codegen_talib.py)
-    - 生成结果[\_\_init\_\_.py](polars_ta/talib/__init__.py)
-    - 使用演示[demo_ta3.py](examples/demo_ta3.py)
-    - 优点：即可以输入到遗传算法，`IDE`还有智能提示
 
 ## 开发调试
 
