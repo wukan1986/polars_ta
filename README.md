@@ -60,7 +60,7 @@ import polars_ta
 polars_ta.MIN_SAMPLES = 1
 
 # High priority
-ts_mean(CLOSE, 10, min_periods=1)
+ts_mean(CLOSE, 10, min_samples=1)
 ```
 
 ## How We Designed This
@@ -163,7 +163,7 @@ import polars_ta
 polars_ta.MIN_SAMPLES = 1
 
 # 指定函数。优先级高
-ts_mean(CLOSE, 10, min_periods=1)
+ts_mean(CLOSE, 10, min_samples=1)
 
 ```
 
@@ -193,6 +193,18 @@ pip install -e .
 ```
 
 注意：如果你在`ta`或`tdx`中添加了新的函数，请再运行`tools`下的`prefix_ta.py`或`prefix_tdx.py`，用于生成对应的前缀文件。前缀文件方便在`expr_codegen`中使用
+
+## 文档生成
+
+```commandline
+pip install -r requirements-docs.txt
+mkdocs build
+```
+
+文档生成在`site`目录下，其中的`llms-full.txt`可以作为大语言模型的知识库导入。
+
+也可以通过以下链接导入：
+https://polars-ta.readthedocs.io/en/latest/llms-full.txt
 
 ## 参考
 

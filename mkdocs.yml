@@ -54,7 +54,6 @@ strict: true
 
 plugins:
   - search
-  #  - section-index
   - mkdocstrings:
       default_handler: python
       handlers:
@@ -67,4 +66,13 @@ plugins:
             show_source: true
             show_signature_annotations: true
             docstring_style: numpy
-#            docstring_section_style: list
+  - llmstxt:
+      full_output: llms-full.txt
+      sections:
+        Usage documentation:
+          - index.md
+          - wq/*.md
+          - ta/*.md
+          - tdx/*.md
+          - talib/*.md
+
