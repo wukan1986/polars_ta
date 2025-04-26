@@ -7,7 +7,7 @@ from polars_ols import RollingKwargs
 
 import polars_ta
 from polars_ta.utils.numba_ import batches_i1_o1, batches_i2_o1, batches_i2_o2, struct_to_numpy
-from polars_ta.utils.pandas_ import roll_kurt, roll_rank
+from polars_ta.utils.pandas_ import roll_rank
 from polars_ta.wq._nb import roll_argmax, roll_argmin, roll_co_kurtosis, roll_co_skewness, roll_moment, roll_partial_corr, roll_triple_corr, _cum_prod_by, _cum_sum_by, _signals_to_size, _cum_sum_reset, _sum_split_by, roll_decay_linear, roll_decay_exp_window, roll_prod
 
 
@@ -555,18 +555,51 @@ def ts_ir(x: Expr, d: int = 1, min_samples: Optional[int] = None) -> Expr:
     return ts_mean(x, d, min_samples) / ts_std_dev(x, d, 0, min_samples)
 
 
-def ts_kurtosis(x: Expr, d: int = 5, min_samples: Optional[int] = None) -> Expr:
+def ts_kurtosis(x: Expr, d: int = 5, bias: bool = False, min_samples: Optional[int] = None) -> Expr:
     """kurtosis of x for the last d days
 
     时序滚动峰度
 
-    Warnings
+    Parameters
+    ----------
+    x
+    d
+    bias
+        有偏
+    min_samples
+
+    Notes
+    -----
+    `bias=False`时与`pandas`结果一样
+
+    Examples
     --------
-    等待polars官方出rolling_kurt
+    ```python
+    df = pl.DataFrame({
+        'a': [None, 1, 2, 3, 4, 999],
+    }).with_columns(
+        out1=pl.col('a').map_batches(lambda x: pl.Series(pd.Series(x).rolling(4).kurt())),
+        out2=ts_kurtosis(pl.col('a'), 4),
+    )
+
+    shape: (6, 3)
+    ┌──────┬──────────┬──────────┐
+    │ a    ┆ out1     ┆ out2     │
+    │ ---  ┆ ---      ┆ ---      │
+    │ i64  ┆ f64      ┆ f64      │
+    ╞══════╪══════════╪══════════╡
+    │ null ┆ null     ┆ null     │
+    │ 1    ┆ null     ┆ null     │
+    │ 2    ┆ null     ┆ null     │
+    │ 3    ┆ null     ┆ null     │
+    │ 4    ┆ -1.2     ┆ -1.2     │
+    │ 999  ┆ 3.999946 ┆ 3.999946 │
+    └──────┴──────────┴──────────┘
+    ```
 
     """
-    minp = min_samples or polars_ta.MIN_SAMPLES or d
-    return x.map_batches(lambda a: roll_kurt(a, d, minp))
+    minp = min_samples or polars_ta.MIN_SAMPLES
+    return x.rolling_kurtosis(d, min_samples=minp, bias=bias)
 
 
 def ts_l2_norm(x: Expr, d: int = 5, min_samples: Optional[int] = None) -> Expr:
@@ -705,7 +738,7 @@ def ts_scale(x: Expr, d: int = 5, min_samples: Optional[int] = None) -> Expr:
     return when(a != b).then((x - a) / (b - a)).otherwise(0)
 
 
-def ts_skewness(x: Expr, d: int = 5, bias: bool = False) -> Expr:
+def ts_skewness(x: Expr, d: int = 5, bias: bool = False, min_samples: Optional[int] = None) -> Expr:
     """Return skewness of x for the past d days
 
     时序滚动偏度
@@ -716,13 +749,15 @@ def ts_skewness(x: Expr, d: int = 5, bias: bool = False) -> Expr:
     d
     bias
         有偏
+    min_samples
 
     Notes
     -----
     `bias=False`时与`pandas`结果一样
 
     """
-    return x.rolling_skew(d, bias=bias)
+    minp = min_samples or polars_ta.MIN_SAMPLES
+    return x.rolling_skew(d, min_samples=minp, bias=bias)
 
 
 def ts_std_dev(x: Expr, d: int = 5, ddof: int = 0, min_samples: Optional[int] = None) -> Expr:

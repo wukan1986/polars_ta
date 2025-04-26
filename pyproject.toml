@@ -17,7 +17,7 @@ classifiers = [
     "Programming Language :: Python"
 ]
 dependencies = [
-    "polars>=1.26.0",
+    "polars>=1.28.0",
     "polars-ols>=0.3.0",
     "numpy",
     "numba",
