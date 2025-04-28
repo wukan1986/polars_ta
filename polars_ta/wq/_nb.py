@@ -181,18 +181,20 @@ def roll_triple_corr(x1, x2, x3, window, min_periods):
 
 @jit(nopython=True, nogil=True, fastmath=True, cache=True)
 def _cum_prod_by(r, by):
+    out = by.copy()
     for i in range(1, r.shape[0]):
-        if isnan(by[i]):
-            by[i] = r[i] * by[i - 1]
-    return by
+        if isnan(out[i]):
+            out[i] = r[i] * out[i - 1]
+    return out
 
 
 @jit(nopython=True, nogil=True, fastmath=True, cache=True)
 def _cum_sum_by(r, by):
+    out = by.copy()
     for i in range(1, r.shape[0]):
-        if isnan(by[i]):
-            by[i] = r[i] + by[i - 1]
-    return by
+        if isnan(out[i]):
+            out[i] = r[i] + out[i - 1]
+    return out
 
 
 @jit(nopython=True, nogil=True, fastmath=True, cache=True)
