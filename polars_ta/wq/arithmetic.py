@@ -1,5 +1,6 @@
 import numpy as np
-from polars import Expr, Series, fold, any_horizontal, Float64
+from polars import Expr, Series, fold, any_horizontal, Float64, Int64
+from polars import arctan2 as _arctan2
 from polars import max_horizontal, sum_horizontal, min_horizontal, mean_horizontal
 
 
@@ -92,6 +93,16 @@ def arc_tan(x: Expr) -> Expr:
     return x.arctan()
 
 
+def arc_tan2(y: Expr, x: Expr) -> Expr:
+    """反正切二值函数"""
+    return _arctan2(y, x)
+
+
+def cbrt(x: Expr) -> Expr:
+    """立方根"""
+    return x.cbrt()
+
+
 def ceiling(x: Expr) -> Expr:
     """向上取整"""
     return x.ceil()
@@ -107,8 +118,55 @@ def cosh(x: Expr) -> Expr:
     return x.cosh()
 
 
+def cot(x: Expr) -> Expr:
+    """余切"""
+    return x.cot()
+
+
+def cube(x: Expr) -> Expr:
+    """立方"""
+    return x.pow(3)
+
+
+def degrees(x: Expr) -> Expr:
+    """弧度转角度"""
+    return x.degrees()
+
+
 def densify(x: Expr) -> Expr:
     raise
+
+
+def div(x: Expr, y: Expr) -> Expr:
+    """x/y的整数部分
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, -1.5, 0., 1.5, 2.5],
+        'b': [None, -1, 0, 1, 2],
+    }).with_columns(
+        out1=div(pl.col('a'), 0),
+        out2=div(pl.col('a'), 1),
+        out3=div(pl.col('a'), pl.col('b')),
+    )
+    shape: (5, 5)
+    ┌──────┬──────┬──────┬──────┬──────┐
+    │ a    ┆ b    ┆ out1 ┆ out2 ┆ out3 │
+    │ ---  ┆ ---  ┆ ---  ┆ ---  ┆ ---  │
+    │ f64  ┆ i64  ┆ i64  ┆ i64  ┆ i64  │
+    ╞══════╪══════╪══════╪══════╪══════╡
+    │ null ┆ null ┆ null ┆ null ┆ null │
+    │ -1.5 ┆ -1   ┆ null ┆ -2   ┆ 1    │
+    │ 0.0  ┆ 0    ┆ null ┆ 0    ┆ null │
+    │ 1.5  ┆ 1    ┆ null ┆ 1    ┆ 1    │
+    │ 2.5  ┆ 2    ┆ null ┆ 2    ┆ 1    │
+    └──────┴──────┴──────┴──────┴──────┘
+    ```
+
+    """
+    return x.floordiv(y).cast(Int64, strict=False)
 
 
 def divide(x: Expr, y: Expr) -> Expr:
@@ -368,6 +426,35 @@ def log1p(x: Expr) -> Expr:
     return x.log1p()
 
 
+def log2(x: Expr) -> Expr:
+    """2为底的对数
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, -1, 0, 1, 2],
+    }).with_columns(
+        out1=log2(pl.col('a')),
+    )
+    shape: (5, 2)
+    ┌──────┬──────┐
+    │ a    ┆ out1 │
+    │ ---  ┆ ---  │
+    │ i64  ┆ f64  │
+    ╞══════╪══════╡
+    │ null ┆ null │
+    │ -1   ┆ NaN  │
+    │ 0    ┆ -inf │
+    │ 1    ┆ 0.0  │
+    │ 2    ┆ 1.0  │
+    └──────┴──────┘
+    ```
+
+    """
+    return x.log(2)
+
+
 def max_(a: Expr, b: Expr, *args) -> Expr:
     """水平多列最大值 Maximum value of all inputs. At least 2 inputs are required."""
     return max_horizontal(a, b, *args)
@@ -513,6 +600,11 @@ def power(x: Expr, y: Expr) -> Expr:
         return x.pow(y)
 
     return x.pow(y.cast(Float64))
+
+
+def radians(x: Expr) -> Expr:
+    """角度转弧度"""
+    return x.radians()
 
 
 def reverse(x: Expr) -> Expr:
@@ -733,6 +825,11 @@ def softsign(x: Expr) -> Expr:
 def sqrt(x: Expr) -> Expr:
     """平方根"""
     return x.sqrt()
+
+
+def square(x: Expr) -> Expr:
+    """平方"""
+    return x.pow(2)
 
 
 def subtract(x: Expr, y: Expr) -> Expr:

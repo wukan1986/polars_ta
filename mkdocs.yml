@@ -63,7 +63,7 @@ plugins:
             summary: true
             show_root_heading: true
             show_if_no_docstring: true
-            show_source: true
+            show_source: false
             show_signature_annotations: true
             docstring_style: numpy
   - llmstxt:
