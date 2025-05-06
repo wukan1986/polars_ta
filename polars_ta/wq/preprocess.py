@@ -8,10 +8,12 @@ from polars_ta.wq.cross_sectional import cs_rank
 # ======================
 # standardize
 def cs_zscore(x: Expr, ddof: int = 0) -> Expr:
+    """横截面zscore标准化"""
     return (x - x.mean()) / x.std(ddof=ddof)
 
 
 def cs_minmax(x: Expr) -> Expr:
+    """横截面minmax标准化"""
     a = x.min()
     b = x.max()
     # 这个版本在b-a为整数时，得到的结果不好看
@@ -22,12 +24,14 @@ def cs_minmax(x: Expr) -> Expr:
 # ======================
 # winsorize
 def cs_quantile(x: Expr, low_limit: float = 0.025, up_limit: float = 0.995) -> Expr:
+    """横截面分位数去极值"""
     a = x.quantile(low_limit)
     b = x.quantile(up_limit)
     return x.clip(lower_bound=a, upper_bound=b)
 
 
 def cs_3sigma(x: Expr, n: float = 3.) -> Expr:
+    """横截面3倍sigma去极值"""
     # fill_nan will seriously reduce speed. So it's more appropriate for users to handle it themselves
     # fill_nan(None) 严重拖慢速度，所以还是由用户自己处理更合适
     a = x.mean()
@@ -36,7 +40,13 @@ def cs_3sigma(x: Expr, n: float = 3.) -> Expr:
 
 
 def cs_mad(x: Expr, n: float = 3., k: float = 1.4826) -> Expr:
-    # https://en.wikipedia.org/wiki/Median_absolute_deviation
+    """横截面MAD去极值
+
+    References
+    ----------
+    https://en.wikipedia.org/wiki/Median_absolute_deviation
+
+    """
     a = x.median()
     b = (n * k) * (x - a).abs().median()
     return x.clip(lower_bound=a - b, upper_bound=a + b)

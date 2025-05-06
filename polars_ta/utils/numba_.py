@@ -27,6 +27,7 @@ def isnan(x):
 
 @jit(nopython=True, nogil=True, cache=True)
 def full_with_window_size(arr, fill_value, dtype=None, window_size: int = 1):
+    """创建一个更大的数组，填充后一截数据"""
     out = full(arr.shape[0] + window_size - 1, fill_value, dtype=dtype)
     out[window_size - 1:] = arr
     return out
@@ -34,6 +35,7 @@ def full_with_window_size(arr, fill_value, dtype=None, window_size: int = 1):
 
 @jit(nopython=True, nogil=True, cache=True)
 def sliding_window_with_min_periods(arr, window_size: int, min_periods: int):
+    """为rolling准备的数据，当数据长度不足时，用nan填充"""
     windows = sliding_window_view(arr, window_size)
     valid_counts = np.sum(~np.isnan(windows), axis=1)
     # 修改这一行，使用布尔索引而不是np.where

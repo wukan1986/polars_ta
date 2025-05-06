@@ -722,6 +722,12 @@ def ts_rank(x: Expr, d: int = 5, min_samples: Optional[int] = None) -> Expr:
     return x.map_batches(lambda a: roll_rank(a, d, minp, True))
 
 
+def ts_realized_volatility(close: Expr, d: int = 5, min_samples: Optional[int] = None) -> Expr:
+    """已实现波动率"""
+    minp = min_samples or polars_ta.MIN_SAMPLES or d
+    return ts_log_diff(close, 1).rolling_std(d, ddof=0, min_samples=minp)
+
+
 def ts_returns(x: Expr, d: int = 1) -> Expr:
     """简单收益率"""
     return x.pct_change(d)
