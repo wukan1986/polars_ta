@@ -1,7 +1,3 @@
-[build-system]
-requires = ["setuptools"]
-build-backend = "setuptools.build_meta"
-
 [project]
 name = "polars_ta"
 authors = [
@@ -30,20 +26,16 @@ talib = [
     "TA-Lib",
 ]
 
-[tool.setuptools]
-packages = [
-    "polars_ta",
-    "polars_ta.candles",
-    "polars_ta.labels",
-    "polars_ta.performance",
-    "polars_ta.prefix",
-    "polars_ta.reports",
-    "polars_ta.ta",
-    "polars_ta.talib",
-    "polars_ta.tdx",
-    "polars_ta.utils",
-    "polars_ta.wq",
-]
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
-[tool.setuptools.dynamic]
-version = { attr = "polars_ta._version.__version__" }
+[tool.hatch.version]
+path = "polars_ta/_version.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["polars_ta"]
+include-package-data = true
+
+[tool.hatch.build.targets.sdist]
+include = ["polars_ta*"]
