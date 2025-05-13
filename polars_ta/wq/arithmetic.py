@@ -5,7 +5,7 @@ from polars import max_horizontal, sum_horizontal, min_horizontal, mean_horizont
 
 
 def abs_(x: Expr) -> Expr:
-    """绝对值
+    """求绝对值
 
     Examples
     --------
@@ -39,7 +39,7 @@ def abs_(x: Expr) -> Expr:
 
 
 def add(a: Expr, b: Expr, *args) -> Expr:
-    """水平多列加
+    """水平多列相加
 
     Examples
     --------
@@ -133,12 +133,12 @@ def degrees(x: Expr) -> Expr:
     return x.degrees()
 
 
-def densify(x: Expr) -> Expr:
+def _densify(x: Expr) -> Expr:
     raise
 
 
 def div(x: Expr, y: Expr) -> Expr:
-    """x/y的整数部分
+    """x除以y的整数部分
 
     Examples
     --------
@@ -170,7 +170,9 @@ def div(x: Expr, y: Expr) -> Expr:
 
 
 def divide(x: Expr, y: Expr) -> Expr:
-    """x/y
+    """除法
+
+    x/y
 
     Examples
     --------
@@ -231,7 +233,9 @@ def exp(x: Expr) -> Expr:
 
 
 def expm1(x: Expr) -> Expr:
-    """对数收益率 转 简单收益率 convert log return to simple return
+    """对数收益率 转 简单收益率
+
+    convert log return to simple return
 
     Examples
     --------
@@ -266,6 +270,7 @@ def floor(x: Expr) -> Expr:
 
 def fraction(x: Expr) -> Expr:
     """小数部分
+
     This operator removes the whole number part and returns the remaining fraction part with sign.
 
     Examples
@@ -306,7 +311,9 @@ def fraction(x: Expr) -> Expr:
 
 
 def inverse(x: Expr) -> Expr:
-    """1/x
+    """倒数
+
+    1/x
 
     Examples
     --------
@@ -335,7 +342,7 @@ def inverse(x: Expr) -> Expr:
 
 
 def log(x: Expr) -> Expr:
-    """e为底的对数
+    """以e为底的对数
 
     Examples
     --------
@@ -367,7 +374,7 @@ def log(x: Expr) -> Expr:
 
 
 def log10(x: Expr) -> Expr:
-    """10为底的对数
+    """以10为底的对数
 
     Examples
     --------
@@ -396,7 +403,9 @@ def log10(x: Expr) -> Expr:
 
 
 def log1p(x: Expr) -> Expr:
-    """简单收益率 转 对数收益率 convert simple return to log return
+    """简单收益率 转 对数收益率
+
+    convert simple return to log return
 
     log(x+1)
 
@@ -427,7 +436,7 @@ def log1p(x: Expr) -> Expr:
 
 
 def log2(x: Expr) -> Expr:
-    """2为底的对数
+    """以2为底的对数
 
     Examples
     --------
@@ -456,12 +465,14 @@ def log2(x: Expr) -> Expr:
 
 
 def max_(a: Expr, b: Expr, *args) -> Expr:
-    """水平多列最大值 Maximum value of all inputs. At least 2 inputs are required."""
+    """水平多列求最大值
+
+    Maximum value of all inputs. At least 2 inputs are required."""
     return max_horizontal(a, b, *args)
 
 
 def mean(a: Expr, b: Expr, *args) -> Expr:
-    """水平多列均值
+    """水平多列求均值
 
     Examples
     --------
@@ -492,12 +503,16 @@ def mean(a: Expr, b: Expr, *args) -> Expr:
 
 
 def min_(a: Expr, b: Expr, *args) -> Expr:
-    """水平多列最小值 Maximum value of all inputs. At least 2 inputs are required."""
+    """水平多列求最小值
+
+    Maximum value of all inputs. At least 2 inputs are required."""
     return min_horizontal(a, b, *args)
 
 
 def mod(x: Expr, y: Expr) -> Expr:
-    """x%y
+    """求余
+
+    x%y
 
     Examples
     --------
@@ -528,7 +543,9 @@ def mod(x: Expr, y: Expr) -> Expr:
 
 
 def multiply(a: Expr, b: Expr, *args) -> Expr:
-    """水平多列乘 Multiply all inputs. At least 2 inputs are required.
+    """水平多列相乘
+
+    Multiply all inputs. At least 2 inputs are required.
 
     Examples
     --------
@@ -569,7 +586,9 @@ def multiply(a: Expr, b: Expr, *args) -> Expr:
 
 
 def power(x: Expr, y: Expr) -> Expr:
-    """x ** y
+    """乘幂
+
+    x ** y
 
     Examples
     --------
@@ -608,12 +627,14 @@ def radians(x: Expr) -> Expr:
 
 
 def reverse(x: Expr) -> Expr:
-    """-x"""
+    """求相反数"""
     return -x
 
 
 def round_(x: Expr, decimals: int = 0) -> Expr:
-    """四舍五入 Round input to closest integer.
+    """四舍五入
+
+    Round input to closest integer.
 
     Parameters
     ----------
@@ -653,7 +674,9 @@ def round_(x: Expr, decimals: int = 0) -> Expr:
 
 
 def round_down(x: Expr, f: int = 1) -> Expr:
-    """小于输入的f的最大倍数 Round input to greatest multiple of f less than input
+    """小于输入的f的最大倍数
+
+    Round input to greatest multiple of f less than input
 
     Parameters
     ----------
@@ -693,6 +716,8 @@ def round_down(x: Expr, f: int = 1) -> Expr:
 def s_log_1p(x: Expr) -> Expr:
     """sign(x) * log10(1 + abs(x))
 
+    一种结合符号函数和对数变换的复合函数，常用于‌保留数据符号的同时压缩数值范围‌
+
     Examples
     --------
     ```python
@@ -729,7 +754,7 @@ def s_log_1p(x: Expr) -> Expr:
 
 
 def sign(x: Expr) -> Expr:
-    """符号"""
+    """符号函数"""
     if isinstance(x, (Expr, Series)):
         return x.sign()
     else:
@@ -737,7 +762,9 @@ def sign(x: Expr) -> Expr:
 
 
 def signed_power(x: Expr, y: Expr) -> Expr:
-    """x raised to the power of y such that final result preserves sign of x.
+    """x的y次幂，符号保留
+
+    x raised to the power of y such that final result preserves sign of x.
 
     Examples
     --------
@@ -793,7 +820,7 @@ def sinh(x: Expr) -> Expr:
 
 
 def softsign(x: Expr) -> Expr:
-    """softsign是 tanh激活函数的另一个替代选择
+    """softsign是tanh激活函数的另一个替代选择
 
     Examples
     --------
@@ -833,7 +860,9 @@ def square(x: Expr) -> Expr:
 
 
 def subtract(x: Expr, y: Expr) -> Expr:
-    """x-y"""
+    """减法
+
+    x-y"""
     return x - y
 
 
@@ -898,7 +927,7 @@ def tanh(x: Expr) -> Expr:
 
 
 def var(a: Expr, b: Expr, *args) -> Expr:
-    """水平多列方差
+    """水平多列求方差
 
     Examples
     --------
@@ -932,7 +961,7 @@ def var(a: Expr, b: Expr, *args) -> Expr:
 
 
 def std(a: Expr, b: Expr, *args) -> Expr:
-    """水平多列标准差
+    """水平多列求标准差
 
     Examples
     --------

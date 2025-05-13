@@ -55,7 +55,7 @@ def cs_mad(x: Expr, n: float = 3., k: float = 1.4826) -> Expr:
 # ======================
 # neutralize
 def cs_demean(x: Expr) -> Expr:
-    """demean
+    """横截面去均值化
 
     Notes
     -----
@@ -76,75 +76,42 @@ def cs_demean(x: Expr) -> Expr:
 _ols_kwargs = OLSKwargs(null_policy='drop', solve_method='svd')
 
 
-# def _residual_multiple(cols: List[Series], add_constant: bool) -> Series:
-#     # 将pl.Struct转成list,这样可以实现传正则，其它也转list
-#     cols = [list(c.struct) if isinstance(c.dtype, Struct) else [c] for c in cols]
-#     # 二维列表转一维列表，再转np.ndarray
-#     cols = [i.to_numpy() for p in cols for i in p]
-#     if add_constant:
-#         cols += [np.ones_like(cols[0])]
-#     yx = np.vstack(cols).T
-#
-#     # skip nan
-#     mask = np.any(np.isnan(yx), axis=1)
-#     yx_ = yx[~mask, :]
-#
-#     y = yx_[:, 0]
-#     x = yx_[:, 1:]
-#     coef = np.linalg.lstsq(x, y, rcond=None)[0]
-#     y_hat = np.sum(x * coef, axis=1)
-#     residual = y - y_hat
-#
-#     # refill
-#     out = np.empty_like(yx[:, 0])
-#     out[~mask] = residual
-#     out[mask] = np.nan
-#     return Series(out, nan_to_null=True)
-#
-#
-# def cs_resid_(y: Expr, *more_x: Expr) -> Expr:
-#     """multivariate regression
-#     多元回归
-#     """
-#     return map_batches([y, *more_x], lambda xx: _residual_multiple(xx, False))
-
-
 def cs_resid(y: Expr, *more_x: Expr) -> Expr:
-    """多元回归取残差"""
+    """横截面多元回归取残差"""
     return pls.compute_least_squares(y, *more_x, mode='residuals', ols_kwargs=_ols_kwargs)
 
 
 def cs_mad_zscore(y: Expr) -> Expr:
-    """去极值、标准化"""
+    """横截面去极值、标准化"""
     return cs_zscore(cs_mad(y))
 
 
 def cs_mad_zscore_resid(y: Expr, *more_x: Expr) -> Expr:
-    """去极值、标准化、中性化"""
+    """横截面去极值、标准化、中性化"""
     return cs_resid(cs_zscore(cs_mad(y)), *more_x)
 
 
 def cs_mad_rank(y: Expr) -> Expr:
-    """去极值，排名。"""
+    """横截面去极值、排名"""
     return cs_rank(cs_mad(y))
 
 
 def cs_mad_rank2(y: Expr, m: float) -> Expr:
-    """非线性处理。去极值，排名，移动峰或谷到零点，然后平方
+    """横截面去极值，排名，移动峰或谷到零点，然后平方。非线性处理
 
     适合于分层收益V型或倒V的情况"""
     return (cs_rank(cs_mad(y)) - m) ** 2
 
 
 def cs_mad_rank2_resid(y: Expr, m: float, *more_x: Expr) -> Expr:
-    """非线性处理。去极值，排名，移动峰或谷到零点，然后平方。回归取残差
+    """横截面去极值，排名，移动峰或谷到零点，然后平方。回归取残差。非线性处理
 
     适合于分层收益V型或倒V的情况"""
     return cs_resid((cs_rank(cs_mad(y)) - m) ** 2, *more_x)
 
 
 def cs_rank2(y: Expr, m: float) -> Expr:
-    """非线性处理。移动峰或谷到零点，然后平方
+    """横截面移动峰或谷到零点，然后平方。非线性处理
 
     适合于分层收益V型或倒V的情况"""
     return (cs_rank(y) - m) ** 2

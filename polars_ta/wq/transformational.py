@@ -1,4 +1,4 @@
-from polars import Expr, when, Boolean, Int32
+from polars import Expr, when, Boolean, Int32, Float32
 
 
 def cut(x: Expr, b: float, *more_bins) -> Expr:
@@ -86,7 +86,7 @@ def clamp(x: Expr, lower: float = 0, upper: float = 0, inverse: bool = False, ma
 #     raise
 
 
-def keep(x: Expr, f: float, period: int = 5) -> Expr:
+def _keep(x: Expr, f: float, period: int = 5) -> Expr:
     """This operator outputs value x when f changes and continues to do that for “period” days after f stopped changing. After “period” days since last change of f, NaN is output."""
     raise
 
@@ -265,3 +265,8 @@ def int_(a: Expr) -> Expr:
 def bool_(a: Expr) -> Expr:
     """convert int to bool"""
     return a.cast(Boolean)
+
+
+def float_(a: Expr) -> Expr:
+    """convert int to float"""
+    return a.cast(Float32)

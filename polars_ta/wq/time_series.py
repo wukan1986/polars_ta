@@ -12,7 +12,9 @@ from polars_ta.wq._nb import roll_argmax, roll_argmin, roll_co_kurtosis, roll_co
 
 
 def ts_arg_max(x: Expr, d: int = 5, reverse: bool = True, min_samples: Optional[int] = None) -> Expr:
-    """Returns the relative index of the max value in the time series for the past d days.
+    """窗口内最大值出现的相对位置，最近的一天记为第 0 天，最远的一天为第 d-1 天
+
+    Returns the relative index of the max value in the time series for the past d days.
     If the current day has the max value for the past d days, it returns 0.
     If previous day has the max value for the past d days, it returns 1.
 
@@ -61,7 +63,7 @@ def ts_arg_max(x: Expr, d: int = 5, reverse: bool = True, min_samples: Optional[
 
 
 def ts_arg_min(x: Expr, d: int = 5, reverse: bool = True, min_samples: Optional[int] = None) -> Expr:
-    """
+    """窗口内最小值出现的相对位置，最近的一天记为第 0 天，最远的一天为第 d-1 天
 
     Parameters
     ----------
@@ -85,19 +87,21 @@ def ts_arg_min(x: Expr, d: int = 5, reverse: bool = True, min_samples: Optional[
 
 
 def ts_co_kurtosis(x: Expr, y: Expr, d: int = 5, ddof: int = 0, min_samples: Optional[int] = None) -> Expr:
+    """计算两个序列在滚动窗口内联合分布的协峰度"""
     minp = min_samples or polars_ta.MIN_SAMPLES or d
     return struct([x, y]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2), roll_co_kurtosis, d, minp))
 
 
 def ts_co_skewness(x: Expr, y: Expr, d: int = 5, ddof: int = 0, min_samples: Optional[int] = None) -> Expr:
+    """计算两个序列在滚动窗口内联合分布的协偏度"""
     minp = min_samples or polars_ta.MIN_SAMPLES or d
     return struct([x, y]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2), roll_co_skewness, d, minp))
 
 
 def ts_corr(x: Expr, y: Expr, d: int = 5, ddof: int = 1, min_samples: Optional[int] = None) -> Expr:
-    """rolling correlation between two columns
+    """时序滚动相关系数
 
-    时序滚动相关系数
+    rolling correlation between two columns
 
     Parameters
     ----------
@@ -236,9 +240,9 @@ def ts_count_nulls(x: Expr, d: int = 5, min_samples: Optional[int] = None) -> Ex
 
 
 def ts_covariance(x: Expr, y: Expr, d: int = 5, ddof: int = 1, min_samples: Optional[int] = None) -> Expr:
-    """rolling covariance between two columns
+    """时序滚动协方差
 
-    时序协方差
+    rolling covariance between two columns
 
     Parameters
     ----------
@@ -291,7 +295,7 @@ def ts_cum_count(x: Expr) -> Expr:
 
 
 def ts_cum_max(x: Expr) -> Expr:
-    """时序累计最大
+    """时序累计最大值
 
     Examples
     --------
@@ -323,7 +327,7 @@ def ts_cum_max(x: Expr) -> Expr:
 
 
 def ts_cum_min(x: Expr) -> Expr:
-    """时序累计最小
+    """时序累计最小值
 
     Examples
     --------
@@ -493,7 +497,9 @@ def ts_decay_linear(x: Expr, d: int = 30, min_samples: Optional[int] = None) -> 
 
 
 def ts_delay(x: Expr, d: int = 1, fill_value=None) -> Expr:
-    """时序数据移动 shift x
+    """时序数据移动
+
+    shift x
 
     Parameters
     ----------
@@ -508,7 +514,7 @@ def ts_delay(x: Expr, d: int = 1, fill_value=None) -> Expr:
 
 
 def ts_delta(x: Expr, d: int = 1) -> Expr:
-    """差分"""
+    """时序差分"""
     return x.diff(d)
 
 
@@ -551,14 +557,16 @@ def ts_fill_null(x: Expr, limit: int = None) -> Expr:
 
 
 def ts_ir(x: Expr, d: int = 1, min_samples: Optional[int] = None) -> Expr:
-    """时序滚动信息系数rolling information ratio"""
+    """时序滚动信息系数
+
+    rolling information ratio"""
     return ts_mean(x, d, min_samples) / ts_std_dev(x, d, 0, min_samples)
 
 
 def ts_kurtosis(x: Expr, d: int = 5, bias: bool = False, min_samples: Optional[int] = None) -> Expr:
-    """kurtosis of x for the last d days
+    """时序滚动峰度
 
-    时序滚动峰度
+    kurtosis of x for the last d days
 
     Parameters
     ----------
@@ -603,16 +611,18 @@ def ts_kurtosis(x: Expr, d: int = 5, bias: bool = False, min_samples: Optional[i
 
 
 def ts_l2_norm(x: Expr, d: int = 5, min_samples: Optional[int] = None) -> Expr:
-    """Euclidean norm
+    """欧几里得范数
 
-    欧几里得范数"""
+    Euclidean norm
+    """
     minp = min_samples or polars_ta.MIN_SAMPLES
     return x.pow(2).rolling_sum(d, min_samples=minp).sqrt()
 
 
 def ts_log_diff(x: Expr, d: int = 1) -> Expr:
-    """对数差分。log(current value of input or x[t] ) - log(previous value of input or x[t-1]).
+    """求对数，然后时序滚动差分
 
+    log(current value of input or x[t] ) - log(previous value of input or x[t-1]).
     """
     return x.log().diff(d)
 
@@ -624,7 +634,9 @@ def ts_max(x: Expr, d: int = 30, min_samples: Optional[int] = None) -> Expr:
 
 
 def ts_max_diff(x: Expr, d: int = 30, min_samples: Optional[int] = None) -> Expr:
-    """Returns x - ts_max(x, d)"""
+    """窗口内最大值与当前值的差异‌
+
+    x - ts_max(x, d)"""
     return x - ts_max(x, d, min_samples)
 
 
@@ -647,24 +659,30 @@ def ts_min(x: Expr, d: int = 30, min_samples: Optional[int] = None) -> Expr:
 
 
 def ts_min_diff(x: Expr, d: int = 30, min_samples: Optional[int] = None) -> Expr:
-    """Returns x - ts_min(x, d)"""
+    """窗口内最小值与当前值的差异‌
+
+    x - ts_min(x, d)"""
     return x - ts_min(x, d, min_samples)
 
 
 def ts_min_max_cps(x: Expr, d: int, f: float = 2.0, min_samples: Optional[int] = None) -> Expr:
-    """Returns (ts_min(x, d) + ts_max(x, d)) - f * x"""
+    """计算时间窗口内最小值与最大值的总和减去当前值的加权结果
+
+    (ts_min(x, d) + ts_max(x, d)) - f * x"""
     return (ts_min(x, d, min_samples) + ts_max(x, d, min_samples)) - f * x
 
 
 def ts_min_max_diff(x: Expr, d: int, f: float = 0.5, min_samples: Optional[int] = None) -> Expr:
-    """Returns x - f * (ts_min(x, d) + ts_max(x, d))"""
+    """计算当前值 x 与基于时间窗口内最小值、最大值的加权组合的差值
+
+    x - f * (ts_min(x, d) + ts_max(x, d))"""
     return x - f * (ts_min(x, d, min_samples) + ts_max(x, d, min_samples))
 
 
 def ts_moment(x: Expr, d: int, k: int = 0, min_samples: Optional[int] = None) -> Expr:
-    """Returns K-th central moment of x for the past d days.
+    """滚动k阶中心距
 
-    滚动k阶中心距
+    Returns K-th central moment of x for the past d days.
 
     Parameters
     ----------
@@ -679,18 +697,19 @@ def ts_moment(x: Expr, d: int, k: int = 0, min_samples: Optional[int] = None) ->
 
 
 def ts_partial_corr(x: Expr, y: Expr, z: Expr, d: int, min_samples: Optional[int] = None) -> Expr:
-    """Returns partial correlation of x, y, z for the past d days.
+    """滚动偏相关
 
-    滚动偏相关
+    Returns partial correlation of x, y, z for the past d days.
+
     """
     minp = min_samples or polars_ta.MIN_SAMPLES or d
     return struct([x, y, z]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 3), roll_partial_corr, d, minp))
 
 
 def ts_percentage(x: Expr, d: int, percentage: float = 0.5, min_samples: Optional[int] = None) -> Expr:
-    """Returns percentile value of x for the past d days.
+    """滚动百分位数
 
-    滚动百分位数
+    Returns percentile value of x for the past d days.
 
     Parameters
     ----------
@@ -734,9 +753,10 @@ def ts_returns(x: Expr, d: int = 1) -> Expr:
 
 
 def ts_scale(x: Expr, d: int = 5, min_samples: Optional[int] = None) -> Expr:
-    """Returns (x – ts_min(x, d)) / (ts_max(x, d) – ts_min(x, d)) + constant
+    """时序滚动缩放
 
-    时序滚动缩放
+    Returns (x – ts_min(x, d)) / (ts_max(x, d) – ts_min(x, d)) + constant
+
     """
     a = ts_min(x, d, min_samples)
     b = ts_max(x, d, min_samples)
@@ -745,9 +765,9 @@ def ts_scale(x: Expr, d: int = 5, min_samples: Optional[int] = None) -> Expr:
 
 
 def ts_skewness(x: Expr, d: int = 5, bias: bool = False, min_samples: Optional[int] = None) -> Expr:
-    """Return skewness of x for the past d days
+    """时序滚动偏度
 
-    时序滚动偏度
+    Return skewness of x for the past d days
 
     Parameters
     ----------
@@ -842,8 +862,9 @@ def ts_sum_split_by(x: Expr, by: Expr, d: int = 30, k: int = 10) -> Expr:
 
 
 def ts_triple_corr(x: Expr, y: Expr, z: Expr, d: int, min_samples: Optional[int] = None) -> Expr:
-    """时序滚动三重相关系数 Returns triple correlation of x, y, z for the past d days.
+    """时序滚动三重相关系数
 
+    Returns triple correlation of x, y, z for the past d days.
 
     """
     minp = min_samples or polars_ta.MIN_SAMPLES or d
@@ -851,7 +872,9 @@ def ts_triple_corr(x: Expr, y: Expr, z: Expr, d: int, min_samples: Optional[int]
 
 
 def ts_weighted_decay(x: Expr, k: float = 0.5, min_samples: Optional[int] = None) -> Expr:
-    """加权衰减 Instead of replacing today’s value with yesterday’s as in ts_delay(x, 1),
+    """时序滚动加权衰减求和
+
+    Instead of replacing today’s value with yesterday’s as in ts_delay(x, 1),
     it assigns weighted average of today’s and yesterday’s values with weight on today’s value being k and yesterday’s being (1-k).
 
     Parameters

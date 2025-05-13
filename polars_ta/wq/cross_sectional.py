@@ -17,7 +17,9 @@ _ols_kwargs = OLSKwargs(null_policy='drop', solve_method='svd')
 
 
 def cs_one_side(x: Expr, is_long: bool = True) -> Expr:
-    """Shifts all instruments up or down so that the Alpha becomes long-only or short-only
+    """横截面上，将全部资产上调或下调，使得 Alpha 策略转为纯多头配置（当方向参数设为空头时则转为纯空头配置）
+
+    Shifts all instruments up or down so that the Alpha becomes long-only or short-only
 (if side = short), respectively.
 
     Examples
@@ -54,7 +56,9 @@ def cs_one_side(x: Expr, is_long: bool = True) -> Expr:
 
 
 def cs_scale(x: Expr, scale_: float = 1, long_scale: float = 1, short_scale: float = 1) -> Expr:
-    """Scales input to booksize. We can also scale the long positions and short positions to separate scales by mentioning additional parameters to the operator.
+    """横截面上，将输入数据进行比例调整。此外，可通过向运算符添加额外参数，将多头头寸和空头头寸分别映射到独立的缩放比例上
+
+    Scales input to booksize. We can also scale the long positions and short positions to separate scales by mentioning additional parameters to the operator.
 
     Examples
     --------
@@ -95,7 +99,9 @@ def cs_scale(x: Expr, scale_: float = 1, long_scale: float = 1, short_scale: flo
 
 
 def cs_scale_down(x: Expr, constant: int = 0) -> Expr:
-    """Scales all values in each day proportionately between 0 and 1 such that minimum value maps to 0 and maximum value maps to 1.
+    """横截面上，将每日数据按比例缩放至 [0,1] 区间，使得最小值映射为 0，最大值映射为 1，并通过减去常数偏移量调整最终结果
+
+    Scales all values in each day proportionately between 0 and 1 such that minimum value maps to 0 and maximum value maps to 1.
     constant is the offset by which final result is subtracted
 
     Examples
@@ -130,7 +136,9 @@ def cs_scale_down(x: Expr, constant: int = 0) -> Expr:
 
 
 def cs_truncate(x: Expr, max_percent: float = 0.01) -> Expr:
-    """Operator truncates all values of x to maxPercent. Here, maxPercent is in decimal notation
+    """横截面上，将所有 x 的取值截断至 maxPercent 指定的上限值，其中 maxPercent 需以十进制小数形式表示
+
+    Operator truncates all values of x to maxPercent. Here, maxPercent is in decimal notation
 
     Examples
     --------
@@ -162,7 +170,7 @@ def cs_truncate(x: Expr, max_percent: float = 0.01) -> Expr:
 
 
 def cs_fill_except_all_null(x: Expr, value=0) -> Expr:
-    """全为`null`时，保持`null`，反之`null`填充为`value`
+    """横截面上，全为`null`时，保持`null`，反之`null`填充为`value`
 
     Examples
     --------
@@ -199,27 +207,29 @@ def cs_fill_except_all_null(x: Expr, value=0) -> Expr:
 
 
 def cs_fill_mean(x: Expr) -> Expr:
-    """填充`null`为均值"""
+    """横截面上，填充`null`为均值"""
     return x.fill_null(strategy='mean')
 
 
 def cs_fill_null(x: Expr, value=0) -> Expr:
-    """填充`null`为`value`"""
+    """横截面上，填充`null`为`value`"""
     return x.fill_null(value)
 
 
 def cs_regression_neut(y: Expr, x: Expr) -> Expr:
-    """一元回归残差"""
+    """横截面上，一元回归残差"""
     return pls.compute_least_squares(y, x, add_intercept=True, mode='residuals', ols_kwargs=_ols_kwargs)
 
 
 def cs_regression_proj(y: Expr, x: Expr) -> Expr:
-    """一元回归预测"""
+    """横截面上，一元回归预测"""
     return pls.compute_least_squares(y, x, add_intercept=True, mode='predictions', ols_kwargs=_ols_kwargs)
 
 
 def cs_rank(x: Expr, pct: bool = True) -> Expr:
-    """排名。Ranks the input among all the instruments and returns an equally distributed number between 0.0 and 1.0. For precise sort, use the rate as 0.
+    """横截面排名。
+
+    Ranks the input among all the instruments and returns an equally distributed number between 0.0 and 1.0. For precise sort, use the rate as 0.
 
     Parameters
     ----------
@@ -269,7 +279,7 @@ def cs_rank(x: Expr, pct: bool = True) -> Expr:
 
 
 def _cs_qcut_rank(x: Expr, q: int = 10) -> Expr:
-    """等频分箱
+    """横截面上等频分箱
 
     Parameters
     ----------
@@ -314,7 +324,9 @@ def _cs_qcut_rank(x: Expr, q: int = 10) -> Expr:
 
 
 def cs_qcut(x: Expr, q: int = 10) -> Expr:
-    """等频分箱 Convert float values into indexes for user-specified buckets. Bucket is useful for creating group values, which can be passed to group operators as input.
+    """横截面上等频分箱
+
+    Convert float values into indexes for user-specified buckets. Bucket is useful for creating group values, which can be passed to group operators as input.
 
     Parameters
     ----------
@@ -362,7 +374,7 @@ def cs_qcut(x: Expr, q: int = 10) -> Expr:
 
 
 def cs_top_bottom(x: Expr, k: int = 10) -> Expr:
-    """前K后K
+    """横截面上，排名。前K标记成-1，后K标记成1
 
     Examples
     --------
