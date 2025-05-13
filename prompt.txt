@@ -30,7 +30,6 @@
 - cot(x:Expr) : 余切
 - cube(x:Expr) : 立方
 - degrees(x:Expr) : 弧度转角度
-- divide(x:Expr,y:Expr) : 除法
 - exp(x:Expr) : 自然指数函数
 - expm1(x:Expr) : 对数收益率 转 简单收益率
 - floor(x:Expr) : 向下取整
@@ -138,6 +137,8 @@
 ```python
 alpha_004 = -1 * ts_rank(cs_rank(LOW), 9)
 alpha_006 = -1 * ts_corr(OPEN, VOLUME, 10)
+alpha_040 = -1 * cs_rank(ts_std_dev(HIGH, 10)) * ts_corr(HIGH, VOLUME, 10)
+alpha_041 = power(HIGH * LOW, 0.5) - VWAP
 alpha_042 = cs_rank(VWAP - CLOSE) / cs_rank(VWAP + CLOSE)
 alpha_053 = -1 * ts_delta((CLOSE - LOW - (HIGH - CLOSE)) / (CLOSE - LOW), 9)
 alpha_057 = - 1 * ((CLOSE - VWAP) / ts_decay_linear(cs_rank(ts_arg_max(CLOSE, 30)), 2))

@@ -73,7 +73,7 @@ def codegen_import_as(module: str,
 
 
 lines = []
-lines += codegen_import_as('polars_ta.wq.arithmetic', exclude_func=['add', 'subtract', 'multiply', 'div'])
+lines += codegen_import_as('polars_ta.wq.arithmetic', exclude_func=['add', 'subtract', 'multiply', 'div', 'divide'])
 lines += codegen_import_as('polars_ta.wq.time_series')
 lines += codegen_import_as('polars_ta.wq.cross_sectional')
 text = '\n'.join(lines)
