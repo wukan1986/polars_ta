@@ -169,7 +169,7 @@ def cs_truncate(x: Expr, max_percent: float = 0.01) -> Expr:
     return x.clip(upper_bound=x.sum() * max_percent)
 
 
-def cs_fill_except_all_null(x: Expr, value=0) -> Expr:
+def cs_fill_except_all_null(x: Expr, value: float = 0) -> Expr:
     """横截面上，全为`null`时，保持`null`，反之`null`填充为`value`
 
     Examples
@@ -211,7 +211,7 @@ def cs_fill_mean(x: Expr) -> Expr:
     return x.fill_null(strategy='mean')
 
 
-def cs_fill_null(x: Expr, value=0) -> Expr:
+def cs_fill_null(x: Expr, value: float = 0) -> Expr:
     """横截面上，填充`null`为`value`"""
     return x.fill_null(value)
 

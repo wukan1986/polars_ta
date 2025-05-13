@@ -820,7 +820,7 @@ def sinh(x: Expr) -> Expr:
 
 
 def softsign(x: Expr) -> Expr:
-    """softsign是tanh激活函数的另一个替代选择
+    """softsign激活函数
 
     Examples
     --------

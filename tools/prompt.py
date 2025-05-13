@@ -9,6 +9,15 @@ def get_annotation(annotation):
     return output
 
 
+def get_parameter(p):
+    annotation = get_annotation(p.annotation)
+    # if annotation != "Expr":
+    output = f"{p.name}:{annotation}"
+    if p.default != inspect._empty:
+        output += f"={p.default}"
+    return output
+
+
 def codegen_import_as(module: str,
                       include_modules: Optional[List[str]] = None,
                       include_func: Optional[List[str]] = None,
@@ -52,7 +61,9 @@ def codegen_import_as(module: str,
     for name, func in funcs:
         if func.__module__ not in include_modules:
             continue
-        if name in exclude_func:
+        if exclude_func and name in exclude_func:
+            continue
+        if include_func and name not in include_func:
             continue
 
         signature = inspect.signature(func)
@@ -61,20 +72,18 @@ def codegen_import_as(module: str,
             if p.kind in (inspect._ParameterKind.VAR_POSITIONAL, inspect._ParameterKind.VAR_KEYWORD):
                 continue
 
-            if p.default == inspect._empty:
-                parameters.append(f"{p.name}:{get_annotation(p.annotation)}")
-            else:
-                parameters.append(f"{p.name}:{get_annotation(p.annotation)}={p.default}")
+            parameters.append(get_parameter(p))
 
-        # txts.append(f'def {name}({", ".join(parameters)}) -> {get_annotation(signature.return_annotation)}:')
-        txts.append(f'- {name}({",".join(parameters)}) : {func.__doc__.splitlines()[0]}')
+        txts.append(f'- {name}({",".join(parameters)})->{get_annotation(signature.return_annotation)} : {func.__doc__.splitlines()[0]}')
 
     return txts
 
 
 lines = []
-lines += codegen_import_as('polars_ta.wq.arithmetic', exclude_func=['add', 'subtract', 'multiply', 'div', 'divide'])
+lines += codegen_import_as('polars_ta.wq.arithmetic', exclude_func=['add', 'subtract', 'multiply', 'div', 'divide', 'reverse', 'inverse'])
 lines += codegen_import_as('polars_ta.wq.time_series')
 lines += codegen_import_as('polars_ta.wq.cross_sectional')
+lines += codegen_import_as('polars_ta.wq.preprocess', exclude_func=['cs_mad_rank', 'cs_mad_rank2', 'cs_mad_rank2_resid', 'cs_mad_zscore', 'cs_mad_zscore_resid', 'cs_rank2'])
+lines += codegen_import_as('polars_ta.wq.logical', include_func=['if_else', ])
 text = '\n'.join(lines)
 print(text)
