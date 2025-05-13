@@ -206,6 +206,11 @@ mkdocs build
 也可以通过以下链接导入：
 https://polars-ta.readthedocs.io/en/latest/llms-full.txt
 
+## 提示词
+由于`llms-full.txt`信息不适合做提示词，所以`tools/prompt.py`提供了生成更简洁算子清单的功能。
+
+用户也可以直接使用`prompt.txt`(欢迎提示词工程专家帮忙改进，做的更准确)
+
 ## 参考
 
 - https://github.com/pola-rs/polars
