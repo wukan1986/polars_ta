@@ -101,5 +101,7 @@ lines += codegen_import_as('polars_ta.wq.preprocess',
                            exclude_func=['cs_mad_rank', 'cs_mad_rank2', 'cs_mad_rank2_resid', 'cs_mad_zscore', 'cs_mad_zscore_resid', 'cs_rank2'])
 lines += codegen_import_as('polars_ta.wq.logical',
                            include_func=['if_else', ])
+lines += codegen_import_as('polars_ta.wq.transformational',
+                           include_func=['cut', 'sigmoid', 'bool_', 'int_', 'float_'])
 text = '\n'.join(lines)
 print(text)

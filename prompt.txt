@@ -108,6 +108,12 @@
 - cs_zscore(x,ddof:int=0) : 横截面zscore标准化
 ### polars_ta.wq.logical
 - if_else(condition,true_value,false_value=None) : 条件判断
+### polars_ta.wq.transformational
+- bool_(a) : int转成bool
+- cut(x,b:float,*more_bins) : 分箱
+- float_(a) : int转成float
+- int_(a) : bool转int
+- sigmoid(x) : sigmoid激活函数
 
 ## 因子示例
 
@@ -122,4 +128,4 @@ alpha_057=-((CLOSE-VWAP)/ts_decay_linear(cs_rank(ts_arg_max(CLOSE,30)),2))
 alpha_101=(CLOSE-OPEN)/(HIGH-LOW+0.001)
 ```
 
-如果理解了上述要求，不用思考，直接回复：“老大，请说”
+如果理解了上述要求，不用思考，直接回复：“老大，请吩咐”

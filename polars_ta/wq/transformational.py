@@ -211,7 +211,7 @@ def right_tail(x: Expr, minimum: float = 0) -> Expr:
 
 
 def sigmoid(x: Expr) -> Expr:
-    """Returns 1 / (1 + exp(-x))"""
+    """sigmoid激活函数"""
     return 1 / (1 + (-x).exp())
 
 
@@ -258,15 +258,15 @@ def tail(x: Expr, lower: float = 0, upper: float = 0, newval: float = 0) -> Expr
 
 
 def int_(a: Expr) -> Expr:
-    """convert bool to int"""
+    """bool转int"""
     return a.cast(Int32)
 
 
 def bool_(a: Expr) -> Expr:
-    """convert int to bool"""
+    """int转成bool"""
     return a.cast(Boolean)
 
 
 def float_(a: Expr) -> Expr:
-    """convert int to float"""
+    """int转成float"""
     return a.cast(Float32)
