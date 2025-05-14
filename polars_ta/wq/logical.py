@@ -12,9 +12,9 @@ def equal(input1: Expr, input2: Expr) -> Expr:
     return input1 == input2
 
 
-def if_else(input1: Expr, input2: Expr, input3: Expr = None) -> Expr:
-    """If input1 is true then return input2 else return input3."""
-    return when(input1).then(input2).otherwise(input3)
+def if_else(condition: Expr, true_value: Expr, false_value: Expr = None) -> Expr:
+    """条件判断"""
+    return when(condition).then(true_value).otherwise(false_value)
 
 
 def is_finite(input1: Expr) -> Expr:

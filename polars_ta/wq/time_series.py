@@ -496,7 +496,7 @@ def ts_decay_linear(x: Expr, d: int = 30, min_samples: Optional[int] = None) -> 
     return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), roll_decay_linear, d, minp))
 
 
-def ts_delay(x: Expr, d: int = 1, fill_value=None) -> Expr:
+def ts_delay(x: Expr, d: int = 1, fill_value: float = None) -> Expr:
     """时序数据移动
 
     shift x
