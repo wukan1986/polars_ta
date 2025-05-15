@@ -8,7 +8,7 @@ from polars_ols import RollingKwargs
 import polars_ta
 from polars_ta.utils.numba_ import batches_i1_o1, batches_i2_o1, batches_i2_o2, struct_to_numpy
 from polars_ta.utils.pandas_ import roll_rank
-from polars_ta.wq._nb import roll_argmax, roll_argmin, roll_co_kurtosis, roll_co_skewness, roll_moment, roll_partial_corr, roll_triple_corr, _cum_prod_by, _cum_sum_by, _signals_to_size, _cum_sum_reset, _sum_split_by, roll_decay_linear, roll_decay_exp_window, roll_prod
+from polars_ta.wq._nb import roll_argmax, roll_argmin, roll_co_kurtosis, roll_co_skewness, roll_moment, roll_partial_corr, roll_triple_corr, _cum_prod_by, _cum_sum_by, _signals_to_size, _cum_sum_reset, _sum_split_by, roll_decay_linear, roll_decay_exp_window, roll_prod, _timeline_integral, _timeline_duration
 
 
 def ts_arg_max(x: Expr, d: int = 5, reverse: bool = True, min_samples: Optional[int] = None) -> Expr:
@@ -400,6 +400,173 @@ def ts_cum_sum_reset(x: Expr) -> Expr:
 
     """
     return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _cum_sum_reset))
+
+
+def ts_integral(x: Expr) -> Expr:
+    """事件发生的连续性计数
+
+    Examples
+    --------
+
+    ```python
+    df = pl.DataFrame({
+        "ma5_price": [2.1, 2.3, 2.7, 3.2, 2.6, 2.2, 1.8, 1.4, 2.1, 2.3, 2.7, 3.2],
+    }).with_columns(ma5_diff=ts_delta(pl.col('ma5_price')))
+    df = df.with_columns([
+        ts_integral(pl.col('ma5_diff') > 0).alias('JC_LAG'),  # ma5金叉时序
+        ts_integral(pl.col('ma5_diff') < 0).alias('SC_LAG'),  # ma5死叉时序
+    ]).with_columns([
+        (pl.col('JC_LAG') + pl.col('SC_LAG') * -1).alias('LAG'),  # 金叉死叉序列
+    ])
+
+    shape: (12, 5)
+    ┌───────────┬──────────┬────────┬────────┬─────┐
+    │ ma5_price ┆ ma5_diff ┆ JC_LAG ┆ SC_LAG ┆ LAG │
+    │ ---       ┆ ---      ┆ ---    ┆ ---    ┆ --- │
+    │ f64       ┆ f64      ┆ i32    ┆ i32    ┆ i32 │
+    ╞═══════════╪══════════╪════════╪════════╪═════╡
+    │ 2.1       ┆ null     ┆ 0      ┆ 0      ┆ 0   │
+    │ 2.3       ┆ 0.2      ┆ 1      ┆ 0      ┆ 1   │
+    │ 2.7       ┆ 0.4      ┆ 2      ┆ 0      ┆ 2   │
+    │ 3.2       ┆ 0.5      ┆ 3      ┆ 0      ┆ 3   │
+    │ 2.6       ┆ -0.6     ┆ 0      ┆ 1      ┆ -1  │
+    │ 2.2       ┆ -0.4     ┆ 0      ┆ 2      ┆ -2  │
+    │ 1.8       ┆ -0.4     ┆ 0      ┆ 3      ┆ -3  │
+    │ 1.4       ┆ -0.4     ┆ 0      ┆ 4      ┆ -4  │
+    │ 2.1       ┆ 0.7      ┆ 1      ┆ 0      ┆ 1   │
+    │ 2.3       ┆ 0.2      ┆ 2      ┆ 0      ┆ 2   │
+    │ 2.7       ┆ 0.4      ┆ 3      ┆ 0      ┆ 3   │
+    │ 3.2       ┆ 0.5      ┆ 4      ┆ 0      ┆ 4   │
+    └───────────┴──────────┴────────┴────────┴─────┘
+    ```
+
+    """
+    return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _timeline_integral))
+
+
+def ts_duration(x: Expr) -> Expr:
+    """事件无事发生的连续性计数, 值永远为正数(包括0)
+
+    Examples
+    --------
+
+    ```python
+    df = pl.DataFrame({
+        "ma5_price": [2.1, 2.3, 2.7, 3.2, 2.6, 2.2, 1.8, 1.4, 2.1, 2.3, 2.7, 3.2],
+    }).with_columns(ma5_diff=ts_delta(pl.col('ma5_price')))
+    df = df.with_columns([
+        ts_integral(pl.col('ma5_diff') > 0).alias('JC_LAG'),  # ma5金叉时序
+        ts_integral(pl.col('ma5_diff') < 0).alias('SC_LAG'),  # ma5死叉时序
+        ts_duration(pl.col('ma5_diff') > 0).alias('JC_BF'),  # ma5金叉前时序
+        ts_duration(pl.col('ma5_diff') < 0).alias('SC_BF'),  # ma5死叉前时序
+    ]).with_columns([
+        (pl.col('JC_LAG') + pl.col('SC_LAG') * -1).alias('LAG'),  # 金叉死叉序列
+    ])
+
+    shape: (12, 7)
+    ┌───────────┬──────────┬────────┬────────┬───────┬───────┬─────┐
+    │ ma5_price ┆ ma5_diff ┆ JC_LAG ┆ SC_LAG ┆ JC_BF ┆ SC_BF ┆ LAG │
+    │ ---       ┆ ---      ┆ ---    ┆ ---    ┆ ---   ┆ ---   ┆ --- │
+    │ f64       ┆ f64      ┆ i32    ┆ i32    ┆ i32   ┆ i32   ┆ i32 │
+    ╞═══════════╪══════════╪════════╪════════╪═══════╪═══════╪═════╡
+    │ 2.1       ┆ null     ┆ 0      ┆ 0      ┆ 0     ┆ 0     ┆ 0   │
+    │ 2.3       ┆ 0.2      ┆ 1      ┆ 0      ┆ 0     ┆ 1     ┆ 1   │
+    │ 2.7       ┆ 0.4      ┆ 2      ┆ 0      ┆ 0     ┆ 2     ┆ 2   │
+    │ 3.2       ┆ 0.5      ┆ 3      ┆ 0      ┆ 0     ┆ 3     ┆ 3   │
+    │ 2.6       ┆ -0.6     ┆ 0      ┆ 1      ┆ 1     ┆ 0     ┆ -1  │
+    │ 2.2       ┆ -0.4     ┆ 0      ┆ 2      ┆ 2     ┆ 0     ┆ -2  │
+    │ 1.8       ┆ -0.4     ┆ 0      ┆ 3      ┆ 3     ┆ 0     ┆ -3  │
+    │ 1.4       ┆ -0.4     ┆ 0      ┆ 4      ┆ 4     ┆ 0     ┆ -4  │
+    │ 2.1       ┆ 0.7      ┆ 1      ┆ 0      ┆ 0     ┆ 1     ┆ 1   │
+    │ 2.3       ┆ 0.2      ┆ 2      ┆ 0      ┆ 0     ┆ 2     ┆ 2   │
+    │ 2.7       ┆ 0.4      ┆ 3      ┆ 0      ┆ 0     ┆ 3     ┆ 3   │
+    │ 3.2       ┆ 0.5      ┆ 4      ┆ 0      ┆ 0     ┆ 4     ┆ 4   │
+    └───────────┴──────────┴────────┴────────┴───────┴───────┴─────┘
+
+    ```
+
+    """
+    return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _timeline_duration))
+
+
+def ts_lag(directions: Expr) -> Expr:
+    """信号发生的连续性计数，含方向, 可算金叉死叉时序
+
+    Examples
+    --------
+
+    ```python
+    df = pl.DataFrame({
+        "ma5_price": [2.1, 2.3, 2.7, 3.2, 2.6, 2.2, 1.8, 1.4, 2.1, 2.3, 2.7, 3.2],
+    }).with_columns(
+        ma5_diff=ts_delta(pl.col('ma5_price'))
+    ).with_columns([
+        timeline_lag(pl.col('ma5_diff')).alias('LAG'),  # 金叉死叉序列
+    ])
+
+    shape: (12, 3)
+    ┌───────────┬──────────┬─────┐
+    │ ma5_price ┆ ma5_diff ┆ LAG │
+    │ ---       ┆ ---      ┆ --- │
+    │ f64       ┆ f64      ┆ i32 │
+    ╞═══════════╪══════════╪═════╡
+    │ 2.1       ┆ null     ┆ 0   │
+    │ 2.3       ┆ 0.2      ┆ 1   │
+    │ 2.7       ┆ 0.4      ┆ 2   │
+    │ 3.2       ┆ 0.5      ┆ 3   │
+    │ 2.6       ┆ -0.6     ┆ -1  │
+    │ 2.2       ┆ -0.4     ┆ -2  │
+    │ 1.8       ┆ -0.4     ┆ -3  │
+    │ 1.4       ┆ -0.4     ┆ -4  │
+    │ 2.1       ┆ 0.7      ┆ 1   │
+    │ 2.3       ┆ 0.2      ┆ 2   │
+    │ 2.7       ┆ 0.4      ┆ 3   │
+    │ 3.2       ┆ 0.5      ┆ 4   │
+    └───────────┴──────────┴─────┘
+
+    ```
+
+    """
+    return ts_integral(directions > 0) + ts_integral(directions < 0) * -1
+
+
+def ts_jsc(price: Expr):
+    """价格发生的连续性计数，含方向。比如算价格的金叉死叉时序
+
+    Examples
+    --------
+
+    ```python
+    df = pl.DataFrame({
+        "ma5_price": [2.1, 2.3, 2.7, 3.2, 2.6, 2.2, 1.8, 1.4, 2.1, 2.3, 2.7, 3.2],
+    }).with_columns([
+        ts_jsc(pl.col('ma5_price')).alias('LAG'),  # 金叉死叉序列
+    ])
+
+    shape: (12, 2)
+    ┌───────────┬─────┐
+    │ ma5_price ┆ LAG │
+    │ ---       ┆ --- │
+    │ f64       ┆ i32 │
+    ╞═══════════╪═════╡
+    │ 2.1       ┆ 0   │
+    │ 2.3       ┆ 1   │
+    │ 2.7       ┆ 2   │
+    │ 3.2       ┆ 3   │
+    │ 2.6       ┆ -1  │
+    │ 2.2       ┆ -2  │
+    │ 1.8       ┆ -3  │
+    │ 1.4       ┆ -4  │
+    │ 2.1       ┆ 1   │
+    │ 2.3       ┆ 2   │
+    │ 2.7       ┆ 3   │
+    │ 3.2       ┆ 4   │
+    └───────────┴─────┘
+
+    ```
+
+    """
+    return ts_lag(ts_delta(price))
 
 
 def ts_decay_exp_window(x: Expr, d: int = 30, factor: float = 1.0, min_samples: Optional[int] = None) -> Expr:
