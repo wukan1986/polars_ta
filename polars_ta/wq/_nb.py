@@ -221,6 +221,28 @@ def _cum_sum_reset(a):
     return out
 
 
+@jit(nopython=True)
+def _timeline_integral(signals: np.ndarray) -> np.ndarray:
+    length = len(signals)
+    T = np.zeros(length).astype(np.int32)
+    if length < 2:
+        return T
+    for i in range(1, length):
+        T[i] = signals[i] * (T[i - 1] + signals[i])
+    return T
+
+
+@jit(nopython=True)
+def _timeline_duration(signals: np.array) -> np.array:
+    length = len(signals)
+    T = np.zeros(length).astype(np.int32)
+    if length < 2:
+        return T
+    for i in range(1, length):
+        T[i] = (T[i - 1] + 1) if (signals[i] != 1) else 0
+    return T
+
+
 @jit(nopython=True, nogil=True, cache=True)
 def _sum_split_by(x1, x2, window=10, n=2):
     out1 = np.full(x1.shape[0], np.nan, dtype=np.float64)
