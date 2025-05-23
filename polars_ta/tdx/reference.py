@@ -85,7 +85,7 @@ def DMA(close: Expr, alpha: float = 0.5) -> Expr:
 
     求X的动态移动平均.
     算法:Y=A*X+(1-A)*Y',其中Y'表示上一周期Y值,A必须大于0且小于1.A支持变量"""
-    return close.ewm_mean(alpha=alpha, adjust=False, min_periods=1)
+    return close.ewm_mean(alpha=alpha, adjust=False, min_samples=1)
 
 
 def EMA(close: Expr, N: int = 30) -> Expr:
@@ -113,7 +113,7 @@ def EXPMEMA(close: Expr, N: int = 30) -> Expr:
     """
     sma = MA(close, N)
     x = when(close.cum_count() < N).then(sma).otherwise(close)
-    return x.ewm_mean(span=N, adjust=False, min_periods=1)
+    return x.ewm_mean(span=N, adjust=False, min_samples=1)
 
 
 def HOD(close: Expr, N: int = 30) -> Expr:
@@ -156,7 +156,7 @@ def SMA_CN(X: Expr, N: int, M: int) -> Expr:
 
     !!!为防止与talib版SMA误用，这里去了默认值1
     """
-    return X.ewm_mean(alpha=M / N, adjust=False, min_periods=1)
+    return X.ewm_mean(alpha=M / N, adjust=False, min_samples=1)
 
 
 def SUMIF(condition: Expr, close: Expr, N: int = 30) -> Expr:

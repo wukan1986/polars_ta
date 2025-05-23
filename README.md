@@ -51,7 +51,7 @@ df = df.with_columns([
 ])
 ```
 
-When both `min_periods` and `MIN_SAMPLES` are set, `min_periods` takes precedence. default value is `None`.
+When both `min_samples` and `MIN_SAMPLES` are set, `min_samples` takes precedence. default value is `None`.
 
 ```python
 import polars_ta
@@ -154,7 +154,7 @@ df = df.with_columns([
 ])
 ```
 
-当`min_periods`和`MIN_SAMPLES`都设置时，以`min_periods`为准，默认值为`None`
+当`min_samples`和`MIN_SAMPLES`都设置时，以`min_samples`为准，默认值为`None`
 
 ```python
 import polars_ta

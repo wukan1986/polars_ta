@@ -39,7 +39,7 @@ def EMA(close: Expr, timeperiod: int = 30) -> Expr:
 
     """
     # 相当于alpha=2/(1+timeperiod)
-    return close.ewm_mean(span=timeperiod, adjust=False, min_periods=timeperiod)
+    return close.ewm_mean(span=timeperiod, adjust=False, min_samples=timeperiod)
 
 
 def KAMA(close: Expr, timeperiod: int = 30) -> Expr:
@@ -78,7 +78,7 @@ def RMA(close: Expr, timeperiod: int = 30) -> Expr:
     https://github.com/twopirllc/pandas-ta/blob/main/pandas_ta/overlap/rma.py
 
     """
-    return close.ewm_mean(alpha=1 / timeperiod, adjust=False, min_periods=timeperiod)
+    return close.ewm_mean(alpha=1 / timeperiod, adjust=False, min_samples=timeperiod)
 
 
 def TEMA(close: Expr, timeperiod: int = 30) -> Expr:
