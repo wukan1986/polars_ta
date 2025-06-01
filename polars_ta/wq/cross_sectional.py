@@ -211,6 +211,16 @@ def cs_fill_mean(x: Expr) -> Expr:
     return x.fill_null(strategy='mean')
 
 
+def cs_fill_max(x: Expr) -> Expr:
+    """横截面上，填充`null`为最大值"""
+    return x.fill_null(strategy='max')
+
+
+def cs_fill_min(x: Expr) -> Expr:
+    """横截面上，填充`null`为最大值"""
+    return x.fill_null(strategy='min')
+
+
 def cs_fill_null(x: Expr, value: float = 0) -> Expr:
     """横截面上，填充`null`为`value`"""
     return x.fill_null(value)
