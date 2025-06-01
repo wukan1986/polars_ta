@@ -3,7 +3,7 @@ import re
 import polars as pl
 
 
-def with_industry(df: pl.DataFrame, industry_name: str, *, drop_first: bool) -> pl.DataFrame:
+def with_industry(df: pl.DataFrame, industry_name: str, drop_first: bool) -> pl.DataFrame:
     """添加行业哑元变量
 
     Parameters
