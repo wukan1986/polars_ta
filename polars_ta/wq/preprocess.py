@@ -86,12 +86,12 @@ _ols_kwargs = OLSKwargs(null_policy='drop', solve_method='svd')
 
 
 def cs_resid(y: Expr, *more_x: Expr) -> Expr:
-    """横截面多元回归取残差。y已标准化"""
+    """横截面多元回归取残差"""
     return pls.compute_least_squares(y, *more_x, mode='residuals', ols_kwargs=_ols_kwargs)
 
 
 def cs_zscore_resid(y: Expr, *more_x: Expr) -> Expr:
-    """横截面标准化、中性化。y已去极值"""
+    """横截面标准化、中性化"""
     return cs_resid(cs_zscore(y), *more_x)
 
 

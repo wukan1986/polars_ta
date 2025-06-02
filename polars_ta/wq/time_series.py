@@ -12,7 +12,9 @@ from polars_ta.wq._nb import roll_argmax, roll_argmin, roll_co_kurtosis, roll_co
 
 
 def ts_arg_max(x: Expr, d: int = 5, reverse: bool = True, min_samples: Optional[int] = None) -> Expr:
-    """窗口内最大值出现的相对位置，最近的一天记为第 0 天，最远的一天为第 d-1 天
+    """最大值相对位置
+
+    最近的一天记为第 0 天，最远的一天为第 d-1 天
 
     Returns the relative index of the max value in the time series for the past d days.
     If the current day has the max value for the past d days, it returns 0.
@@ -63,7 +65,9 @@ def ts_arg_max(x: Expr, d: int = 5, reverse: bool = True, min_samples: Optional[
 
 
 def ts_arg_min(x: Expr, d: int = 5, reverse: bool = True, min_samples: Optional[int] = None) -> Expr:
-    """窗口内最小值出现的相对位置，最近的一天记为第 0 天，最远的一天为第 d-1 天
+    """最小值相对位置
+
+    最近的一天记为第 0 天，最远的一天为第 d-1 天
 
     Parameters
     ----------
@@ -753,7 +757,7 @@ def ts_returns(x: Expr, d: int = 1) -> Expr:
 
 
 def ts_scale(x: Expr, d: int = 5, min_samples: Optional[int] = None) -> Expr:
-    """时序滚动缩放
+    """时序滚动缩放。相当于ts_minmax
 
     Returns (x – ts_min(x, d)) / (ts_max(x, d) – ts_min(x, d)) + constant
 

@@ -84,21 +84,26 @@ def codegen_import_as(module: str,
     return txts
 
 
-# 过滤一些很少用到的函数，最好控制在5000字内（百度5000字限制）
+# 过滤一些很少用到的函数，最好控制在5000字内（百度5000字限制）。部分智能体只支持1000字符
 lines = []
 lines += codegen_import_as('polars_ta.wq.arithmetic',
                            exclude_func=['add', 'subtract', 'multiply', 'div', 'divide', 'reverse', 'inverse', "mean",
                                          'arc_cos', 'arc_sin', 'arc_tan', 'arc_tan2', 'cot', 'cosh', 'tanh', 'sinh', 'degrees', 'radians',
-                                         's_log_1p', 'softsign', 'log2',
+                                         's_log_1p', 'softsign', 'log2', "expm1",
                                          ])
 lines += codegen_import_as('polars_ta.wq.time_series',
                            exclude_func=['ts_co_kurtosis', 'ts_co_skewness', 'ts_count_nans', 'ts_count_nulls',
                                          'ts_cum_prod', 'ts_cum_prod_by', 'ts_cum_sum', 'ts_cum_sum_by', 'ts_cum_sum_reset',
-                                         "ts_min_max_cps", "ts_min_max_diff", "ts_signals_to_size", 'ts_sum_split_by'])
+                                         "ts_min_max_cps", "ts_min_max_diff", "ts_signals_to_size", 'ts_sum_split_by',
+                                         "ts_cum_count", "ts_cum_max", "ts_cum_min", "ts_triple_corr", "ts_partial_corr",
+                                         "ts_max_diff", "ts_min_diff",
+                                         ])
 lines += codegen_import_as('polars_ta.wq.cross_sectional',
-                           exclude_func=['cs_fill_except_all_null', 'cs_fill_mean', 'cs_fill_null', 'cs_top_bottom', 'cs_one_side'])
+                           exclude_func=['cs_fill_except_all_null', 'cs_fill_mean', 'cs_fill_max', 'cs_fill_min',
+                                         'cs_top_bottom', 'cs_one_side',
+                                         'cs_regression_neut', 'cs_regression_proj', 'cs_scale_down', 'cs_truncate'])
 lines += codegen_import_as('polars_ta.wq.preprocess',
-                           exclude_func=['cs_mad_rank', 'cs_mad_rank2', 'cs_mad_rank2_resid', 'cs_mad_zscore', 'cs_mad_zscore_resid', 'cs_rank2'])
+                           exclude_func=['cs_mad_zscore', 'cs_mad_zscore_resid', 'cs_mad_zscore_resid_zscore', 'cs_zscore_resid'])
 lines += codegen_import_as('polars_ta.wq.logical',
                            include_func=['if_else', ])
 lines += codegen_import_as('polars_ta.wq.transformational',

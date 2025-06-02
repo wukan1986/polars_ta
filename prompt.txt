@@ -13,7 +13,7 @@
 ## 基础因子
 - 价格因子: OPEN, HIGH, LOW, CLOSE, VWAP
 - 成交量因子: VOLUME, AMOUNT, TURNOVER
-- 市值因子: MARKET_CAP
+- 市值因子: MARKET_CAP, PB, PE
 
 ## 内置算子
 
@@ -24,7 +24,6 @@
 - cos(x) : 余弦
 - cube(x) : 立方
 - exp(x) : 自然指数函数
-- expm1(x) : 对数收益率 转 简单收益率
 - floor(x) : 向下取整
 - fraction(x) : 小数部分
 - log(x) : 以e为底的对数
@@ -45,14 +44,11 @@
 - tan(x) : 正切
 - var(a,b,*args) : 水平多列求方差
 ### polars_ta.wq.time_series
-- ts_arg_max(x,d:int=5,reverse:bool=True) : 窗口内最大值出现的相对位置，最近的一天记为第 0 天，最远的一天为第 d-1 天
-- ts_arg_min(x,d:int=5,reverse:bool=True) : 窗口内最小值出现的相对位置，最近的一天记为第 0 天，最远的一天为第 d-1 天
+- ts_arg_max(x,d:int=5,reverse:bool=True) : 最大值相对位置
+- ts_arg_min(x,d:int=5,reverse:bool=True) : 最小值相对位置
 - ts_corr(x,y,d:int=5,ddof:int=1) : 时序滚动相关系数
 - ts_count(x,d:int=30) : 时序滚动计数
 - ts_covariance(x,y,d:int=5,ddof:int=1) : 时序滚动协方差
-- ts_cum_count(x) : 时序累计计数
-- ts_cum_max(x) : 时序累计最大值
-- ts_cum_min(x) : 时序累计最小值
 - ts_decay_exp_window(x,d:int=30,factor:float=1.0) : 指数衰减移动平均
 - ts_decay_linear(x,d:int=30) : 线性衰减移动平均
 - ts_delay(x,d:int=1,fill_value:float=None) : 时序数据移动
@@ -63,13 +59,10 @@
 - ts_l2_norm(x,d:int=5) : 欧几里得范数
 - ts_log_diff(x,d:int=1) : 求对数，然后时序滚动差分
 - ts_max(x,d:int=30) : 时序滚动最大值
-- ts_max_diff(x,d:int=30) : 窗口内最大值与当前值的差异‌
 - ts_mean(x,d:int=5) : 简单移动平均
 - ts_median(x,d:int=5) : 时序滚动中位数
 - ts_min(x,d:int=30) : 时序滚动最小值
-- ts_min_diff(x,d:int=30) : 窗口内最小值与当前值的差异‌
 - ts_moment(x,d:int,k:int=0) : 滚动k阶中心距
-- ts_partial_corr(x,y,z,d:int) : 滚动偏相关
 - ts_percentage(x,d:int,percentage:float=0.5) : 滚动百分位数
 - ts_pred(y,*more_x,d:int=30) : 多元时序滚动回归预测
 - ts_product(x,d:int=5) : 时序滚动乘
@@ -81,29 +74,25 @@
 - ts_regression_slope(y,x,d:int) : 时序滚动回归取斜率
 - ts_resid(y,*more_x,d:int=30) : 多元时序滚动回归取残差
 - ts_returns(x,d:int=1) : 简单收益率
-- ts_scale(x,d:int=5) : 时序滚动缩放
+- ts_scale(x,d:int=5) : 时序滚动缩放。相当于ts_minmax
 - ts_skewness(x,d:int=5,bias:bool=False) : 时序滚动偏度
 - ts_std_dev(x,d:int=5,ddof:int=0) : 时序滚动标准差
 - ts_sum(x,d:int=30) : 时序滚动求和
-- ts_triple_corr(x,y,z,d:int) : 时序滚动三重相关系数
 - ts_weighted_decay(x,k:float=0.5) : 时序滚动加权衰减求和
 - ts_weighted_mean(x,w,d:int) : 时序滚动加权平均
 - ts_weighted_sum(x,w,d:int) : 时序滚动加权求和
 - ts_zscore(x,d:int=5) : 时序滚动zscore
 ### polars_ta.wq.cross_sectional
+- cs_fill_null(x,value:float=0) : 横截面上，填充`null`为`value`
 - cs_qcut(x,q:int=10) : 横截面上等频分箱
-- cs_rank(x,pct:bool=True) : 横截面排名。
-- cs_regression_neut(y,x) : 横截面上，一元回归残差
-- cs_regression_proj(y,x) : 横截面上，一元回归预测
-- cs_scale(x,scale_:float=1,long_scale:float=1,short_scale:float=1) : 横截面上，将输入数据进行比例调整。此外，可通过向运算符添加额外参数，将多头头寸和空头头寸分别映射到独立的缩放比例上
-- cs_scale_down(x,constant:int=0) : 横截面上，将每日数据按比例缩放至 [0,1] 区间，使得最小值映射为 0，最大值映射为 1，并通过减去常数偏移量调整最终结果
-- cs_truncate(x,max_percent:float=0.01) : 横截面上，将所有 x 的取值截断至 maxPercent 指定的上限值，其中 maxPercent 需以十进制小数形式表示
+- cs_rank(x,pct:bool=True) : 横截面排名
+- cs_scale(x,scale_:float=1,long_scale:float=1,short_scale:float=1) : 横截面上，将输入数据进行比例调整
 ### polars_ta.wq.preprocess
 - cs_3sigma(x,n:float=3.0) : 横截面3倍sigma去极值
 - cs_demean(x) : 横截面去均值化
 - cs_mad(x,n:float=3.0,k:float=1.4826) : 横截面MAD去极值
 - cs_minmax(x) : 横截面minmax标准化
-- cs_quantile(x,low_limit:float=0.025,up_limit:float=0.995) : 横截面分位数去极值
+- cs_quantile(x,low_limit:float=0.025,up_limit:float=0.975) : 横截面分位数去极值
 - cs_resid(y,*more_x) : 横截面多元回归取残差
 - cs_zscore(x,ddof:int=0) : 横截面zscore标准化
 ### polars_ta.wq.logical

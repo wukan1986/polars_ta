@@ -56,7 +56,9 @@ def cs_one_side(x: Expr, is_long: bool = True) -> Expr:
 
 
 def cs_scale(x: Expr, scale_: float = 1, long_scale: float = 1, short_scale: float = 1) -> Expr:
-    """横截面上，将输入数据进行比例调整。此外，可通过向运算符添加额外参数，将多头头寸和空头头寸分别映射到独立的缩放比例上
+    """横截面上，将输入数据进行比例调整
+
+    此外，可通过向运算符添加额外参数，将多头头寸和空头头寸分别映射到独立的缩放比例上
 
     Scales input to booksize. We can also scale the long positions and short positions to separate scales by mentioning additional parameters to the operator.
 
@@ -217,7 +219,7 @@ def cs_fill_max(x: Expr) -> Expr:
 
 
 def cs_fill_min(x: Expr) -> Expr:
-    """横截面上，填充`null`为最大值"""
+    """横截面上，填充`null`为最小值"""
     return x.fill_null(strategy='min')
 
 
@@ -237,7 +239,7 @@ def cs_regression_proj(y: Expr, x: Expr) -> Expr:
 
 
 def cs_rank(x: Expr, pct: bool = True) -> Expr:
-    """横截面排名。
+    """横截面排名
 
     Ranks the input among all the instruments and returns an equally distributed number between 0.0 and 1.0. For precise sort, use the rate as 0.
 
