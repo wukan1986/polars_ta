@@ -6,7 +6,7 @@ MC_LOG = cs_quantile(log1p(market_cap), 0.01, 0.99)
 # 对数市值。标准化。供其他因子市值中性化时使用
 MC_NORM = cs_zscore(MC_LOG)
 # 对数市值。行业中性化。直接作为因子使用
-MC_NEUT = cs_resid_zscore(MC_NORM, CS_SW_L1, ONE)
+MC_NEUT = cs_zscore(cs_resid(MC_NORM, CS_SW_L1, ONE))
 
 """
 import polars_ols as pls
@@ -86,13 +86,18 @@ _ols_kwargs = OLSKwargs(null_policy='drop', solve_method='svd')
 
 
 def cs_resid(y: Expr, *more_x: Expr) -> Expr:
-    """横截面多元回归取残差"""
+    """横截面多元回归取残差。y已标准化"""
     return pls.compute_least_squares(y, *more_x, mode='residuals', ols_kwargs=_ols_kwargs)
 
 
 def cs_zscore_resid(y: Expr, *more_x: Expr) -> Expr:
-    """横截面标准化、中性化。y已经去极值了"""
+    """横截面标准化、中性化。y已去极值"""
     return cs_resid(cs_zscore(y), *more_x)
+
+
+def cs_mad_zscore(y: Expr) -> Expr:
+    """横截面去极值、标准化"""
+    return cs_zscore(cs_mad(y))
 
 
 def cs_mad_zscore_resid(y: Expr, *more_x: Expr) -> Expr:
