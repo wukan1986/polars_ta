@@ -1,21 +1,17 @@
 """
-graph LR
-A[原始因子] --> B[去极值] --> C[中性化] --> D[标准化] --> E[最终因子]
+补空值 → 去极值 → 标准化 → 中性化 → 标准化（可选二次标准化）
 
 # 对数市值。去极值
 MC_LOG = cs_quantile(log1p(market_cap), 0.01, 0.99)
 # 对数市值。标准化。供其他因子市值中性化时使用
 MC_NORM = cs_zscore(MC_LOG)
 # 对数市值。行业中性化。直接作为因子使用
-MC_NEUT = cs_zscore(cs_resid(MC_NORM, CS_SW_L1, ONE))
-
+MC_NEUT = cs_resid_zscore(MC_NORM, CS_SW_L1, ONE)
 
 """
 import polars_ols as pls
 from polars import Expr, when
 from polars_ols.least_squares import OLSKwargs
-
-from polars_ta.wq.cross_sectional import cs_rank
 
 
 # ======================
@@ -94,47 +90,16 @@ def cs_resid(y: Expr, *more_x: Expr) -> Expr:
     return pls.compute_least_squares(y, *more_x, mode='residuals', ols_kwargs=_ols_kwargs)
 
 
-def cs_mad_zscore(y: Expr) -> Expr:
-    """横截面MAD去极值、标准化"""
-    return cs_zscore(cs_mad(y))
+def cs_zscore_resid(y: Expr, *more_x: Expr) -> Expr:
+    """横截面标准化、中性化。y已经去极值了"""
+    return cs_resid(cs_zscore(y), *more_x)
 
 
-def cs_quantile_zscore(x: Expr, low_limit: float = 0.01, up_limit: float = 0.99) -> Expr:
-    """横截面分位数去极值、标准化"""
-    return cs_zscore(cs_quantile(x, low_limit, up_limit))
+def cs_mad_zscore_resid(y: Expr, *more_x: Expr) -> Expr:
+    """横截面去极值、标准化、中性化"""
+    return cs_resid(cs_zscore(cs_mad(y)), *more_x)
 
 
-def cs_mad_resid_zscore(y: Expr, *more_x: Expr) -> Expr:
-    """横截面去极值、中性化、标准化"""
-    return cs_zscore(cs_resid(cs_mad(y), *more_x))
-
-
-def cs_resid_zscore(y: Expr, *more_x: Expr) -> Expr:
-    """横截面中性化、标准化"""
-    return cs_zscore(cs_resid(y, *more_x))
-
-
-def cs_mad_rank(y: Expr) -> Expr:
-    """横截面去极值、排名"""
-    return cs_rank(cs_mad(y))
-
-#
-# def cs_mad_rank2(y: Expr, m: float) -> Expr:
-#     """横截面去极值，排名，移动峰或谷到零点，然后平方。非线性处理
-#
-#     适合于分层收益V型或倒V的情况"""
-#     return (cs_rank(cs_mad(y)) - m) ** 2
-#
-#
-# def cs_mad_rank2_resid(y: Expr, m: float, *more_x: Expr) -> Expr:
-#     """横截面去极值，排名，移动峰或谷到零点，然后平方。回归取残差。非线性处理
-#
-#     适合于分层收益V型或倒V的情况"""
-#     return cs_resid((cs_rank(cs_mad(y)) - m) ** 2, *more_x)
-#
-#
-# def cs_rank2(y: Expr, m: float) -> Expr:
-#     """横截面移动峰或谷到零点，然后平方。非线性处理
-#
-#     适合于分层收益V型或倒V的情况"""
-#     return (cs_rank(y) - m) ** 2
+def cs_mad_zscore_resid_zscore(y: Expr, *more_x: Expr) -> Expr:
+    """横截面去极值、标准化、中性化、二次标准化"""
+    return cs_zscore(cs_resid(cs_zscore(cs_mad(y)), *more_x))
