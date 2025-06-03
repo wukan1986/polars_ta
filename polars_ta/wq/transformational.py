@@ -215,6 +215,11 @@ def sigmoid(x: Expr) -> Expr:
     return 1 / (1 + (-x).exp())
 
 
+def logit(x: Expr) -> Expr:
+    """对数几率，拉伸中间部分"""
+    return (x / (1 + x)).log()
+
+
 def tail(x: Expr, lower: float = 0, upper: float = 0, newval: float = 0) -> Expr:
     """If (x > lower AND x < upper) return newval, else return x. Lower, upper, newval should be constants.
 

@@ -80,3 +80,6 @@ def vec_stddev(x: Expr) -> Expr:
 def vec_sum(x: Expr) -> Expr:
     """Sum of vector field x"""
     return x.sum()
+
+def vec_median(x: Expr) -> Expr:
+    return x.median()

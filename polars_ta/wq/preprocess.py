@@ -1,5 +1,6 @@
 """
-补空值 → 去极值 → 标准化 → 中性化 → 标准化（可选二次标准化）
+1. 补空值 → 去极值 → 标准化 → 中性化 → 标准化（可选二次标准化）
+2. 补空值 → 去极值 → 中性化 → 标准化
 
 # 对数市值。去极值
 MC_LOG = cs_quantile(log1p(market_cap), 0.01, 0.99)
@@ -95,16 +96,26 @@ def cs_zscore_resid(y: Expr, *more_x: Expr) -> Expr:
     return cs_resid(cs_zscore(y), *more_x)
 
 
+def cs_resid_zscore(y: Expr, *more_x: Expr) -> Expr:
+    """横截面中性化、标准化"""
+    return cs_resid(cs_zscore(y), *more_x)
+
+
 def cs_mad_zscore(y: Expr) -> Expr:
-    """横截面去极值、标准化"""
+    """横截面MAD去极值、标准化"""
     return cs_zscore(cs_mad(y))
 
 
 def cs_mad_zscore_resid(y: Expr, *more_x: Expr) -> Expr:
-    """横截面去极值、标准化、中性化"""
+    """横截面MAD去极值、标准化、中性化"""
     return cs_resid(cs_zscore(cs_mad(y)), *more_x)
 
 
 def cs_mad_zscore_resid_zscore(y: Expr, *more_x: Expr) -> Expr:
-    """横截面去极值、标准化、中性化、二次标准化"""
+    """横截面去MAD极值、标准化、中性化、二次标准化"""
     return cs_zscore(cs_resid(cs_zscore(cs_mad(y)), *more_x))
+
+
+def cs_quantile_zscore(y: Expr, low_limit: float = 0.025, up_limit: float = 0.975) -> Expr:
+    """横截面分位数去极值、标准化"""
+    return cs_zscore(cs_quantile(y, low_limit, up_limit))

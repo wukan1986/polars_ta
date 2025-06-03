@@ -7,6 +7,7 @@ from polars_ta.wq.vector import vec_ir as cs_vec_ir  # noqa
 from polars_ta.wq.vector import vec_kurtosis as cs_vec_kurtosis  # noqa
 from polars_ta.wq.vector import vec_l2_norm as cs_vec_l2_norm  # noqa
 from polars_ta.wq.vector import vec_max as cs_vec_max  # noqa
+from polars_ta.wq.vector import vec_median as cs_vec_median  # noqa
 from polars_ta.wq.vector import vec_min as cs_vec_min  # noqa
 from polars_ta.wq.vector import vec_norm as cs_vec_norm  # noqa
 from polars_ta.wq.vector import vec_percentage as cs_vec_percentage  # noqa
