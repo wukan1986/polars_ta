@@ -252,7 +252,6 @@ def cs_rank(x: Expr, pct: bool = True) -> Expr:
 
     Examples
     --------
-
     ```python
     df = pl.DataFrame({
         'a': [None, 1, 1, 1, 2, 2, 3, 10],
@@ -288,6 +287,37 @@ def cs_rank(x: Expr, pct: bool = True) -> Expr:
         return r / max_horizontal(r.max(), 1)
     else:
         return x.rank(method='dense')
+
+
+def cs_rank_if(condition: Expr, x: Expr, pct: bool = True) -> Expr:
+    """动态票池过滤排名
+
+    Parameters
+    ----------
+    condition:Expr
+        条件
+    x:Expr
+        因子
+    pct:bool
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, 1, 1, 1, 2, 2, 3, 10],
+        'b': [1, 2, 3, 4, 5, 6, 7, 8],
+    }).with_columns(
+        out1=cs_rank_if(True, pl.col('a'), True), # 与cs_rank等价
+        out2=cs_rank_if(pl.col('b') > 3, -pl.col('a'), False),
+    )
+    ```
+
+    Notes
+    -----
+    已经产生了新的None，尽量避免之后再进行ts_时序计算
+
+    """
+    return cs_rank(when(condition).then(x).otherwise(None), pct)
 
 
 def _cs_qcut_rank(x: Expr, q: int = 10) -> Expr:
