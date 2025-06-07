@@ -310,6 +310,22 @@ def cs_rank_if(condition: Expr, x: Expr, pct: bool = True) -> Expr:
         out1=cs_rank_if(True, pl.col('a'), True), # 与cs_rank等价
         out2=cs_rank_if(pl.col('b') > 3, -pl.col('a'), False),
     )
+
+    shape: (8, 4)
+    ┌──────┬─────┬──────────┬──────┐
+    │ a    ┆ b   ┆ out1     ┆ out2 │
+    │ ---  ┆ --- ┆ ---      ┆ ---  │
+    │ i64  ┆ i64 ┆ f64      ┆ u32  │
+    ╞══════╪═════╪══════════╪══════╡
+    │ null ┆ 1   ┆ null     ┆ null │
+    │ 1    ┆ 2   ┆ 0.0      ┆ null │
+    │ 1    ┆ 3   ┆ 0.0      ┆ null │
+    │ 1    ┆ 4   ┆ 0.0      ┆ 4    │
+    │ 2    ┆ 5   ┆ 0.333333 ┆ 3    │
+    │ 2    ┆ 6   ┆ 0.333333 ┆ 3    │
+    │ 3    ┆ 7   ┆ 0.666667 ┆ 2    │
+    │ 10   ┆ 8   ┆ 1.0      ┆ 1    │
+    └──────┴─────┴──────────┴──────┘
     ```
 
     Notes
