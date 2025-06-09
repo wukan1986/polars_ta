@@ -2,6 +2,7 @@
 Demo for using numba to implement rolling functions.
 本文件是使用numba实现rolling的函数，演示用
 """
+from functools import lru_cache
 from typing import List
 
 import numpy as np
@@ -160,3 +161,12 @@ def roll_sum(x: Expr, n: int) -> Expr:
 
 def roll_cov(a: Expr, b: Expr, n: int) -> Expr:
     return struct([a, b]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2), nb_roll_cov, n))
+
+
+@lru_cache
+@jit(nopython=True, nogil=True, fastmath=True, cache=True)
+def get_exponent_weights(
+        window: int = 10,
+        half_life: int = 5,
+) -> np.ndarray:
+    return np.repeat(0.5 ** (1 / half_life), window) ** np.arange(window - 1, -1, -1)

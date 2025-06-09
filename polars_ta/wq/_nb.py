@@ -312,7 +312,13 @@ def _signals_to_size(is_long_entry: np.ndarray, is_long_exit: np.ndarray,
 
 
 @jit(nopython=True, nogil=True, cache=True)
-def roll_decay_linear(x1, window, min_periods):
+def _roll_decay_linear(x1, window, min_periods):
+    """
+    def ts_decay_linear(x: Expr, d: int = 30, min_samples: Optional[int] = None) -> Expr:
+        minp = min_samples or polars_ta.MIN_SAMPLES or d
+        return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _roll_decay_linear, d, minp))
+
+    """
     weights = np.arange(1., window + 1)
 
     out1 = full_with_window_size(x1, np.nan, dtype=np.float64, window_size=window)
@@ -327,7 +333,13 @@ def roll_decay_linear(x1, window, min_periods):
 
 
 @jit(nopython=True, nogil=True, cache=True)
-def roll_decay_exp_window(x1, window, min_periods, factor):
+def _roll_decay_exp_window(x1, window, min_periods, factor):
+    """
+    def ts_decay_exp_window(x: Expr, d: int = 30, factor: float = 1.0, min_samples: Optional[int] = None) -> Expr:
+        minp = min_samples or polars_ta.MIN_SAMPLES or d
+        return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _roll_decay_exp_window, d, minp, factor))
+
+    """
     weights = factor ** np.arange(window - 1, -1, -1)
 
     out1 = full_with_window_size(x1, np.nan, dtype=np.float64, window_size=window)

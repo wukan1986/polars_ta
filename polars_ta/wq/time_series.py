@@ -1,5 +1,6 @@
 from typing import Optional
 
+import numpy as np
 import polars_ols as pls
 from polars import Expr, UInt16, struct, when, Struct, Field, Float64, Boolean, UInt32
 from polars import rolling_corr, rolling_cov
@@ -8,7 +9,7 @@ from polars_ols import RollingKwargs
 import polars_ta
 from polars_ta.utils.numba_ import batches_i1_o1, batches_i2_o1, batches_i2_o2, struct_to_numpy
 from polars_ta.utils.pandas_ import roll_rank
-from polars_ta.wq._nb import roll_argmax, roll_argmin, roll_co_kurtosis, roll_co_skewness, roll_moment, roll_partial_corr, roll_triple_corr, _cum_prod_by, _cum_sum_by, _signals_to_size, _cum_sum_reset, _sum_split_by, roll_decay_linear, roll_decay_exp_window, roll_prod
+from polars_ta.wq._nb import roll_argmax, roll_argmin, roll_co_kurtosis, roll_co_skewness, roll_moment, roll_partial_corr, roll_triple_corr, _cum_prod_by, _cum_sum_by, _signals_to_size, _cum_sum_reset, _sum_split_by, roll_prod
 
 
 def ts_arg_max(x: Expr, d: int = 5, reverse: bool = True, min_samples: Optional[int] = None) -> Expr:
@@ -448,12 +449,11 @@ def ts_decay_exp_window(x: Expr, d: int = 30, factor: float = 1.0, min_samples: 
     https://platform.worldquantbrain.com/learn/operators/detailed-operator-descriptions#ts_decay_exp_windowx-d-factor-10-nan-true
 
     """
-    # y = arange(d - 1, -1, step=-1, eager=False)
-    # weights = repeat(factor, d, eager=True).pow(y)
+    minp = min_samples or polars_ta.MIN_SAMPLES
+    weights = np.repeat(factor, d) ** np.arange(d - 1, -1, -1)
     # print(weights)
-    # return x.rolling_mean(d, weights=weights)
-    minp = min_samples or polars_ta.MIN_SAMPLES or d
-    return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), roll_decay_exp_window, d, minp, factor))
+    # pyo3_runtime.PanicException: weights not yet supported on array with null values
+    return x.fill_null(np.nan).rolling_mean(d, weights=weights, min_samples=minp).fill_nan(None)
 
 
 def ts_decay_linear(x: Expr, d: int = 30, min_samples: Optional[int] = None) -> Expr:
@@ -492,12 +492,12 @@ def ts_decay_linear(x: Expr, d: int = 30, min_samples: Optional[int] = None) -> 
     https://platform.worldquantbrain.com/learn/operators/detailed-operator-descriptions#ts_decay_linearx-d-dense-false
 
     """
-    # # weights not yet supported on array with null values
-    # weights = arange(1, d + 1, eager=True)
-    # # print(weights)
-    # return x.rolling_mean(d, weights=weights)
-    minp = min_samples or polars_ta.MIN_SAMPLES or d
-    return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), roll_decay_linear, d, minp))
+    minp = min_samples or polars_ta.MIN_SAMPLES
+    weights = np.arange(1, d + 1)
+    # print(weights)
+    # pyo3_runtime.PanicException: weights not yet supported on array with null values
+    # null换成NaN就不报错了，再换回来
+    return x.fill_null(np.nan).rolling_mean(d, weights=weights, min_samples=minp).fill_nan(None)
 
 
 def ts_delay(x: Expr, d: int = 1, fill_value: float = None) -> Expr:
