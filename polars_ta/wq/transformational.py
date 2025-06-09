@@ -275,3 +275,8 @@ def bool_(a: Expr) -> Expr:
 def float_(a: Expr) -> Expr:
     """int转成float"""
     return a.cast(Float32)
+
+
+def nop(x: Expr) -> Expr:
+    """空操作"""
+    return x

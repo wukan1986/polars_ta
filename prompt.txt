@@ -86,6 +86,7 @@
 - cs_fill_null(x,value:float=0) : 横截面上，填充`null`为`value`
 - cs_qcut(x,q:int=10) : 横截面上等频分箱
 - cs_rank(x,pct:bool=True) : 横截面排名
+- cs_rank_if(condition,x,pct:bool=True) : 横截面筛选排名。可实现动态票池
 - cs_scale(x,scale_:float=1,long_scale:float=1,short_scale:float=1) : 横截面上，将输入数据进行比例调整
 ### polars_ta.wq.preprocess
 - cs_3sigma(x,n:float=3.0) : 横截面3倍sigma去极值
@@ -93,7 +94,9 @@
 - cs_mad(x,n:float=3.0,k:float=1.4826) : 横截面MAD去极值
 - cs_minmax(x) : 横截面minmax标准化
 - cs_quantile(x,low_limit:float=0.025,up_limit:float=0.975) : 横截面分位数去极值
+- cs_quantile_zscore(y,low_limit:float=0.025,up_limit:float=0.975) : 横截面分位数去极值、标准化
 - cs_resid(y,*more_x) : 横截面多元回归取残差
+- cs_resid_zscore(y,*more_x) : 横截面中性化、标准化
 - cs_zscore(x,ddof:int=0) : 横截面zscore标准化
 ### polars_ta.wq.logical
 - if_else(condition,true_value,false_value=None) : 条件判断

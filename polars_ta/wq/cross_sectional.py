@@ -290,7 +290,7 @@ def cs_rank(x: Expr, pct: bool = True) -> Expr:
 
 
 def cs_rank_if(condition: Expr, x: Expr, pct: bool = True) -> Expr:
-    """动态票池过滤排名
+    """横截面筛选排名。可实现动态票池
 
     Parameters
     ----------
@@ -299,6 +299,7 @@ def cs_rank_if(condition: Expr, x: Expr, pct: bool = True) -> Expr:
     x:Expr
         因子
     pct:bool
+        排名百分比。范围：[0,1]
 
     Examples
     --------
