@@ -119,3 +119,12 @@ def cs_mad_zscore_resid_zscore(y: Expr, *more_x: Expr) -> Expr:
 def cs_quantile_zscore(y: Expr, low_limit: float = 0.025, up_limit: float = 0.975) -> Expr:
     """横截面分位数去极值、标准化"""
     return cs_zscore(cs_quantile(y, low_limit, up_limit))
+
+
+# ==========================
+def cs_resid_w(w: Expr, y: Expr, *more_x: Expr) -> Expr:
+    """横截面加权多元回归取残差
+
+    Barra中权重采用流通市值的平方根
+    """
+    return pls.compute_least_squares(y, *more_x, sample_weights=w, mode='residuals', ols_kwargs=_ols_kwargs)
