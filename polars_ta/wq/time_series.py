@@ -2,14 +2,51 @@ from typing import Optional
 
 import numpy as np
 import polars_ols as pls
-from polars import Expr, UInt16, struct, when, Struct, Field, Float64, Boolean, UInt32
+from polars import Expr, UInt16, struct, when, Struct, Field, Float64, Boolean, UInt32, all_horizontal
 from polars import rolling_corr, rolling_cov
 from polars_ols import RollingKwargs
 
 import polars_ta
 from polars_ta.utils.numba_ import batches_i1_o1, batches_i2_o1, batches_i2_o2, struct_to_numpy
 from polars_ta.utils.pandas_ import roll_rank
-from polars_ta.wq._nb import roll_argmax, roll_argmin, roll_co_kurtosis, roll_co_skewness, roll_moment, roll_partial_corr, roll_triple_corr, _cum_prod_by, _cum_sum_by, _signals_to_size, _cum_sum_reset, _sum_split_by, roll_prod
+from polars_ta.wq._nb import roll_argmax, roll_argmin, roll_co_kurtosis, roll_co_skewness, roll_moment, roll_partial_corr, roll_triple_corr, _cum_prod_by, _cum_sum_by, _signals_to_size, \
+    _cum_sum_reset, _sum_split_by, roll_prod
+
+
+def ts_all(*args):
+    """时序上按顺序进行平移，然后逻辑与
+
+    能一定程度上简化代码
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, True, True, True, True, True],
+        'b': [None, False, True, True, True, True],
+        'c': [None, False, False, True, True, True],
+    }).with_columns(
+        out1=ts_all(pl.col('a'), pl.col('b'), pl.col('c')),
+        out2=pl.col('a').shift(2) & pl.col('b').shift(1) & pl.col('c').shift(0),
+    )
+
+    shape: (6, 5)
+    ┌──────┬───────┬───────┬───────┬───────┐
+    │ a    ┆ b     ┆ c     ┆ out1  ┆ out2  │
+    │ ---  ┆ ---   ┆ ---   ┆ ---   ┆ ---   │
+    │ bool ┆ bool  ┆ bool  ┆ bool  ┆ bool  │
+    ╞══════╪═══════╪═══════╪═══════╪═══════╡
+    │ null ┆ null  ┆ null  ┆ null  ┆ null  │
+    │ true ┆ false ┆ false ┆ false ┆ false │
+    │ true ┆ true  ┆ false ┆ false ┆ false │
+    │ true ┆ true  ┆ true  ┆ true  ┆ true  │
+    │ true ┆ true  ┆ true  ┆ true  ┆ true  │
+    │ true ┆ true  ┆ true  ┆ true  ┆ true  │
+    └──────┴───────┴───────┴───────┴───────┘
+    ```
+
+    """
+    return all_horizontal([arg.shift(i) for i, arg in enumerate(reversed(args))])
 
 
 def ts_arg_max(x: Expr, d: int = 5, reverse: bool = True, min_samples: Optional[int] = None) -> Expr:
