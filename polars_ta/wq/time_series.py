@@ -203,6 +203,40 @@ def ts_count(x: Expr, d: int = 30, min_samples: Optional[int] = None) -> Expr:
     return x.cast(Boolean).cast(UInt32).rolling_sum(d, min_samples=minp)
 
 
+def ts_count_eq(x: Expr, d: int = 30, n: int = 10, min_samples: Optional[int] = None) -> Expr:
+    """D天内最近连续出现N次
+
+    Parameters
+    ----------
+    x
+    d: int
+        窗口大小
+    n: int
+        连续出现次数
+
+    """
+    minp = min_samples or polars_ta.MIN_SAMPLES
+    xx = x.cast(Boolean).cast(UInt32)
+    return (xx.rolling_sum(n) == n) & (xx.rolling_sum(d, min_samples=minp) == n)
+
+
+def ts_count_ge(x: Expr, d: int = 30, n: int = 10, min_samples: Optional[int] = None) -> Expr:
+    """D天内最近连续出现至少N次
+
+    Parameters
+    ----------
+    x
+    d: int
+        窗口大小
+    n: int
+        至少连续出现次数
+
+    """
+    minp = min_samples or polars_ta.MIN_SAMPLES
+    xx = x.cast(Boolean).cast(UInt32)
+    return (xx.rolling_sum(n) == n) & (xx.rolling_sum(d, min_samples=minp) >= n)
+
+
 def ts_count_nans(x: Expr, d: int = 5, min_samples: Optional[int] = None) -> Expr:
     """时序滚动统计nan出现次数
 
