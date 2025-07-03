@@ -18,6 +18,7 @@ dependencies = [
     "numpy",
     "numba",
     "pandas",
+    "more_itertools",
 ]
 dynamic = ["version"]
 

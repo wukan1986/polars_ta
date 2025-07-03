@@ -1,8 +1,10 @@
+import itertools
 from typing import Optional
 
+import more_itertools
 import numpy as np
 import polars_ols as pls
-from polars import Expr, UInt16, struct, when, Struct, Field, Float64, Boolean, UInt32, all_horizontal
+from polars import Expr, UInt16, struct, when, Struct, Field, Float64, Boolean, UInt32, all_horizontal, any_horizontal
 from polars import rolling_corr, rolling_cov
 from polars_ols import RollingKwargs
 
@@ -11,42 +13,6 @@ from polars_ta.utils.numba_ import batches_i1_o1, batches_i2_o1, batches_i2_o2, 
 from polars_ta.utils.pandas_ import roll_rank
 from polars_ta.wq._nb import roll_argmax, roll_argmin, roll_co_kurtosis, roll_co_skewness, roll_moment, roll_partial_corr, roll_triple_corr, _cum_prod_by, _cum_sum_by, _signals_to_size, \
     _cum_sum_reset, _sum_split_by, roll_prod
-
-
-def ts_all(*args):
-    """时序上按顺序进行平移，然后逻辑与
-
-    能一定程度上简化代码
-
-    Examples
-    --------
-    ```python
-    df = pl.DataFrame({
-        'a': [None, True, True, True, True, True],
-        'b': [None, False, True, True, True, True],
-        'c': [None, False, False, True, True, True],
-    }).with_columns(
-        out1=ts_all(pl.col('a'), pl.col('b'), pl.col('c')),
-        out2=pl.col('a').shift(2) & pl.col('b').shift(1) & pl.col('c').shift(0),
-    )
-
-    shape: (6, 5)
-    ┌──────┬───────┬───────┬───────┬───────┐
-    │ a    ┆ b     ┆ c     ┆ out1  ┆ out2  │
-    │ ---  ┆ ---   ┆ ---   ┆ ---   ┆ ---   │
-    │ bool ┆ bool  ┆ bool  ┆ bool  ┆ bool  │
-    ╞══════╪═══════╪═══════╪═══════╪═══════╡
-    │ null ┆ null  ┆ null  ┆ null  ┆ null  │
-    │ true ┆ false ┆ false ┆ false ┆ false │
-    │ true ┆ true  ┆ false ┆ false ┆ false │
-    │ true ┆ true  ┆ true  ┆ true  ┆ true  │
-    │ true ┆ true  ┆ true  ┆ true  ┆ true  │
-    │ true ┆ true  ┆ true  ┆ true  ┆ true  │
-    └──────┴───────┴───────┴───────┴───────┘
-    ```
-
-    """
-    return all_horizontal([arg.shift(i) for i, arg in enumerate(reversed(args))])
 
 
 def ts_arg_max(x: Expr, d: int = 5, reverse: bool = True, min_samples: Optional[int] = None) -> Expr:
@@ -837,6 +803,137 @@ def ts_scale(x: Expr, d: int = 5, min_samples: Optional[int] = None) -> Expr:
     b = ts_max(x, d, min_samples)
     # return (x - a) / (b - a + TA_EPSILON)
     return when(a != b).then((x - a) / (b - a)).otherwise(0)
+
+
+def ts_shifts_v1(*args) -> Expr:
+    """时序上按顺序进行平移，然后逻辑与
+
+    能一定程度上简化代码
+
+    Parameters
+    ----------
+    args
+        pl.col按照顺序排列
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, False, False, True, True, True],
+        'b': [None, False, True, True, True, True],
+        'c': [None, True, True, True, True, True],
+    }).with_columns(
+        out1=ts_shifts_v1(pl.col('a'), pl.col('b'), pl.col('c')),
+        out2=pl.col('a').shift(0) & pl.col('b').shift(1) & pl.col('c').shift(2),
+    )
+
+    shape: (6, 5)
+    ┌──────┬───────┬───────┬───────┬───────┐
+    │ c    ┆ b     ┆ a     ┆ out1  ┆ out2  │
+    │ ---  ┆ ---   ┆ ---   ┆ ---   ┆ ---   │
+    │ bool ┆ bool  ┆ bool  ┆ bool  ┆ bool  │
+    ╞══════╪═══════╪═══════╪═══════╪═══════╡
+    │ null ┆ null  ┆ null  ┆ null  ┆ null  │
+    │ true ┆ false ┆ false ┆ false ┆ false │
+    │ true ┆ true  ┆ false ┆ false ┆ false │
+    │ true ┆ true  ┆ true  ┆ true  ┆ true  │
+    │ true ┆ true  ┆ true  ┆ true  ┆ true  │
+    │ true ┆ true  ┆ true  ┆ true  ┆ true  │
+    └──────┴───────┴───────┴───────┴───────┘
+    ```
+
+    """
+    return all_horizontal([arg.shift(i) for i, arg in enumerate(args)])
+
+
+def ts_shifts_v2(*args) -> Expr:
+    """时序上按顺序进行平移，然后逻辑与
+
+    Parameters
+    ----------
+    args
+        pl.col, repeat。两个参数循环
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, False, False, True, True, True],
+        'b': [None, False, True, True, True, True],
+        'c': [None, True, True, True, True, True],
+    }).with_columns(
+        out1=ts_shifts_v1(pl.col('a'), pl.col('b'), pl.col('b')),
+        out2=ts_shifts_v2(pl.col('a'), 1, pl.col('b'), 2),
+        out3=pl.col('a').shift(0) & pl.col('b').shift(1) & pl.col('b').shift(2),
+    )
+
+    shape: (6, 6)
+    ┌───────┬───────┬──────┬───────┬───────┬───────┐
+    │ a     ┆ b     ┆ c    ┆ out1  ┆ out2  ┆ out3  │
+    │ ---   ┆ ---   ┆ ---  ┆ ---   ┆ ---   ┆ ---   │
+    │ bool  ┆ bool  ┆ bool ┆ bool  ┆ bool  ┆ bool  │
+    ╞═══════╪═══════╪══════╪═══════╪═══════╪═══════╡
+    │ null  ┆ null  ┆ null ┆ null  ┆ null  ┆ null  │
+    │ false ┆ false ┆ true ┆ false ┆ false ┆ false │
+    │ false ┆ true  ┆ true ┆ false ┆ false ┆ false │
+    │ true  ┆ true  ┆ true ┆ false ┆ false ┆ false │
+    │ true  ┆ true  ┆ true ┆ true  ┆ true  ┆ true  │
+    │ true  ┆ true  ┆ true ┆ true  ┆ true  ┆ true  │
+    └───────┴───────┴──────┴───────┴───────┴───────┘
+    ```
+
+    """
+    return ts_shifts_v1(*itertools.chain.from_iterable([item] * count for item, count in more_itertools.chunked(args, 2)))
+
+
+def ts_shifts_v3(*args) -> Expr:
+    """时序上按顺序进行平移，然后逻辑或
+
+    Parameters
+    ----------
+    args
+        pl.col, start, end。三个参数循环
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [None, False, False, True, True, True],
+        'b': [None, False, True, True, True, True],
+        'c': [None, True, True, True, True, True],
+    }).with_columns(
+        out0=ts_shifts_v3(pl.col('a'), 1, 4, pl.col('b'), 2, 3),
+        out1=ts_shifts_v2(pl.col('a'), 1, pl.col('b'), 2),
+        out2=ts_shifts_v2(pl.col('a'), 2, pl.col('b'), 2),
+        out3=ts_shifts_v2(pl.col('a'), 3, pl.col('b'), 2),
+    ).with_columns(
+        out4=pl.col('out1') | pl.col('out2') | pl.col('out3'),
+    )
+
+    shape: (6, 8)
+    ┌───────┬───────┬──────┬───────┬───────┬───────┬───────┬───────┐
+    │ a     ┆ b     ┆ c    ┆ out0  ┆ out1  ┆ out2  ┆ out3  ┆ out4  │
+    │ ---   ┆ ---   ┆ ---  ┆ ---   ┆ ---   ┆ ---   ┆ ---   ┆ ---   │
+    │ bool  ┆ bool  ┆ bool ┆ bool  ┆ bool  ┆ bool  ┆ bool  ┆ bool  │
+    ╞═══════╪═══════╪══════╪═══════╪═══════╪═══════╪═══════╪═══════╡
+    │ null  ┆ null  ┆ null ┆ null  ┆ null  ┆ null  ┆ null  ┆ null  │
+    │ false ┆ false ┆ true ┆ false ┆ false ┆ false ┆ false ┆ false │
+    │ false ┆ true  ┆ true ┆ false ┆ false ┆ false ┆ false ┆ false │
+    │ true  ┆ true  ┆ true ┆ false ┆ false ┆ false ┆ false ┆ false │
+    │ true  ┆ true  ┆ true ┆ true  ┆ true  ┆ false ┆ false ┆ true  │
+    │ true  ┆ true  ┆ true ┆ true  ┆ true  ┆ true  ┆ false ┆ true  │
+    └───────┴───────┴──────┴───────┴───────┴───────┴───────┴───────┘
+    ```
+
+    """
+    exprs = []
+    ranges = []
+    for a, b, c in more_itertools.chunked(args, 3):
+        exprs.append(a)
+        ranges.append(range(b, c))
+    # 参数整理成col,repeat模式
+    outputs = [itertools.chain.from_iterable(zip(exprs, d)) for d in itertools.product(*ranges)]
+    return any_horizontal(ts_shifts_v2(*_) for _ in outputs)
 
 
 def ts_skewness(x: Expr, d: int = 5, bias: bool = False, min_samples: Optional[int] = None) -> Expr:
