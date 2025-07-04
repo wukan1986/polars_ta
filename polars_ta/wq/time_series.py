@@ -808,7 +808,7 @@ def ts_scale(x: Expr, d: int = 5, min_samples: Optional[int] = None) -> Expr:
 def ts_shifts_v1(*args) -> Expr:
     """时序上按顺序进行平移，然后逻辑与
 
-    能一定程度上简化代码
+    比如今天反包，昨天阴跌，前天涨停。只需要写`ts_shifts_v1(反包,阴跌,涨停)`。使用此函数能一定程度上简化代码
 
     Parameters
     ----------
@@ -843,11 +843,14 @@ def ts_shifts_v1(*args) -> Expr:
     ```
 
     """
-    return all_horizontal([arg.shift(i) for i, arg in enumerate(args)])
+    return all_horizontal(arg.shift(i) for i, arg in enumerate(args))
 
 
 def ts_shifts_v2(*args) -> Expr:
     """时序上按顺序进行平移，然后逻辑与
+
+    遇到连续条件时可简化参数。如连续3天涨停后连续2天跌停，可用`ts_shifts_v2(跌停,2,涨停,3)`
+    另一种实现方法是：`ts_delay((ts_count(涨停,3)==3),2)&(ts_count(跌停,2)==2)`
 
     Parameters
     ----------
@@ -889,10 +892,13 @@ def ts_shifts_v2(*args) -> Expr:
 def ts_shifts_v3(*args) -> Expr:
     """时序上按顺序进行平移，然后逻辑或
 
+    如：涨停后连续下跌1~3天。这个案例会导致涨停可能出现在动态的一天。`ts_shifts_v3(下跌,1,3,涨停,1,1)`
+    它本质上是`ts_shifts_v2(下跌,1,涨停,1)|ts_shifts_v2(下跌,2,涨停,1)|ts_shifts_v2(下跌,3,涨停,1)|`
+
     Parameters
     ----------
     args
-        pl.col, start, end。三个参数循环
+        pl.col, [start, end]。三个参数循环。start/end都是闭区间
 
     Examples
     --------
@@ -902,12 +908,12 @@ def ts_shifts_v3(*args) -> Expr:
         'b': [None, False, True, True, True, True],
         'c': [None, True, True, True, True, True],
     }).with_columns(
-        out0=ts_shifts_v3(pl.col('a'), 1, 4, pl.col('b'), 2, 3),
+        out0=ts_shifts_v3(pl.col('a'), 1, 3, pl.col('b'), 2, 2),
         out1=ts_shifts_v2(pl.col('a'), 1, pl.col('b'), 2),
         out2=ts_shifts_v2(pl.col('a'), 2, pl.col('b'), 2),
-        out3=ts_shifts_v2(pl.col('a'), 3, pl.col('b'), 2),
+        out3=ts_shifts_v2(pl.col('a'), 3, pl.col('b'), 2)
     ).with_columns(
-        out4=pl.col('out1') | pl.col('out2') | pl.col('out3'),
+        out4=pl.col('out1') | pl.col('out2') | pl.col('out3')
     )
 
     shape: (6, 8)
@@ -926,11 +932,8 @@ def ts_shifts_v3(*args) -> Expr:
     ```
 
     """
-    exprs = []
-    ranges = []
-    for a, b, c in more_itertools.chunked(args, 3):
-        exprs.append(a)
-        ranges.append(range(b, c))
+    exprs = [a for a, b, c in more_itertools.chunked(args, 3)]
+    ranges = [range(b, c + 1) for a, b, c in more_itertools.chunked(args, 3)]
     # 参数整理成col,repeat模式
     outputs = [itertools.chain.from_iterable(zip(exprs, d)) for d in itertools.product(*ranges)]
     return any_horizontal(ts_shifts_v2(*_) for _ in outputs)
