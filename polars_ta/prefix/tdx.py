@@ -129,7 +129,7 @@ from polars_ta.tdx.statistic import VAR as ts_VAR  # noqa
 from polars_ta.tdx.statistic import VARP as ts_VARP  # noqa
 from polars_ta.tdx.statistic import ts_up_stat  # noqa
 from polars_ta.tdx.times import FROMOPEN  # noqa
-from polars_ta.tdx.times import FROMOPEN1  # noqa
+from polars_ta.tdx.times import FROMOPEN_1  # noqa
 from polars_ta.tdx.trend import ADX as ts_ADX  # noqa
 from polars_ta.tdx.trend import ADXR as ts_ADXR  # noqa
 from polars_ta.tdx.trend import DPO as ts_DPO  # noqa
