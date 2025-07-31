@@ -31,6 +31,11 @@ def cs_minmax(x: Expr) -> Expr:
     return when(a != b).then((x - a) / (b - a)).otherwise(0)
 
 
+def cs_robust_scale(x: Expr) -> Expr:
+    """横截面robust scale标准化"""
+    return (x - x.median()) / (x.quantile(0.75) - x.quantile(0.25))
+
+
 # ======================
 # winsorize
 def cs_quantile(x: Expr, low_limit: float = 0.025, up_limit: float = 0.975) -> Expr:
