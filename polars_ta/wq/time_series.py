@@ -65,7 +65,7 @@ def ts_arg_max(x: Expr, d: int = 5, reverse: bool = True, min_samples: Optional[
 
     """
     minp = min_samples or polars_ta.MIN_SAMPLES or d
-    return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy(), roll_argmax, d, minp, reverse, dtype=UInt16))
+    return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy(), roll_argmax, d, minp, reverse, dtype=UInt16), return_dtype=UInt16)
 
 
 def ts_arg_min(x: Expr, d: int = 5, reverse: bool = True, min_samples: Optional[int] = None) -> Expr:
@@ -91,19 +91,19 @@ def ts_arg_min(x: Expr, d: int = 5, reverse: bool = True, min_samples: Optional[
 
     """
     minp = min_samples or polars_ta.MIN_SAMPLES or d
-    return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy(), roll_argmin, d, minp, reverse, dtype=UInt16))
+    return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy(), roll_argmin, d, minp, reverse, dtype=UInt16), return_dtype=UInt16)
 
 
 def ts_co_kurtosis(x: Expr, y: Expr, d: int = 5, ddof: int = 0, min_samples: Optional[int] = None) -> Expr:
     """计算两个序列在滚动窗口内联合分布的协峰度"""
     minp = min_samples or polars_ta.MIN_SAMPLES or d
-    return struct([x, y]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2), roll_co_kurtosis, d, minp))
+    return struct(f0=x, f1=y).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2), roll_co_kurtosis, d, minp), return_dtype=Float64)
 
 
 def ts_co_skewness(x: Expr, y: Expr, d: int = 5, ddof: int = 0, min_samples: Optional[int] = None) -> Expr:
     """计算两个序列在滚动窗口内联合分布的协偏度"""
     minp = min_samples or polars_ta.MIN_SAMPLES or d
-    return struct([x, y]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2), roll_co_skewness, d, minp))
+    return struct(f0=x, f1=y).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2), roll_co_skewness, d, minp), return_dtype=Float64)
 
 
 def ts_corr(x: Expr, y: Expr, d: int = 5, ddof: int = 1, min_samples: Optional[int] = None) -> Expr:
@@ -441,7 +441,7 @@ def ts_cum_sum_reset(x: Expr) -> Expr:
     ```
 
     """
-    return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _cum_sum_reset))
+    return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _cum_sum_reset), return_dtype=Float64)
 
 
 def ts_decay_exp_window(x: Expr, d: int = 30, factor: float = 1.0, min_samples: Optional[int] = None) -> Expr:
@@ -734,7 +734,7 @@ def ts_moment(x: Expr, d: int, k: int = 0, min_samples: Optional[int] = None) ->
 
     """
     minp = min_samples or polars_ta.MIN_SAMPLES or d
-    return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy(), roll_moment, d, minp, k))
+    return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy(), roll_moment, d, minp, k), return_dtype=Float64)
 
 
 def ts_partial_corr(x: Expr, y: Expr, z: Expr, d: int, min_samples: Optional[int] = None) -> Expr:
@@ -744,7 +744,7 @@ def ts_partial_corr(x: Expr, y: Expr, z: Expr, d: int, min_samples: Optional[int
 
     """
     minp = min_samples or polars_ta.MIN_SAMPLES or d
-    return struct([x, y, z]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 3), roll_partial_corr, d, minp))
+    return struct(f0=x, f1=y, f2=z).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 3), roll_partial_corr, d, minp), return_dtype=Float64)
 
 
 def ts_percentage(x: Expr, d: int, percentage: float = 0.5, min_samples: Optional[int] = None) -> Expr:
@@ -767,7 +767,7 @@ def ts_percentage(x: Expr, d: int, percentage: float = 0.5, min_samples: Optiona
 def ts_product(x: Expr, d: int = 5, min_samples: Optional[int] = None) -> Expr:
     """时序滚动乘"""
     minp = min_samples or polars_ta.MIN_SAMPLES or d
-    return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy(), roll_prod, d, minp))
+    return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy(), roll_prod, d, minp), return_dtype=Float64)
 
 
 def ts_rank(x: Expr, d: int = 5, min_samples: Optional[int] = None) -> Expr:
@@ -779,7 +779,7 @@ def ts_rank(x: Expr, d: int = 5, min_samples: Optional[int] = None) -> Expr:
 
     """
     minp = min_samples or polars_ta.MIN_SAMPLES or d
-    return x.map_batches(lambda a: roll_rank(a, d, minp, True))
+    return x.map_batches(lambda a: roll_rank(a, d, minp, True), return_dtype=Float64)
 
 
 def ts_realized_volatility(close: Expr, d: int = 5, min_samples: Optional[int] = None) -> Expr:
@@ -1033,7 +1033,7 @@ def ts_sum_split_by(x: Expr, by: Expr, d: int = 30, k: int = 10) -> Expr:
 
     """
     dtype = Struct([Field(f"column_{i}", Float64) for i in range(2)])
-    return struct([x, by]).map_batches(lambda xx: batches_i2_o2(struct_to_numpy(xx, 2), _sum_split_by, d, k), return_dtype=dtype)
+    return struct(f0=x, f1=by).map_batches(lambda xx: batches_i2_o2(struct_to_numpy(xx, 2), _sum_split_by, d, k), return_dtype=dtype)
 
 
 def ts_triple_corr(x: Expr, y: Expr, z: Expr, d: int, min_samples: Optional[int] = None) -> Expr:
@@ -1043,7 +1043,7 @@ def ts_triple_corr(x: Expr, y: Expr, z: Expr, d: int, min_samples: Optional[int]
 
     """
     minp = min_samples or polars_ta.MIN_SAMPLES or d
-    return struct([x, y, z]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 3), roll_triple_corr, d, minp))
+    return struct(f0=x, f1=y, f2=z).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 3), roll_triple_corr, d, minp), return_dtype=Float64)
 
 
 def ts_weighted_decay(x: Expr, k: float = 0.5, min_samples: Optional[int] = None) -> Expr:
@@ -1120,7 +1120,7 @@ def ts_cum_prod_by(r: Expr, v: Expr) -> Expr:
 
 
     """
-    return struct([r, v]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2), _cum_prod_by))
+    return struct(f0=r, f1=v).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2), _cum_prod_by), return_dtype=Float64)
 
 
 def ts_cum_sum_by(r: Expr, v: Expr) -> Expr:
@@ -1169,7 +1169,7 @@ def ts_cum_sum_by(r: Expr, v: Expr) -> Expr:
     ```
 
     """
-    return struct([r, v]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2), _cum_sum_by))
+    return struct(f0=r, f1=v).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2), _cum_sum_by), return_dtype=Float64)
 
 
 def ts_regression_resid(y: Expr, x: Expr, d: int, min_samples: Optional[int] = None) -> Expr:
@@ -1264,5 +1264,5 @@ def ts_signals_to_size(long_entry: Expr, long_exit: Expr,
         返回持仓状态还是下单操作
 
     """
-    return struct([long_entry, long_exit, short_entry, short_exit]).map_batches(
-        lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _signals_to_size, accumulate, action))
+    return struct(f0=long_entry, f1=long_exit, f2=short_entry, f3=short_exit).map_batches(
+        lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _signals_to_size, accumulate, action), return_dtype=Float64)

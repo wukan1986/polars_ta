@@ -15,7 +15,7 @@ def HT_DCPERIOD(close: Expr) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.HT_DCPERIOD))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.HT_DCPERIOD), return_dtype=Float64)
 
 
 def HT_DCPHASE(close: Expr) -> Expr:  # ['real']
@@ -28,7 +28,7 @@ def HT_DCPHASE(close: Expr) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.HT_DCPHASE))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.HT_DCPHASE), return_dtype=Float64)
 
 
 def HT_PHASOR(close: Expr) -> Expr:  # ['inphase', 'quadrature']
@@ -71,7 +71,7 @@ def HT_TRENDMODE(close: Expr) -> Expr:  # ['integer']
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.HT_TRENDMODE))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.HT_TRENDMODE), return_dtype=Float64)
 
 
 def ADD(high: Expr, low: Expr) -> Expr:  # ['real']
@@ -85,7 +85,7 @@ def ADD(high: Expr, low: Expr) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return struct([high, low]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2, dtype=float), _ta.ADD))
+    return struct(f0=high, f1=low).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2, dtype=float), _ta.ADD), return_dtype=Float64)
 
 
 def DIV(high: Expr, low: Expr) -> Expr:  # ['real']
@@ -99,7 +99,7 @@ def DIV(high: Expr, low: Expr) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return struct([high, low]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2, dtype=float), _ta.DIV))
+    return struct(f0=high, f1=low).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2, dtype=float), _ta.DIV), return_dtype=Float64)
 
 
 def MAX(close: Expr, timeperiod: int = 30) -> Expr:  # ['real']
@@ -114,7 +114,7 @@ def MAX(close: Expr, timeperiod: int = 30) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.MAX, timeperiod))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.MAX, timeperiod), return_dtype=Float64)
 
 
 def MAXINDEX(close: Expr, timeperiod: int = 30) -> Expr:  # ['integer']
@@ -129,7 +129,7 @@ def MAXINDEX(close: Expr, timeperiod: int = 30) -> Expr:  # ['integer']
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.MAXINDEX, timeperiod))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.MAXINDEX, timeperiod), return_dtype=Float64)
 
 
 def MIN(close: Expr, timeperiod: int = 30) -> Expr:  # ['real']
@@ -144,7 +144,7 @@ def MIN(close: Expr, timeperiod: int = 30) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.MIN, timeperiod))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.MIN, timeperiod), return_dtype=Float64)
 
 
 def MININDEX(close: Expr, timeperiod: int = 30) -> Expr:  # ['integer']
@@ -159,7 +159,7 @@ def MININDEX(close: Expr, timeperiod: int = 30) -> Expr:  # ['integer']
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.MININDEX, timeperiod))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.MININDEX, timeperiod), return_dtype=Float64)
 
 
 def MINMAX(close: Expr, timeperiod: int = 30) -> Expr:  # ['min', 'max']
@@ -207,7 +207,7 @@ def MULT(high: Expr, low: Expr) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return struct([high, low]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2, dtype=float), _ta.MULT))
+    return struct(f0=high, f1=low).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2, dtype=float), _ta.MULT), return_dtype=Float64)
 
 
 def SUB(high: Expr, low: Expr) -> Expr:  # ['real']
@@ -221,7 +221,7 @@ def SUB(high: Expr, low: Expr) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return struct([high, low]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2, dtype=float), _ta.SUB))
+    return struct(f0=high, f1=low).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2, dtype=float), _ta.SUB), return_dtype=Float64)
 
 
 def SUM(close: Expr, timeperiod: int = 30) -> Expr:  # ['real']
@@ -236,7 +236,7 @@ def SUM(close: Expr, timeperiod: int = 30) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.SUM, timeperiod))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.SUM, timeperiod), return_dtype=Float64)
 
 
 def ACOS(close: Expr) -> Expr:  # ['real']
@@ -249,7 +249,7 @@ def ACOS(close: Expr) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.ACOS))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.ACOS), return_dtype=Float64)
 
 
 def ASIN(close: Expr) -> Expr:  # ['real']
@@ -262,7 +262,7 @@ def ASIN(close: Expr) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.ASIN))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.ASIN), return_dtype=Float64)
 
 
 def ATAN(close: Expr) -> Expr:  # ['real']
@@ -275,7 +275,7 @@ def ATAN(close: Expr) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.ATAN))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.ATAN), return_dtype=Float64)
 
 
 def CEIL(close: Expr) -> Expr:  # ['real']
@@ -288,7 +288,7 @@ def CEIL(close: Expr) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.CEIL))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.CEIL), return_dtype=Float64)
 
 
 def COS(close: Expr) -> Expr:  # ['real']
@@ -301,7 +301,7 @@ def COS(close: Expr) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.COS))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.COS), return_dtype=Float64)
 
 
 def COSH(close: Expr) -> Expr:  # ['real']
@@ -314,7 +314,7 @@ def COSH(close: Expr) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.COSH))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.COSH), return_dtype=Float64)
 
 
 def EXP(close: Expr) -> Expr:  # ['real']
@@ -327,7 +327,7 @@ def EXP(close: Expr) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.EXP))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.EXP), return_dtype=Float64)
 
 
 def FLOOR(close: Expr) -> Expr:  # ['real']
@@ -340,7 +340,7 @@ def FLOOR(close: Expr) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.FLOOR))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.FLOOR), return_dtype=Float64)
 
 
 def LN(close: Expr) -> Expr:  # ['real']
@@ -353,7 +353,7 @@ def LN(close: Expr) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.LN))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.LN), return_dtype=Float64)
 
 
 def LOG10(close: Expr) -> Expr:  # ['real']
@@ -366,7 +366,7 @@ def LOG10(close: Expr) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.LOG10))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.LOG10), return_dtype=Float64)
 
 
 def SIN(close: Expr) -> Expr:  # ['real']
@@ -379,7 +379,7 @@ def SIN(close: Expr) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.SIN))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.SIN), return_dtype=Float64)
 
 
 def SINH(close: Expr) -> Expr:  # ['real']
@@ -392,7 +392,7 @@ def SINH(close: Expr) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.SINH))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.SINH), return_dtype=Float64)
 
 
 def SQRT(close: Expr) -> Expr:  # ['real']
@@ -405,7 +405,7 @@ def SQRT(close: Expr) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.SQRT))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.SQRT), return_dtype=Float64)
 
 
 def TAN(close: Expr) -> Expr:  # ['real']
@@ -418,7 +418,7 @@ def TAN(close: Expr) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.TAN))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.TAN), return_dtype=Float64)
 
 
 def TANH(close: Expr) -> Expr:  # ['real']
@@ -431,7 +431,7 @@ def TANH(close: Expr) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.TANH))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.TANH), return_dtype=Float64)
 
 
 def ADX(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
@@ -446,7 +446,7 @@ def ADX(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:  # ['
     Outputs:
         real
     """
-    return struct([high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 3, dtype=float), _ta.ADX, timeperiod))
+    return struct(f0=high, f1=low, f2=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 3, dtype=float), _ta.ADX, timeperiod), return_dtype=Float64)
 
 
 def ADXR(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
@@ -461,7 +461,7 @@ def ADXR(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:  # [
     Outputs:
         real
     """
-    return struct([high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 3, dtype=float), _ta.ADXR, timeperiod))
+    return struct(f0=high, f1=low, f2=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 3, dtype=float), _ta.ADXR, timeperiod), return_dtype=Float64)
 
 
 def APO(close: Expr, fastperiod: int = 12, slowperiod: int = 26, matype: int = 0) -> Expr:  # ['real']
@@ -478,7 +478,7 @@ def APO(close: Expr, fastperiod: int = 12, slowperiod: int = 26, matype: int = 0
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.APO, fastperiod, slowperiod, matype))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.APO, fastperiod, slowperiod, matype), return_dtype=Float64)
 
 
 def AROON(high: Expr, low: Expr, timeperiod: int = 14) -> Expr:  # ['aroondown', 'aroonup']
@@ -495,7 +495,7 @@ def AROON(high: Expr, low: Expr, timeperiod: int = 14) -> Expr:  # ['aroondown',
         aroonup
     """
     dtype = Struct([Field(f"column_{i}", Float64) for i in range(2)])
-    return struct([high, low]).map_batches(lambda xx: batches_i2_o2(struct_to_numpy(xx, 2, dtype=float), _ta.AROON, timeperiod), return_dtype=dtype)
+    return struct(f0=high, f1=low).map_batches(lambda xx: batches_i2_o2(struct_to_numpy(xx, 2, dtype=float), _ta.AROON, timeperiod), return_dtype=dtype)
 
 
 def AROONOSC(high: Expr, low: Expr, timeperiod: int = 14) -> Expr:  # ['real']
@@ -510,7 +510,7 @@ def AROONOSC(high: Expr, low: Expr, timeperiod: int = 14) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return struct([high, low]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2, dtype=float), _ta.AROONOSC, timeperiod))
+    return struct(f0=high, f1=low).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2, dtype=float), _ta.AROONOSC, timeperiod), return_dtype=Float64)
 
 
 def BOP(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['real']
@@ -523,7 +523,7 @@ def BOP(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.BOP))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.BOP), return_dtype=Float64)
 
 
 def CCI(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
@@ -538,7 +538,7 @@ def CCI(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:  # ['
     Outputs:
         real
     """
-    return struct([high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 3, dtype=float), _ta.CCI, timeperiod))
+    return struct(f0=high, f1=low, f2=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 3, dtype=float), _ta.CCI, timeperiod), return_dtype=Float64)
 
 
 def CMO(close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
@@ -553,7 +553,7 @@ def CMO(close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.CMO, timeperiod))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.CMO, timeperiod), return_dtype=Float64)
 
 
 def DX(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
@@ -568,7 +568,7 @@ def DX(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:  # ['r
     Outputs:
         real
     """
-    return struct([high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 3, dtype=float), _ta.DX, timeperiod))
+    return struct(f0=high, f1=low, f2=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 3, dtype=float), _ta.DX, timeperiod), return_dtype=Float64)
 
 
 def MACD(close: Expr, fastperiod: int = 12, slowperiod: int = 26, signalperiod: int = 9) -> Expr:  # ['macd', 'macdsignal', 'macdhist']
@@ -644,7 +644,7 @@ def MFI(high: Expr, low: Expr, close: Expr, volume: Expr, timeperiod: int = 14) 
     Outputs:
         real
     """
-    return struct([high, low, close, volume]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.MFI, timeperiod))
+    return struct(f0=high, f1=low, f2=close, f3=volume).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.MFI, timeperiod), return_dtype=Float64)
 
 
 def MINUS_DI(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
@@ -659,7 +659,7 @@ def MINUS_DI(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr: 
     Outputs:
         real
     """
-    return struct([high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 3, dtype=float), _ta.MINUS_DI, timeperiod))
+    return struct(f0=high, f1=low, f2=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 3, dtype=float), _ta.MINUS_DI, timeperiod), return_dtype=Float64)
 
 
 def MINUS_DM(high: Expr, low: Expr, timeperiod: int = 14) -> Expr:  # ['real']
@@ -674,7 +674,7 @@ def MINUS_DM(high: Expr, low: Expr, timeperiod: int = 14) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return struct([high, low]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2, dtype=float), _ta.MINUS_DM, timeperiod))
+    return struct(f0=high, f1=low).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2, dtype=float), _ta.MINUS_DM, timeperiod), return_dtype=Float64)
 
 
 def MOM(close: Expr, timeperiod: int = 10) -> Expr:  # ['real']
@@ -689,7 +689,7 @@ def MOM(close: Expr, timeperiod: int = 10) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.MOM, timeperiod))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.MOM, timeperiod), return_dtype=Float64)
 
 
 def PLUS_DI(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
@@ -704,7 +704,7 @@ def PLUS_DI(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:  
     Outputs:
         real
     """
-    return struct([high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 3, dtype=float), _ta.PLUS_DI, timeperiod))
+    return struct(f0=high, f1=low, f2=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 3, dtype=float), _ta.PLUS_DI, timeperiod), return_dtype=Float64)
 
 
 def PLUS_DM(high: Expr, low: Expr, timeperiod: int = 14) -> Expr:  # ['real']
@@ -719,7 +719,7 @@ def PLUS_DM(high: Expr, low: Expr, timeperiod: int = 14) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return struct([high, low]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2, dtype=float), _ta.PLUS_DM, timeperiod))
+    return struct(f0=high, f1=low).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2, dtype=float), _ta.PLUS_DM, timeperiod), return_dtype=Float64)
 
 
 def PPO(close: Expr, fastperiod: int = 12, slowperiod: int = 26, matype: int = 0) -> Expr:  # ['real']
@@ -736,7 +736,7 @@ def PPO(close: Expr, fastperiod: int = 12, slowperiod: int = 26, matype: int = 0
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.PPO, fastperiod, slowperiod, matype))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.PPO, fastperiod, slowperiod, matype), return_dtype=Float64)
 
 
 def ROC(close: Expr, timeperiod: int = 10) -> Expr:  # ['real']
@@ -751,7 +751,7 @@ def ROC(close: Expr, timeperiod: int = 10) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.ROC, timeperiod))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.ROC, timeperiod), return_dtype=Float64)
 
 
 def ROCP(close: Expr, timeperiod: int = 10) -> Expr:  # ['real']
@@ -766,7 +766,7 @@ def ROCP(close: Expr, timeperiod: int = 10) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.ROCP, timeperiod))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.ROCP, timeperiod), return_dtype=Float64)
 
 
 def ROCR(close: Expr, timeperiod: int = 10) -> Expr:  # ['real']
@@ -781,7 +781,7 @@ def ROCR(close: Expr, timeperiod: int = 10) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.ROCR, timeperiod))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.ROCR, timeperiod), return_dtype=Float64)
 
 
 def ROCR100(close: Expr, timeperiod: int = 10) -> Expr:  # ['real']
@@ -796,7 +796,7 @@ def ROCR100(close: Expr, timeperiod: int = 10) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.ROCR100, timeperiod))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.ROCR100, timeperiod), return_dtype=Float64)
 
 
 def RSI(close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
@@ -811,7 +811,7 @@ def RSI(close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.RSI, timeperiod))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.RSI, timeperiod), return_dtype=Float64)
 
 
 def STOCH(high: Expr, low: Expr, close: Expr, fastk_period: int = 5, slowk_period: int = 3, slowk_matype: int = 0, slowd_period: int = 3, slowd_matype: int = 0) -> Expr:  # ['slowk', 'slowd']
@@ -832,7 +832,7 @@ def STOCH(high: Expr, low: Expr, close: Expr, fastk_period: int = 5, slowk_perio
         slowd
     """
     dtype = Struct([Field(f"column_{i}", Float64) for i in range(2)])
-    return struct([high, low, close]).map_batches(lambda xx: batches_i2_o2(struct_to_numpy(xx, 3, dtype=float), _ta.STOCH, fastk_period, slowk_period, slowk_matype, slowd_period, slowd_matype), return_dtype=dtype)
+    return struct(f0=high, f1=low, f2=close).map_batches(lambda xx: batches_i2_o2(struct_to_numpy(xx, 3, dtype=float), _ta.STOCH, fastk_period, slowk_period, slowk_matype, slowd_period, slowd_matype), return_dtype=dtype)
 
 
 def STOCHF(high: Expr, low: Expr, close: Expr, fastk_period: int = 5, fastd_period: int = 3, fastd_matype: int = 0) -> Expr:  # ['fastk', 'fastd']
@@ -851,7 +851,7 @@ def STOCHF(high: Expr, low: Expr, close: Expr, fastk_period: int = 5, fastd_peri
         fastd
     """
     dtype = Struct([Field(f"column_{i}", Float64) for i in range(2)])
-    return struct([high, low, close]).map_batches(lambda xx: batches_i2_o2(struct_to_numpy(xx, 3, dtype=float), _ta.STOCHF, fastk_period, fastd_period, fastd_matype), return_dtype=dtype)
+    return struct(f0=high, f1=low, f2=close).map_batches(lambda xx: batches_i2_o2(struct_to_numpy(xx, 3, dtype=float), _ta.STOCHF, fastk_period, fastd_period, fastd_matype), return_dtype=dtype)
 
 
 def STOCHRSI(close: Expr, timeperiod: int = 14, fastk_period: int = 5, fastd_period: int = 3, fastd_matype: int = 0) -> Expr:  # ['fastk', 'fastd']
@@ -886,7 +886,7 @@ def TRIX(close: Expr, timeperiod: int = 30) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.TRIX, timeperiod))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.TRIX, timeperiod), return_dtype=Float64)
 
 
 def ULTOSC(high: Expr, low: Expr, close: Expr, timeperiod1: int = 7, timeperiod2: int = 14, timeperiod3: int = 28) -> Expr:  # ['real']
@@ -903,7 +903,7 @@ def ULTOSC(high: Expr, low: Expr, close: Expr, timeperiod1: int = 7, timeperiod2
     Outputs:
         real
     """
-    return struct([high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 3, dtype=float), _ta.ULTOSC, timeperiod1, timeperiod2, timeperiod3))
+    return struct(f0=high, f1=low, f2=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 3, dtype=float), _ta.ULTOSC, timeperiod1, timeperiod2, timeperiod3), return_dtype=Float64)
 
 
 def WILLR(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
@@ -918,7 +918,7 @@ def WILLR(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:  # 
     Outputs:
         real
     """
-    return struct([high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 3, dtype=float), _ta.WILLR, timeperiod))
+    return struct(f0=high, f1=low, f2=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 3, dtype=float), _ta.WILLR, timeperiod), return_dtype=Float64)
 
 
 def BBANDS(close: Expr, timeperiod: int = 5, nbdevup: float = 2.0, nbdevdn: float = 2.0, matype: int = 0) -> Expr:  # ['upperband', 'middleband', 'lowerband']
@@ -954,7 +954,7 @@ def DEMA(close: Expr, timeperiod: int = 30) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.DEMA, timeperiod))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.DEMA, timeperiod), return_dtype=Float64)
 
 
 def EMA(close: Expr, timeperiod: int = 30) -> Expr:  # ['real']
@@ -969,7 +969,7 @@ def EMA(close: Expr, timeperiod: int = 30) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.EMA, timeperiod))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.EMA, timeperiod), return_dtype=Float64)
 
 
 def HT_TRENDLINE(close: Expr) -> Expr:  # ['real']
@@ -982,7 +982,7 @@ def HT_TRENDLINE(close: Expr) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.HT_TRENDLINE))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.HT_TRENDLINE), return_dtype=Float64)
 
 
 def KAMA(close: Expr, timeperiod: int = 30) -> Expr:  # ['real']
@@ -997,7 +997,7 @@ def KAMA(close: Expr, timeperiod: int = 30) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.KAMA, timeperiod))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.KAMA, timeperiod), return_dtype=Float64)
 
 
 def MA(close: Expr, timeperiod: int = 30, matype: int = 0) -> Expr:  # ['real']
@@ -1013,7 +1013,7 @@ def MA(close: Expr, timeperiod: int = 30, matype: int = 0) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.MA, timeperiod, matype))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.MA, timeperiod, matype), return_dtype=Float64)
 
 
 def MAMA(close: Expr, fastlimit: float = 0.5, slowlimit: float = 0.05) -> Expr:  # ['mama', 'fama']
@@ -1049,7 +1049,7 @@ def MAVP(close: Expr, periods: Expr, minperiod: int = 2, maxperiod: int = 30, ma
     Outputs:
         real
     """
-    return struct([close, periods]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2, dtype=float), _ta.MAVP, minperiod, maxperiod, matype))
+    return struct(f0=close, f1=periods).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2, dtype=float), _ta.MAVP, minperiod, maxperiod, matype), return_dtype=Float64)
 
 
 def MIDPOINT(close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
@@ -1064,7 +1064,7 @@ def MIDPOINT(close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.MIDPOINT, timeperiod))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.MIDPOINT, timeperiod), return_dtype=Float64)
 
 
 def MIDPRICE(high: Expr, low: Expr, timeperiod: int = 14) -> Expr:  # ['real']
@@ -1079,7 +1079,7 @@ def MIDPRICE(high: Expr, low: Expr, timeperiod: int = 14) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return struct([high, low]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2, dtype=float), _ta.MIDPRICE, timeperiod))
+    return struct(f0=high, f1=low).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2, dtype=float), _ta.MIDPRICE, timeperiod), return_dtype=Float64)
 
 
 def SAR(high: Expr, low: Expr, acceleration: float = 0.02, maximum: float = 0.2) -> Expr:  # ['real']
@@ -1095,7 +1095,7 @@ def SAR(high: Expr, low: Expr, acceleration: float = 0.02, maximum: float = 0.2)
     Outputs:
         real
     """
-    return struct([high, low]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2, dtype=float), _ta.SAR, acceleration, maximum))
+    return struct(f0=high, f1=low).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2, dtype=float), _ta.SAR, acceleration, maximum), return_dtype=Float64)
 
 
 def SAREXT(high: Expr, low: Expr, startvalue: float = 0.0, offsetonreverse: float = 0.0, accelerationinitlong: float = 0.02, accelerationlong: float = 0.02, accelerationmaxlong: float = 0.2, accelerationinitshort: float = 0.02, accelerationshort: float = 0.02, accelerationmaxshort: float = 0.2) -> Expr:  # ['real']
@@ -1117,7 +1117,7 @@ def SAREXT(high: Expr, low: Expr, startvalue: float = 0.0, offsetonreverse: floa
     Outputs:
         real
     """
-    return struct([high, low]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2, dtype=float), _ta.SAREXT, startvalue, offsetonreverse, accelerationinitlong, accelerationlong, accelerationmaxlong, accelerationinitshort, accelerationshort, accelerationmaxshort))
+    return struct(f0=high, f1=low).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2, dtype=float), _ta.SAREXT, startvalue, offsetonreverse, accelerationinitlong, accelerationlong, accelerationmaxlong, accelerationinitshort, accelerationshort, accelerationmaxshort), return_dtype=Float64)
 
 
 def SMA(close: Expr, timeperiod: int = 30) -> Expr:  # ['real']
@@ -1132,7 +1132,7 @@ def SMA(close: Expr, timeperiod: int = 30) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.SMA, timeperiod))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.SMA, timeperiod), return_dtype=Float64)
 
 
 def T3(close: Expr, timeperiod: int = 5, vfactor: float = 0.7) -> Expr:  # ['real']
@@ -1148,7 +1148,7 @@ def T3(close: Expr, timeperiod: int = 5, vfactor: float = 0.7) -> Expr:  # ['rea
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.T3, timeperiod, vfactor))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.T3, timeperiod, vfactor), return_dtype=Float64)
 
 
 def TEMA(close: Expr, timeperiod: int = 30) -> Expr:  # ['real']
@@ -1163,7 +1163,7 @@ def TEMA(close: Expr, timeperiod: int = 30) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.TEMA, timeperiod))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.TEMA, timeperiod), return_dtype=Float64)
 
 
 def TRIMA(close: Expr, timeperiod: int = 30) -> Expr:  # ['real']
@@ -1178,7 +1178,7 @@ def TRIMA(close: Expr, timeperiod: int = 30) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.TRIMA, timeperiod))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.TRIMA, timeperiod), return_dtype=Float64)
 
 
 def WMA(close: Expr, timeperiod: int = 30) -> Expr:  # ['real']
@@ -1193,7 +1193,7 @@ def WMA(close: Expr, timeperiod: int = 30) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.WMA, timeperiod))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.WMA, timeperiod), return_dtype=Float64)
 
 
 def CDL2CROWS(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1206,7 +1206,7 @@ def CDL2CROWS(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['inte
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDL2CROWS))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDL2CROWS), return_dtype=Float64)
 
 
 def CDL3BLACKCROWS(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1219,7 +1219,7 @@ def CDL3BLACKCROWS(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # [
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDL3BLACKCROWS))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDL3BLACKCROWS), return_dtype=Float64)
 
 
 def CDL3INSIDE(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1232,7 +1232,7 @@ def CDL3INSIDE(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['int
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDL3INSIDE))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDL3INSIDE), return_dtype=Float64)
 
 
 def CDL3LINESTRIKE(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1245,7 +1245,7 @@ def CDL3LINESTRIKE(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # [
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDL3LINESTRIKE))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDL3LINESTRIKE), return_dtype=Float64)
 
 
 def CDL3OUTSIDE(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1258,7 +1258,7 @@ def CDL3OUTSIDE(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['in
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDL3OUTSIDE))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDL3OUTSIDE), return_dtype=Float64)
 
 
 def CDL3STARSINSOUTH(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1271,7 +1271,7 @@ def CDL3STARSINSOUTH(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  #
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDL3STARSINSOUTH))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDL3STARSINSOUTH), return_dtype=Float64)
 
 
 def CDL3WHITESOLDIERS(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1284,7 +1284,7 @@ def CDL3WHITESOLDIERS(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDL3WHITESOLDIERS))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDL3WHITESOLDIERS), return_dtype=Float64)
 
 
 def CDLABANDONEDBABY(open: Expr, high: Expr, low: Expr, close: Expr, penetration: float = 0.3) -> Expr:  # ['integer']
@@ -1299,7 +1299,7 @@ def CDLABANDONEDBABY(open: Expr, high: Expr, low: Expr, close: Expr, penetration
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLABANDONEDBABY, penetration))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLABANDONEDBABY, penetration), return_dtype=Float64)
 
 
 def CDLADVANCEBLOCK(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1312,7 +1312,7 @@ def CDLADVANCEBLOCK(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # 
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLADVANCEBLOCK))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLADVANCEBLOCK), return_dtype=Float64)
 
 
 def CDLBELTHOLD(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1325,7 +1325,7 @@ def CDLBELTHOLD(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['in
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLBELTHOLD))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLBELTHOLD), return_dtype=Float64)
 
 
 def CDLBREAKAWAY(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1338,7 +1338,7 @@ def CDLBREAKAWAY(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['i
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLBREAKAWAY))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLBREAKAWAY), return_dtype=Float64)
 
 
 def CDLCLOSINGMARUBOZU(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1351,7 +1351,7 @@ def CDLCLOSINGMARUBOZU(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr: 
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLCLOSINGMARUBOZU))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLCLOSINGMARUBOZU), return_dtype=Float64)
 
 
 def CDLCONCEALBABYSWALL(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1364,7 +1364,7 @@ def CDLCONCEALBABYSWALL(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLCONCEALBABYSWALL))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLCONCEALBABYSWALL), return_dtype=Float64)
 
 
 def CDLCOUNTERATTACK(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1377,7 +1377,7 @@ def CDLCOUNTERATTACK(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  #
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLCOUNTERATTACK))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLCOUNTERATTACK), return_dtype=Float64)
 
 
 def CDLDARKCLOUDCOVER(open: Expr, high: Expr, low: Expr, close: Expr, penetration: float = 0.5) -> Expr:  # ['integer']
@@ -1392,7 +1392,7 @@ def CDLDARKCLOUDCOVER(open: Expr, high: Expr, low: Expr, close: Expr, penetratio
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLDARKCLOUDCOVER, penetration))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLDARKCLOUDCOVER, penetration), return_dtype=Float64)
 
 
 def CDLDOJI(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1405,7 +1405,7 @@ def CDLDOJI(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['intege
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLDOJI))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLDOJI), return_dtype=Float64)
 
 
 def CDLDOJISTAR(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1418,7 +1418,7 @@ def CDLDOJISTAR(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['in
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLDOJISTAR))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLDOJISTAR), return_dtype=Float64)
 
 
 def CDLDRAGONFLYDOJI(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1431,7 +1431,7 @@ def CDLDRAGONFLYDOJI(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  #
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLDRAGONFLYDOJI))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLDRAGONFLYDOJI), return_dtype=Float64)
 
 
 def CDLENGULFING(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1444,7 +1444,7 @@ def CDLENGULFING(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['i
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLENGULFING))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLENGULFING), return_dtype=Float64)
 
 
 def CDLEVENINGDOJISTAR(open: Expr, high: Expr, low: Expr, close: Expr, penetration: float = 0.3) -> Expr:  # ['integer']
@@ -1459,7 +1459,7 @@ def CDLEVENINGDOJISTAR(open: Expr, high: Expr, low: Expr, close: Expr, penetrati
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLEVENINGDOJISTAR, penetration))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLEVENINGDOJISTAR, penetration), return_dtype=Float64)
 
 
 def CDLEVENINGSTAR(open: Expr, high: Expr, low: Expr, close: Expr, penetration: float = 0.3) -> Expr:  # ['integer']
@@ -1474,7 +1474,7 @@ def CDLEVENINGSTAR(open: Expr, high: Expr, low: Expr, close: Expr, penetration: 
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLEVENINGSTAR, penetration))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLEVENINGSTAR, penetration), return_dtype=Float64)
 
 
 def CDLGAPSIDESIDEWHITE(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1487,7 +1487,7 @@ def CDLGAPSIDESIDEWHITE(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLGAPSIDESIDEWHITE))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLGAPSIDESIDEWHITE), return_dtype=Float64)
 
 
 def CDLGRAVESTONEDOJI(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1500,7 +1500,7 @@ def CDLGRAVESTONEDOJI(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLGRAVESTONEDOJI))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLGRAVESTONEDOJI), return_dtype=Float64)
 
 
 def CDLHAMMER(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1513,7 +1513,7 @@ def CDLHAMMER(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['inte
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLHAMMER))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLHAMMER), return_dtype=Float64)
 
 
 def CDLHANGINGMAN(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1526,7 +1526,7 @@ def CDLHANGINGMAN(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLHANGINGMAN))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLHANGINGMAN), return_dtype=Float64)
 
 
 def CDLHARAMI(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1539,7 +1539,7 @@ def CDLHARAMI(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['inte
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLHARAMI))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLHARAMI), return_dtype=Float64)
 
 
 def CDLHARAMICROSS(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1552,7 +1552,7 @@ def CDLHARAMICROSS(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # [
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLHARAMICROSS))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLHARAMICROSS), return_dtype=Float64)
 
 
 def CDLHIGHWAVE(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1565,7 +1565,7 @@ def CDLHIGHWAVE(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['in
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLHIGHWAVE))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLHIGHWAVE), return_dtype=Float64)
 
 
 def CDLHIKKAKE(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1578,7 +1578,7 @@ def CDLHIKKAKE(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['int
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLHIKKAKE))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLHIKKAKE), return_dtype=Float64)
 
 
 def CDLHIKKAKEMOD(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1591,7 +1591,7 @@ def CDLHIKKAKEMOD(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLHIKKAKEMOD))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLHIKKAKEMOD), return_dtype=Float64)
 
 
 def CDLHOMINGPIGEON(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1604,7 +1604,7 @@ def CDLHOMINGPIGEON(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # 
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLHOMINGPIGEON))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLHOMINGPIGEON), return_dtype=Float64)
 
 
 def CDLIDENTICAL3CROWS(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1617,7 +1617,7 @@ def CDLIDENTICAL3CROWS(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr: 
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLIDENTICAL3CROWS))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLIDENTICAL3CROWS), return_dtype=Float64)
 
 
 def CDLINNECK(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1630,7 +1630,7 @@ def CDLINNECK(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['inte
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLINNECK))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLINNECK), return_dtype=Float64)
 
 
 def CDLINVERTEDHAMMER(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1643,7 +1643,7 @@ def CDLINVERTEDHAMMER(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLINVERTEDHAMMER))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLINVERTEDHAMMER), return_dtype=Float64)
 
 
 def CDLKICKING(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1656,7 +1656,7 @@ def CDLKICKING(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['int
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLKICKING))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLKICKING), return_dtype=Float64)
 
 
 def CDLKICKINGBYLENGTH(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1669,7 +1669,7 @@ def CDLKICKINGBYLENGTH(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr: 
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLKICKINGBYLENGTH))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLKICKINGBYLENGTH), return_dtype=Float64)
 
 
 def CDLLADDERBOTTOM(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1682,7 +1682,7 @@ def CDLLADDERBOTTOM(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # 
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLLADDERBOTTOM))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLLADDERBOTTOM), return_dtype=Float64)
 
 
 def CDLLONGLEGGEDDOJI(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1695,7 +1695,7 @@ def CDLLONGLEGGEDDOJI(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLLONGLEGGEDDOJI))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLLONGLEGGEDDOJI), return_dtype=Float64)
 
 
 def CDLLONGLINE(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1708,7 +1708,7 @@ def CDLLONGLINE(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['in
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLLONGLINE))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLLONGLINE), return_dtype=Float64)
 
 
 def CDLMARUBOZU(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1721,7 +1721,7 @@ def CDLMARUBOZU(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['in
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLMARUBOZU))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLMARUBOZU), return_dtype=Float64)
 
 
 def CDLMATCHINGLOW(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1734,7 +1734,7 @@ def CDLMATCHINGLOW(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # [
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLMATCHINGLOW))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLMATCHINGLOW), return_dtype=Float64)
 
 
 def CDLMATHOLD(open: Expr, high: Expr, low: Expr, close: Expr, penetration: float = 0.5) -> Expr:  # ['integer']
@@ -1749,7 +1749,7 @@ def CDLMATHOLD(open: Expr, high: Expr, low: Expr, close: Expr, penetration: floa
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLMATHOLD, penetration))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLMATHOLD, penetration), return_dtype=Float64)
 
 
 def CDLMORNINGDOJISTAR(open: Expr, high: Expr, low: Expr, close: Expr, penetration: float = 0.3) -> Expr:  # ['integer']
@@ -1764,7 +1764,7 @@ def CDLMORNINGDOJISTAR(open: Expr, high: Expr, low: Expr, close: Expr, penetrati
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLMORNINGDOJISTAR, penetration))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLMORNINGDOJISTAR, penetration), return_dtype=Float64)
 
 
 def CDLMORNINGSTAR(open: Expr, high: Expr, low: Expr, close: Expr, penetration: float = 0.3) -> Expr:  # ['integer']
@@ -1779,7 +1779,7 @@ def CDLMORNINGSTAR(open: Expr, high: Expr, low: Expr, close: Expr, penetration: 
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLMORNINGSTAR, penetration))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLMORNINGSTAR, penetration), return_dtype=Float64)
 
 
 def CDLONNECK(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1792,7 +1792,7 @@ def CDLONNECK(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['inte
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLONNECK))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLONNECK), return_dtype=Float64)
 
 
 def CDLPIERCING(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1805,7 +1805,7 @@ def CDLPIERCING(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['in
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLPIERCING))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLPIERCING), return_dtype=Float64)
 
 
 def CDLRICKSHAWMAN(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1818,7 +1818,7 @@ def CDLRICKSHAWMAN(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # [
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLRICKSHAWMAN))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLRICKSHAWMAN), return_dtype=Float64)
 
 
 def CDLRISEFALL3METHODS(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1831,7 +1831,7 @@ def CDLRISEFALL3METHODS(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLRISEFALL3METHODS))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLRISEFALL3METHODS), return_dtype=Float64)
 
 
 def CDLSEPARATINGLINES(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1844,7 +1844,7 @@ def CDLSEPARATINGLINES(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr: 
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLSEPARATINGLINES))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLSEPARATINGLINES), return_dtype=Float64)
 
 
 def CDLSHOOTINGSTAR(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1857,7 +1857,7 @@ def CDLSHOOTINGSTAR(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # 
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLSHOOTINGSTAR))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLSHOOTINGSTAR), return_dtype=Float64)
 
 
 def CDLSHORTLINE(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1870,7 +1870,7 @@ def CDLSHORTLINE(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['i
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLSHORTLINE))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLSHORTLINE), return_dtype=Float64)
 
 
 def CDLSPINNINGTOP(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1883,7 +1883,7 @@ def CDLSPINNINGTOP(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # [
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLSPINNINGTOP))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLSPINNINGTOP), return_dtype=Float64)
 
 
 def CDLSTALLEDPATTERN(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1896,7 +1896,7 @@ def CDLSTALLEDPATTERN(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLSTALLEDPATTERN))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLSTALLEDPATTERN), return_dtype=Float64)
 
 
 def CDLSTICKSANDWICH(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1909,7 +1909,7 @@ def CDLSTICKSANDWICH(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  #
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLSTICKSANDWICH))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLSTICKSANDWICH), return_dtype=Float64)
 
 
 def CDLTAKURI(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1922,7 +1922,7 @@ def CDLTAKURI(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['inte
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLTAKURI))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLTAKURI), return_dtype=Float64)
 
 
 def CDLTASUKIGAP(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1935,7 +1935,7 @@ def CDLTASUKIGAP(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['i
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLTASUKIGAP))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLTASUKIGAP), return_dtype=Float64)
 
 
 def CDLTHRUSTING(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1948,7 +1948,7 @@ def CDLTHRUSTING(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['i
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLTHRUSTING))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLTHRUSTING), return_dtype=Float64)
 
 
 def CDLTRISTAR(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1961,7 +1961,7 @@ def CDLTRISTAR(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['int
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLTRISTAR))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLTRISTAR), return_dtype=Float64)
 
 
 def CDLUNIQUE3RIVER(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1974,7 +1974,7 @@ def CDLUNIQUE3RIVER(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # 
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLUNIQUE3RIVER))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLUNIQUE3RIVER), return_dtype=Float64)
 
 
 def CDLUPSIDEGAP2CROWS(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -1987,7 +1987,7 @@ def CDLUPSIDEGAP2CROWS(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr: 
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLUPSIDEGAP2CROWS))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLUPSIDEGAP2CROWS), return_dtype=Float64)
 
 
 def CDLXSIDEGAP3METHODS(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['integer']
@@ -2000,7 +2000,7 @@ def CDLXSIDEGAP3METHODS(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:
     Outputs:
         integer (values are -100, 0 or 100)
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLXSIDEGAP3METHODS))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.CDLXSIDEGAP3METHODS), return_dtype=Float64)
 
 
 def AVGPRICE(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['real']
@@ -2013,7 +2013,7 @@ def AVGPRICE(open: Expr, high: Expr, low: Expr, close: Expr) -> Expr:  # ['real'
     Outputs:
         real
     """
-    return struct([open, high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.AVGPRICE))
+    return struct(f0=open, f1=high, f2=low, f3=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.AVGPRICE), return_dtype=Float64)
 
 
 def MEDPRICE(high: Expr, low: Expr) -> Expr:  # ['real']
@@ -2026,7 +2026,7 @@ def MEDPRICE(high: Expr, low: Expr) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return struct([high, low]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2, dtype=float), _ta.MEDPRICE))
+    return struct(f0=high, f1=low).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2, dtype=float), _ta.MEDPRICE), return_dtype=Float64)
 
 
 def TYPPRICE(high: Expr, low: Expr, close: Expr) -> Expr:  # ['real']
@@ -2039,7 +2039,7 @@ def TYPPRICE(high: Expr, low: Expr, close: Expr) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return struct([high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 3, dtype=float), _ta.TYPPRICE))
+    return struct(f0=high, f1=low, f2=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 3, dtype=float), _ta.TYPPRICE), return_dtype=Float64)
 
 
 def WCLPRICE(high: Expr, low: Expr, close: Expr) -> Expr:  # ['real']
@@ -2052,7 +2052,7 @@ def WCLPRICE(high: Expr, low: Expr, close: Expr) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return struct([high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 3, dtype=float), _ta.WCLPRICE))
+    return struct(f0=high, f1=low, f2=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 3, dtype=float), _ta.WCLPRICE), return_dtype=Float64)
 
 
 def BETA(high: Expr, low: Expr, timeperiod: int = 5) -> Expr:  # ['real']
@@ -2068,7 +2068,7 @@ def BETA(high: Expr, low: Expr, timeperiod: int = 5) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return struct([high, low]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2, dtype=float), _ta.BETA, timeperiod))
+    return struct(f0=high, f1=low).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2, dtype=float), _ta.BETA, timeperiod), return_dtype=Float64)
 
 
 def CORREL(high: Expr, low: Expr, timeperiod: int = 30) -> Expr:  # ['real']
@@ -2084,7 +2084,7 @@ def CORREL(high: Expr, low: Expr, timeperiod: int = 30) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return struct([high, low]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2, dtype=float), _ta.CORREL, timeperiod))
+    return struct(f0=high, f1=low).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2, dtype=float), _ta.CORREL, timeperiod), return_dtype=Float64)
 
 
 def LINEARREG(close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
@@ -2099,7 +2099,7 @@ def LINEARREG(close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.LINEARREG, timeperiod))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.LINEARREG, timeperiod), return_dtype=Float64)
 
 
 def LINEARREG_ANGLE(close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
@@ -2114,7 +2114,7 @@ def LINEARREG_ANGLE(close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.LINEARREG_ANGLE, timeperiod))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.LINEARREG_ANGLE, timeperiod), return_dtype=Float64)
 
 
 def LINEARREG_INTERCEPT(close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
@@ -2129,7 +2129,7 @@ def LINEARREG_INTERCEPT(close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.LINEARREG_INTERCEPT, timeperiod))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.LINEARREG_INTERCEPT, timeperiod), return_dtype=Float64)
 
 
 def LINEARREG_SLOPE(close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
@@ -2144,7 +2144,7 @@ def LINEARREG_SLOPE(close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.LINEARREG_SLOPE, timeperiod))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.LINEARREG_SLOPE, timeperiod), return_dtype=Float64)
 
 
 def STDDEV(close: Expr, timeperiod: int = 5, nbdev: float = 1.0) -> Expr:  # ['real']
@@ -2160,7 +2160,7 @@ def STDDEV(close: Expr, timeperiod: int = 5, nbdev: float = 1.0) -> Expr:  # ['r
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.STDDEV, timeperiod, nbdev))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.STDDEV, timeperiod, nbdev), return_dtype=Float64)
 
 
 def TSF(close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
@@ -2175,7 +2175,7 @@ def TSF(close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.TSF, timeperiod))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.TSF, timeperiod), return_dtype=Float64)
 
 
 def VAR(close: Expr, timeperiod: int = 5, nbdev: float = 1.0) -> Expr:  # ['real']
@@ -2191,7 +2191,7 @@ def VAR(close: Expr, timeperiod: int = 5, nbdev: float = 1.0) -> Expr:  # ['real
     Outputs:
         real
     """
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.VAR, timeperiod, nbdev))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _ta.VAR, timeperiod, nbdev), return_dtype=Float64)
 
 
 def ATR(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
@@ -2206,7 +2206,7 @@ def ATR(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:  # ['
     Outputs:
         real
     """
-    return struct([high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 3, dtype=float), _ta.ATR, timeperiod))
+    return struct(f0=high, f1=low, f2=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 3, dtype=float), _ta.ATR, timeperiod), return_dtype=Float64)
 
 
 def NATR(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:  # ['real']
@@ -2221,7 +2221,7 @@ def NATR(high: Expr, low: Expr, close: Expr, timeperiod: int = 14) -> Expr:  # [
     Outputs:
         real
     """
-    return struct([high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 3, dtype=float), _ta.NATR, timeperiod))
+    return struct(f0=high, f1=low, f2=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 3, dtype=float), _ta.NATR, timeperiod), return_dtype=Float64)
 
 
 def TRANGE(high: Expr, low: Expr, close: Expr) -> Expr:  # ['real']
@@ -2234,7 +2234,7 @@ def TRANGE(high: Expr, low: Expr, close: Expr) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return struct([high, low, close]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 3, dtype=float), _ta.TRANGE))
+    return struct(f0=high, f1=low, f2=close).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 3, dtype=float), _ta.TRANGE), return_dtype=Float64)
 
 
 def AD(high: Expr, low: Expr, close: Expr, volume: Expr) -> Expr:  # ['real']
@@ -2247,7 +2247,7 @@ def AD(high: Expr, low: Expr, close: Expr, volume: Expr) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return struct([high, low, close, volume]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.AD))
+    return struct(f0=high, f1=low, f2=close, f3=volume).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.AD), return_dtype=Float64)
 
 
 def ADOSC(high: Expr, low: Expr, close: Expr, volume: Expr, fastperiod: int = 3, slowperiod: int = 10) -> Expr:  # ['real']
@@ -2263,7 +2263,7 @@ def ADOSC(high: Expr, low: Expr, close: Expr, volume: Expr, fastperiod: int = 3,
     Outputs:
         real
     """
-    return struct([high, low, close, volume]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.ADOSC, fastperiod, slowperiod))
+    return struct(f0=high, f1=low, f2=close, f3=volume).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 4, dtype=float), _ta.ADOSC, fastperiod, slowperiod), return_dtype=Float64)
 
 
 def OBV(close: Expr, volume: Expr) -> Expr:  # ['real']
@@ -2277,4 +2277,4 @@ def OBV(close: Expr, volume: Expr) -> Expr:  # ['real']
     Outputs:
         real
     """
-    return struct([close, volume]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2, dtype=float), _ta.OBV))
+    return struct(f0=close, f1=volume).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2, dtype=float), _ta.OBV), return_dtype=Float64)

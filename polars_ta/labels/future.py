@@ -12,7 +12,7 @@ https://mp.weixin.qq.com/s/XtgYezFsslOfW-QyIMr0VA
 https://github.com/Rachnog/Advanced-Deep-Trading/blob/master/bars-labels-diff/Labeling.ipynb
 
 """
-from polars import Expr, struct
+from polars import Expr, struct, Float64
 
 from polars_ta.labels._nb import _triple_barrier
 from polars_ta.utils.numba_ import batches_i2_o1, struct_to_numpy
@@ -162,4 +162,4 @@ def ts_triple_barrier(close: Expr, high: Expr, low: Expr, d: int = 5, take_profi
     ```
 
     """
-    return struct([close, high, low]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 3), _triple_barrier, d, take_profit, stop_loss))
+    return struct(f0=close, f1=high, f2=low).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 3), _triple_barrier, d, take_profit, stop_loss), return_dtype=Float64)

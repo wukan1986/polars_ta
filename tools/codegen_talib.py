@@ -20,7 +20,7 @@ def _codegen_func(name, input_names, parameters, output_names, doc):
     tpl11 = """
 def {name}({aa}) -> Expr:  # {output_names}
     \"\"\"{doc}\"\"\"
-    return {bb}.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), {cc}))
+    return {bb}.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), {cc}), return_dtype=Float64)
 """
     tpl12 = """
 def {name}({aa}) -> Expr:  # {output_names}
@@ -31,13 +31,13 @@ def {name}({aa}) -> Expr:  # {output_names}
     tpl21 = """
 def {name}({aa}) -> Expr:  # {output_names}
     \"\"\"{doc}\"\"\"
-    return struct([{bb}]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, {dd}, dtype=float), {cc}))
+    return struct({bb}).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, {dd}, dtype=float), {cc}), return_dtype=Float64)
 """
     tpl22 = """
 def {name}({aa}) -> Expr:  # {output_names}
     \"\"\"{doc}\"\"\"
     dtype = Struct([Field(f"column_{{i}}", Float64) for i in range({ee})])
-    return struct([{bb}]).map_batches(lambda xx: batches_i2_o2(struct_to_numpy(xx, {dd}, dtype=float), {cc}), return_dtype=dtype)
+    return struct({bb}).map_batches(lambda xx: batches_i2_o2(struct_to_numpy(xx, {dd}, dtype=float), {cc}), return_dtype=dtype)
 """
     if len(output_names) > 42:
         extra_args = {'ret_idx': len(output_names) - 1}
@@ -49,6 +49,9 @@ def {name}({aa}) -> Expr:  # {output_names}
     aa = ', '.join(a1 + a2 + a3)
 
     bb = ', '.join(input_names)
+    if len(input_names) > 1:
+        bb = [f'f{i}={arg}' for i, arg in enumerate(input_names)]
+        bb = ', '.join(bb)
 
     c1 = [f'_ta.{name}']
     if len(parameters) > 0:

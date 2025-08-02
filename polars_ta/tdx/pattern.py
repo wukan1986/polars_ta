@@ -1,7 +1,7 @@
 from polars import Expr, Struct, Field, Float64, struct
 
 from polars_ta.tdx._chip import _WINNER_COST
-from polars_ta.utils.numba_ import batches_i2_o2
+from polars_ta.utils.numba_ import batches_i2_o2, struct_to_numpy
 
 
 def ts_WINNER_COST(high: Expr, low: Expr, avg: Expr, turnover: Expr, close: Expr, cost: Expr = 0.5, step: float = 0.1) -> Expr:
@@ -46,4 +46,4 @@ def ts_WINNER_COST(high: Expr, low: Expr, avg: Expr, turnover: Expr, close: Expr
 
     """
     dtype = Struct([Field(f"column_{i}", Float64) for i in range(2)])
-    return struct([high, low, avg, turnover, close, cost]).map_batches(lambda xx: batches_i2_o2([xx.struct[i].to_numpy().astype(float) for i in range(6)], _WINNER_COST, step), return_dtype=dtype)
+    return struct(f0=high, f1=low, f2=avg, f3=turnover, f4=close, f5=cost).map_batches(lambda xx: batches_i2_o2(struct_to_numpy(xx, 6, dtype=float), _WINNER_COST, step), return_dtype=dtype)

@@ -1,4 +1,4 @@
-from polars import Expr, Struct, Field, Int64
+from polars import Expr, Struct, Field, Int64, Float64
 
 from polars_ta.tdx._nb import roll_avedev, _up_stat
 from polars_ta.utils.numba_ import batches_i1_o1, batches_i1_o2
@@ -10,7 +10,7 @@ from polars_ta.wq.time_series import ts_std_dev as _ts_std_dev
 def AVEDEV(close: Expr, timeperiod: int = 5) -> Expr:
     """mean absolute deviation
     平均绝对偏差"""
-    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy(), roll_avedev, timeperiod))
+    return close.map_batches(lambda x1: batches_i1_o1(x1.to_numpy(), roll_avedev, timeperiod), return_dtype=Float64)
 
 
 def DEVSQ(close: Expr, timeperiod: int = 5) -> Expr:

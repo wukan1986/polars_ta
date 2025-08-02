@@ -70,7 +70,7 @@ def BARSSINCE(condition: Expr) -> Expr:
 def BARSSINCEN(condition: Expr, N: int = 30) -> Expr:
     """# of Observations since the first time condition was true (rolling within N observations)
     N周期内第一次X不为0到现在的天数"""
-    return condition.cast(Boolean).map_batches(lambda x1: batches_i1_o1(x1.to_numpy(), roll_bars_since_n, N, dtype=UInt16))
+    return condition.cast(Boolean).map_batches(lambda x1: batches_i1_o1(x1.to_numpy(), roll_bars_since_n, N, dtype=UInt16), return_dtype=UInt16)
 
 
 def CUMSUM(close: Expr) -> Expr:
@@ -119,13 +119,13 @@ def EXPMEMA(close: Expr, N: int = 30) -> Expr:
 def HOD(close: Expr, N: int = 30) -> Expr:
     """rolling rank of each data in descending order
     HOD(X,N):求当前X数据是N周期内的第几个高值,N=0则从第一个有效值开始"""
-    return close.map_batches(lambda a: roll_rank(a, N, pct=False, ascending=False))
+    return close.map_batches(lambda a: roll_rank(a, N, pct=False, ascending=False), return_dtype=UInt16)
 
 
 def LOD(close: Expr, N: int = 30) -> Expr:
     """rolling rank of each data in ascending order
     LOD(X,N):求当前X数据是N周期内的第几个低值"""
-    return close.map_batches(lambda a: roll_rank(a, N, pct=False, ascending=True))
+    return close.map_batches(lambda a: roll_rank(a, N, pct=False, ascending=True), return_dtype=UInt16)
 
 
 def LOWRANGE(close: Expr) -> Expr:

@@ -316,7 +316,7 @@ def _roll_decay_linear(x1, window, min_periods):
     """
     def ts_decay_linear(x: Expr, d: int = 30, min_samples: Optional[int] = None) -> Expr:
         minp = min_samples or polars_ta.MIN_SAMPLES or d
-        return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _roll_decay_linear, d, minp))
+        return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _roll_decay_linear, d, minp), return_dtype=Float64)
 
     """
     weights = np.arange(1., window + 1)
@@ -337,7 +337,7 @@ def _roll_decay_exp_window(x1, window, min_periods, factor):
     """
     def ts_decay_exp_window(x: Expr, d: int = 30, factor: float = 1.0, min_samples: Optional[int] = None) -> Expr:
         minp = min_samples or polars_ta.MIN_SAMPLES or d
-        return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _roll_decay_exp_window, d, minp, factor))
+        return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy().astype(float), _roll_decay_exp_window, d, minp, factor), return_dtype=Float64)
 
     """
     weights = factor ** np.arange(window - 1, -1, -1)

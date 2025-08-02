@@ -9,7 +9,7 @@ import numpy as np
 from numba import jit
 from numpy import full
 from numpy.lib.stride_tricks import sliding_window_view
-from polars import Series, Expr, struct, DataFrame
+from polars import Series, Expr, struct, DataFrame, Float64
 
 """
 Series.to_numpy的操作在调用之前做，这样可控一些
@@ -156,11 +156,11 @@ def nb_roll_cov(x1, x2, window):
 
 
 def roll_sum(x: Expr, n: int) -> Expr:
-    return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy(), nb_roll_sum, n))
+    return x.map_batches(lambda x1: batches_i1_o1(x1.to_numpy(), nb_roll_sum, n), return_dtype=Float64)
 
 
 def roll_cov(a: Expr, b: Expr, n: int) -> Expr:
-    return struct([a, b]).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2), nb_roll_cov, n))
+    return struct(f0=a, f1=b).map_batches(lambda xx: batches_i2_o1(struct_to_numpy(xx, 2), nb_roll_cov, n), return_dtype=Float64)
 
 
 @lru_cache
