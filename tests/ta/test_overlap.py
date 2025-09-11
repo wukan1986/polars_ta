@@ -100,11 +100,11 @@ class TestDemoClass:
     #     assert np.allclose(result1, result3, equal_nan=True)
 
     def test_BBANDS(self):
-        from polars_ta.ta.overlap import BBANDS_upperband
+        from polars_ta.ta.overlap import BBANDS
 
         result1, _, _ = talib.BBANDS(self.close_np, timeperiod=3)
-        result2 = self.df_pl.select(BBANDS_upperband(pl.col("close"), timeperiod=3))
-        result3 = result2['close'].to_numpy()
+        result2 = self.df_pl.select(BBANDS(pl.col("close"), timeperiod=3).struct[0])
+        result3 = result2['upperband'].to_numpy()
 
         assert np.allclose(result1, result3, equal_nan=True)
 

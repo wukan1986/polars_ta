@@ -1,4 +1,4 @@
-from polars import Expr, when
+from polars import Expr, when, struct
 
 from polars_ta import TA_EPSILON
 from polars_ta.ta.operators import MAX
@@ -18,17 +18,9 @@ def APO(close: Expr, fastperiod: int = 12, slowperiod: int = 26, matype: int = 0
         return EMA(close, fastperiod) - EMA(close, slowperiod)
 
 
-def AROON_aroondown(high: Expr, low: Expr, timeperiod: int = 14) -> Expr:
+def AROON(high: Expr, low: Expr, timeperiod: int = 14) -> Expr:
     """
-    Lower band:
     下轨:(N-LLVBARS(L,N))/N*100,COLORGREEN;
-    """
-    return 1 - ts_arg_min(low, timeperiod, reverse=True) / timeperiod
-
-
-def AROON_aroonup(high: Expr, low: Expr, timeperiod: int = 14) -> Expr:
-    """
-    Upper band:
     上轨:(N-HHVBARS(H,N))/N*100,COLORRED;
 
     Notes
@@ -38,10 +30,13 @@ def AROON_aroonup(high: Expr, low: Expr, timeperiod: int = 14) -> Expr:
     pd.Series.rolling().arg_max()没有逆序，导致出现两个及以上最高点时，结果偏大
 
     """
-    return 1 - ts_arg_max(high, timeperiod, reverse=True) / timeperiod
+    aroondown = 1 - ts_arg_min(low, timeperiod, reverse=True) / timeperiod
+    aroonup = 1 - ts_arg_max(high, timeperiod, reverse=True) / timeperiod
+
+    return struct(aroondown=aroondown, aroonup=aroonup)
 
 
-def MACD_macd(close: Expr, fastperiod: int = 12, slowperiod: int = 26) -> Expr:
+def MACD(close: Expr, fastperiod: int = 12, slowperiod: int = 26, signalperiod: int = 9) -> Expr:
     """MACD
 
     Notes
@@ -52,28 +47,10 @@ def MACD_macd(close: Expr, fastperiod: int = 12, slowperiod: int = 26) -> Expr:
     talib.MACD有效数据按fastperiod，而本项目按slowperiod
 
     """
-    return EMA(close, fastperiod) - EMA(close, slowperiod)
-
-
-def MACD_macdhist(close: Expr, fastperiod: int = 12, slowperiod: int = 26, signalperiod: int = 9) -> Expr:
-    """MACD
-
-    Notes
-    -----
-    Chinese version is multiplied by 2
-
-    中国版多了乘2
-
-    """
-    macd = MACD_macd(close, fastperiod, slowperiod)
-    signal = EMA(macd, signalperiod)
-    return macd - signal
-
-
-def MACD_macdsignal(close: Expr, fastperiod: int = 12, slowperiod: int = 26, signalperiod: int = 9) -> Expr:
-    macd = MACD_macd(close, fastperiod, slowperiod)
-    signal = EMA(macd, signalperiod)
-    return signal
+    macd = EMA(close, fastperiod) - EMA(close, slowperiod)
+    macdsignal = EMA(macd, signalperiod)
+    macdhist = (macd - macdsignal)  # * 2 # 中国版多了乘2
+    return struct(macd=macd, macdsignal=macdsignal, macdhist=macdhist)
 
 
 def MOM(close: Expr, timeperiod: int = 10) -> Expr:
@@ -143,8 +120,10 @@ def RSI(close: Expr, timeperiod: int = 14) -> Expr:
     return RMA(max_(dif, 0), timeperiod) / (RMA(dif.abs(), timeperiod) + TA_EPSILON)  # * 100
 
 
-def STOCHF_fastd(high: Expr, low: Expr, close: Expr, fastk_period: int = 5, fastd_period: int = 3) -> Expr:
-    return SMA(RSV(high, low, close, fastk_period), fastd_period)
+def STOCHF(high: Expr, low: Expr, close: Expr, fastk_period: int = 5, fastd_period: int = 3) -> Expr:
+    fastk = RSV(high, low, close, fastk_period)
+    fastd = SMA(fastk, fastd_period)
+    return struct(fastk=fastk, fastd=fastd)
 
 
 def TRIX(close: Expr, timeperiod: int = 30) -> Expr:

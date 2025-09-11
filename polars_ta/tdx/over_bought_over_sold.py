@@ -1,4 +1,4 @@
-from polars import Expr
+from polars import Expr, struct
 
 from polars_ta import TA_EPSILON
 from polars_ta.ta.momentum import RSI  # noqa
@@ -63,8 +63,7 @@ def KDJ(HIGH: Expr, LOW: Expr, CLOSE: Expr, N: int = 9, M1: int = 3, M2: int = 3
     k = SMA_CN(rsv, M1, 1)
     d = SMA_CN(k, M2, 1)
     j = k * 3 - d * 2
-    # return k, d, j
-    return j
+    return struct(K=k, D=d, J=j)
 
 
 def MTM(CLOSE: Expr, N: int = 12) -> Expr:

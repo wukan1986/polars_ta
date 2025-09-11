@@ -1,6 +1,6 @@
 from math import ceil, floor
 
-from polars import Expr
+from polars import Expr, struct
 
 from polars_ta.ta.operators import MAX
 from polars_ta.ta.operators import MIN
@@ -9,19 +9,10 @@ from polars_ta.wq.time_series import ts_decay_linear as WMA  # noqa
 from polars_ta.wq.time_series import ts_mean as SMA  # noqa
 
 
-def BBANDS_upperband(close: Expr, timeperiod: int = 5, nbdevup: float = 2) -> Expr:
-    """Bollinger Bands Upper Band
-    布林线上轨
-
-    Notes
-    -----
-    1. You may create a new functino based on this, to replace the middle band
-    2. use negative values in `nbdevup` for the lower band
-
-    1. 想替换中线算法时，参考此代码新建一个函数
-    2. 想生成下轨时，nbdevup用负数
-    """
-    return SMA(close, timeperiod) + STDDEV(close, timeperiod, nbdevup)
+def BBANDS(close: Expr, timeperiod: float = 5.0, nbdevup: float = 2.0, nbdevdn: float = 2.0, matype: float = 0.0) -> Expr:
+    middleband = SMA(close, timeperiod)
+    stddev = STDDEV(close, timeperiod)
+    return struct(upperband=middleband + stddev * nbdevup, middleband=middleband, lowerband=middleband - stddev * nbdevdn)
 
 
 def DEMA(close: Expr, timeperiod: int = 30) -> Expr:
