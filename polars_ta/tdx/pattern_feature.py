@@ -154,7 +154,7 @@ def 跳空缺口选股(HIGH: Expr, LOW: Expr) -> Expr:
 def 单阳不破选股(O: Expr, H: Expr, L: Expr, C: Expr, N1: int = 2, N2: int = 7) -> Expr:
     """W106 单阳不破选股
     """
-    A0 = ((C > O * 1.08) | (C > REF(C, 1) * 1.08)) & NOT(H == L) & NOT(H == C & H == O)  # {大阳超8%，排除当天一字、T字板}
+    A0 = ((C > O * 1.08) | (C > REF(C, 1) * 1.08)) & NOT(H == L) & NOT((H == C) & (H == O))  # {大阳超8%，排除当天一字、T字板}
     A1 = A0 & BARSLASTCOUNT(A0) == 1
     A2 = BARSLAST(A1)  # {距离大阳几根K}
     ZCX = REF(O, A2)  # {获取大阳位置的开盘价作为支撑线}
@@ -232,5 +232,5 @@ def 突破(C: Expr, N1: int = 5, N2: int = 10, N3: int = 30) -> Expr:
     T1 = CROSS(M2, M3)  # {今天中线上穿长线}
     T2 = (D1 >= D2) & (D2 >= D3)  # {交叉按指定的先后出现}
     T3 = COUNT(CROSS(M2, M1) | CROSS(M3, M2) | CROSS(M3, M1), D1) == 0  # {中间无夹杂其它交叉}
-    T4 = REF(M1 < M3 & M2 < M3, D1 + 1)  # {短上穿中前一天短、中线在长线之下}
+    T4 = REF((M1 < M3) & (M2 < M3), D1 + 1)  # {短上穿中前一天短、中线在长线之下}
     return T1 & T2 & T3 & T4  # {价托确定};

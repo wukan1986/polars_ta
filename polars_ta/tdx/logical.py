@@ -63,11 +63,17 @@ def EXIST(condition: Expr, N: int) -> Expr:
 
 def EXISTR(condition: Expr, a: int, b: int) -> Expr:
     """从前a日到前b日内是否存在"""
+    # 不支持a参数为0，用一季来代替
+    if a == 0:
+        a = 60 + b
     return EXIST(condition, a - b).shift(b)
 
 
 def LAST(condition: Expr, a: int, b: int) -> Expr:
     """从前a日到前b日内一直存在"""
+    # 不支持a参数为0，用一季来代替
+    if a == 0:
+        a = 60 + b
     return EVERY(condition, a - b).shift(b)
 
 
