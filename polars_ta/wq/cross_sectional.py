@@ -5,7 +5,7 @@
 
 """
 import polars_ols as pls
-from polars import Expr, when, max_horizontal, UInt16, Int8
+from polars import Expr, when, max_horizontal, UInt16, Int8, Utf8
 from polars_ols import OLSKwargs
 
 # In the original version, the function names are not prefixed with `cs_`,
@@ -429,7 +429,7 @@ def cs_qcut(x: Expr, q: int = 10) -> Expr:
     # 实测直接to_physical()无法用于over,相当于with pl.StringCache():
     # return x.qcut(q, allow_duplicates=True).to_physical()
 
-    return x.qcut(q, allow_duplicates=True, labels=[f'{i}' for i in range(q)]).cast(UInt16)
+    return x.qcut(q, allow_duplicates=True, labels=[f'{i}' for i in range(q)]).cast(Utf8).cast(UInt16)
 
 
 def cs_top_bottom(x: Expr, k: int = 10) -> Expr:
