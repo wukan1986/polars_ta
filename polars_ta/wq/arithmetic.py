@@ -614,6 +614,10 @@ def power(x: Expr, y: Expr) -> Expr:
     └──────┴──────┴──────┴──────┘
     ```
 
+    Notes
+    -----
+    负数的非整数幂在实数中未定义
+
     """
     if isinstance(y, (int, float)):
         return x.pow(y)
