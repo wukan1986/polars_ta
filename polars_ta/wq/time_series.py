@@ -10,7 +10,6 @@ from polars_ols import RollingKwargs
 
 import polars_ta
 from polars_ta.utils.numba_ import batches_i1_o1, batches_i2_o1, batches_i2_o2, struct_to_numpy
-from polars_ta.utils.pandas_ import roll_rank
 from polars_ta.wq._nb import roll_argmax, roll_argmin, roll_co_kurtosis, roll_co_skewness, roll_moment, roll_partial_corr, roll_triple_corr, _cum_prod_by, _cum_sum_by, _signals_to_size, \
     _cum_sum_reset, _sum_split_by, roll_prod
 
@@ -771,15 +770,9 @@ def ts_product(x: Expr, d: int = 5, min_samples: Optional[int] = None) -> Expr:
 
 
 def ts_rank(x: Expr, d: int = 5, min_samples: Optional[int] = None) -> Expr:
-    """时序滚动排名
-
-    Warnings
-    --------
-    等待polars官方出rolling_rank
-
-    """
-    minp = min_samples or polars_ta.MIN_SAMPLES or d
-    return x.map_batches(lambda a: roll_rank(a, d, minp, True), return_dtype=Float64)
+    """时序滚动排名"""
+    minp = min_samples or polars_ta.MIN_SAMPLES
+    return x.rolling_rank(d, min_samples=minp) / x.is_not_null().rolling_sum(d, min_samples=minp)
 
 
 def ts_realized_volatility(close: Expr, d: int = 5, min_samples: Optional[int] = None) -> Expr:
