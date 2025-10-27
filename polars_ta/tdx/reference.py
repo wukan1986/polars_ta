@@ -28,7 +28,6 @@ from polars_ta.ta.overlap import SMA as MA
 from polars_ta.ta.volatility import TRANGE as TR  # noqa
 from polars_ta.tdx._nb import roll_bars_since_n
 from polars_ta.utils.numba_ import batches_i1_o1
-from polars_ta.utils.pandas_ import roll_rank
 from polars_ta.wq.arithmetic import max_ as MAX  # noqa
 from polars_ta.wq.arithmetic import min_ as MIN  # noqa
 from polars_ta.wq.time_series import ts_arg_max as HHVBARS  # noqa
@@ -119,13 +118,13 @@ def EXPMEMA(close: Expr, N: int = 30) -> Expr:
 def HOD(close: Expr, N: int = 30) -> Expr:
     """rolling rank of each data in descending order
     HOD(X,N):求当前X数据是N周期内的第几个高值,N=0则从第一个有效值开始"""
-    return close.map_batches(lambda a: roll_rank(a, N, pct=False, ascending=False), return_dtype=UInt16)
+    return (-close).rolling_rank(N, method="min")
 
 
 def LOD(close: Expr, N: int = 30) -> Expr:
     """rolling rank of each data in ascending order
     LOD(X,N):求当前X数据是N周期内的第几个低值"""
-    return close.map_batches(lambda a: roll_rank(a, N, pct=False, ascending=True), return_dtype=UInt16)
+    return close.rolling_rank(N, method="min")
 
 
 def LOWRANGE(close: Expr) -> Expr:
