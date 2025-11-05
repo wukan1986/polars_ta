@@ -2,9 +2,11 @@ from polars import Expr, all_horizontal, any_horizontal, Boolean
 from polars import when
 
 
-def and_(a: Expr, b: Expr, *args) -> Expr:
+def and_(a: Expr, *args) -> Expr:
     """Logical AND operator, returns true if both operands are true and returns false otherwise"""
-    return all_horizontal(a, b, *args)
+    if len(args) == 0:
+        return a
+    return all_horizontal(a, *args)
 
 
 def equal(input1: Expr, input2: Expr) -> Expr:
@@ -69,9 +71,11 @@ def not_(input1: Expr) -> Expr:
     return ~input1.cast(Boolean)
 
 
-def or_(a: Expr, b: Expr, *args) -> Expr:
+def or_(a: Expr, *args) -> Expr:
     """Logical OR operator returns true if either or both inputs are true and returns false otherwise"""
-    return any_horizontal(a, b, *args)
+    if len(args) == 0:
+        return a
+    return any_horizontal(a, *args)
 
 
 def xor(a: Expr, b: Expr) -> Expr:
