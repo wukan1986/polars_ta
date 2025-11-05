@@ -331,7 +331,7 @@ def cs_rank_if(condition: Expr, x: Expr, pct: bool = True) -> Expr:
 
     Notes
     -----
-    已经产生了新的None，尽量避免之后再进行ts_时序计算
+    已经产生了新的`None`，尽量避免之后再进行`ts_`时序计算。或按需调整`over_null`
 
     """
     return cs_rank(when(condition).then(x).otherwise(None), pct)

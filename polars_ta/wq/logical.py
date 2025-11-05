@@ -13,7 +13,14 @@ def equal(input1: Expr, input2: Expr) -> Expr:
 
 
 def if_else(condition: Expr, true_value: Expr, false_value: Expr = None) -> Expr:
-    """条件判断"""
+    """条件判断
+
+    Notes
+    -----
+    如果`true_value`或`false_value`使用了`None`,导致数据有`null`,
+    后面如再有`ts_`时序算子，一定要留意当前`over_null`值
+
+    """
     return when(condition).then(true_value).otherwise(false_value)
 
 
