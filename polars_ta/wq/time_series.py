@@ -772,7 +772,7 @@ def ts_product(x: Expr, d: int = 5, min_samples: Optional[int] = None) -> Expr:
 def ts_rank(x: Expr, d: int = 5, min_samples: Optional[int] = None) -> Expr:
     """时序滚动排名"""
     minp = min_samples or polars_ta.MIN_SAMPLES
-    return x.rolling_rank(d, min_samples=minp) / x.is_not_null().rolling_sum(d, min_samples=minp)
+    return x.rolling_rank(d, min_samples=minp) / x.is_not_null().cast(UInt32).rolling_sum(d, min_samples=minp)
 
 
 def ts_realized_volatility(close: Expr, d: int = 5, min_samples: Optional[int] = None) -> Expr:
