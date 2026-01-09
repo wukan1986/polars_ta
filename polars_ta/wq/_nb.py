@@ -14,11 +14,10 @@ def roll_argmax(x1, window, min_periods, reverse):
     if reverse:
         a1 = a1[:, ::-1]
     for i, v1 in enumerate(a1):
-        if np.isnan(v1).all():
+        if np.isnan(v1[:min_periods]).any():
             continue
-        out1[i] = argmax(v1)
+        out1[i] = argmax(v1[~np.isnan(v1)])
     return out1[:x1.shape[0]]
-
 
 @jit(nopython=True, nogil=True, cache=True)
 def roll_argmin(x1, window, min_periods, reverse):
@@ -28,9 +27,10 @@ def roll_argmin(x1, window, min_periods, reverse):
     if reverse:
         a1 = a1[:, ::-1]
     for i, v1 in enumerate(a1):
-        if np.isnan(v1).all():
+        if np.isnan(v1[:min_periods]).any():
             continue
-        out1[i] = argmin(v1)
+        out1[i] = argmin(v1[~np.isnan(v1)])
+
     return out1[:x1.shape[0]]
 
 

@@ -39,23 +39,26 @@ def ts_arg_max(x: Expr, d: int = 5, reverse: bool = True, min_samples: Optional[
     --------
     ```python
     df = pl.DataFrame({
-        'a': [6, 2, 8, 5, 9, 4][::-1],
+        'a': [0., 1., 0.,np.nan, 1., 0.],
     }).with_columns(
-        out=ts_arg_max(pl.col('a'), 6),
+        out3=ts_arg_max(pl.col('a'), 3),
+        out2=ts_arg_max(pl.col('a'), 3, min_samples=2),
+        out1=ts_arg_max(pl.col('a'), 3, min_samples=1),
     )
-    shape: (6, 2)
-    ┌─────┬──────┐
-    │ a   ┆ out  │
-    │ --- ┆ ---  │
-    │ i64 ┆ u16  │
-    ╞═════╪══════╡
-    │ 4   ┆ null │
-    │ 9   ┆ null │
-    │ 5   ┆ null │
-    │ 8   ┆ null │
-    │ 2   ┆ null │
-    │ 6   ┆ 4    │
-    └─────┴──────┘
+
+    shape: (6, 4)
+    ┌─────┬──────┬──────┬──────┐
+    │ a   ┆ out3 ┆ out2 ┆ out1 │
+    │ --- ┆ ---  ┆ ---  ┆ ---  │
+    │ f64 ┆ u16  ┆ u16  ┆ u16  │
+    ╞═════╪══════╪══════╪══════╡
+    │ 0.0 ┆ null ┆ null ┆ 0    │
+    │ 1.0 ┆ null ┆ 0    ┆ 0    │
+    │ 0.0 ┆ 1    ┆ 1    ┆ 1    │
+    │ NaN ┆ null ┆ null ┆ null │
+    │ 1.0 ┆ null ┆ null ┆ 0    │
+    │ 0.0 ┆ null ┆ 1    ┆ 1    │
+    └─────┴──────┴──────┴──────┘
     ```
 
     References
@@ -83,6 +86,32 @@ def ts_arg_min(x: Expr, d: int = 5, reverse: bool = True, min_samples: Optional[
     See Also
     --------
     ts_arg_max
+
+    Examples
+    --------
+    ```python
+    df = pl.DataFrame({
+        'a': [0., 1., 0.,np.nan, 1., 0.],
+    }).with_columns(
+        out3=ts_arg_min(pl.col('a'), 3),
+        out2=ts_arg_min(pl.col('a'), 3, min_samples=2),
+        out1=ts_arg_min(pl.col('a'), 3, min_samples=1),
+    )
+
+    shape: (6, 4)
+    ┌─────┬──────┬──────┬──────┐
+    │ a   ┆ out3 ┆ out2 ┆ out1 │
+    │ --- ┆ ---  ┆ ---  ┆ ---  │
+    │ f64 ┆ u16  ┆ u16  ┆ u16  │
+    ╞═════╪══════╪══════╪══════╡
+    │ 0.0 ┆ null ┆ null ┆ 0    │
+    │ 1.0 ┆ null ┆ 1    ┆ 1    │
+    │ 0.0 ┆ 0    ┆ 0    ┆ 0    │
+    │ NaN ┆ null ┆ null ┆ null │
+    │ 1.0 ┆ null ┆ null ┆ 1    │
+    │ 0.0 ┆ null ┆ 0    ┆ 0    │
+    └─────┴──────┴──────┴──────┘
+    ```
 
     References
     ----------
