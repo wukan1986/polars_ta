@@ -11,16 +11,14 @@ def roll_argmax(x1, window, min_periods, reverse):
     out1 = full_with_window_size(x1, np.nan, dtype=np.float64, window_size=window)
     a1 = sliding_window_with_min_periods(out1, window, min_periods)
     out1[:] = np.nan
-    if reverse:
-        a1 = a1[:, ::-1]
+
     for i, v1 in enumerate(a1):
-        if reverse:
-            v0 = v1[:min_periods]
-        else:
-            v0 = v1[-min_periods:]
-        if np.isnan(v0).any():
+        if np.isnan(v1[-min_periods:]).any():
             continue
+        if reverse:
+            v1 = v1[::-1]
         out1[i] = argmax(v1[~np.isnan(v1)])
+
     return out1[:x1.shape[0]]
 
 
@@ -29,15 +27,12 @@ def roll_argmin(x1, window, min_periods, reverse):
     out1 = full_with_window_size(x1, np.nan, dtype=np.float64, window_size=window)
     a1 = sliding_window_with_min_periods(out1, window, min_periods)
     out1[:] = np.nan
-    if reverse:
-        a1 = a1[:, ::-1]
+
     for i, v1 in enumerate(a1):
-        if reverse:
-            v0 = v1[:min_periods]
-        else:
-            v0 = v1[-min_periods:]
-        if np.isnan(v0).any():
+        if np.isnan(v1[-min_periods:]).any():
             continue
+        if reverse:
+            v1 = v1[::-1]
         out1[i] = argmin(v1[~np.isnan(v1)])
 
     return out1[:x1.shape[0]]
