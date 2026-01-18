@@ -1,137 +1,224 @@
+"""
+Point In Time处理相关函数
+
+原始表：
+资产负债表   时点数据
+   利润表   区间数据
+现金流量表   区间数据
+
+单季度数据
+资产负债表   同原始表
+   利润表   本季-上季；一季度
+现金流量表   本季-上季；一季度
+
+TTM数据
+资产负债表   四个报告期平均值；最新和同比两期的平均值；最新
+   利润表   年报；本季+去年报-同比；年化
+现金流量表   年报；本季+去年报-同比；年化
+
+"""
 import polars as pl
-from polars import selectors as cs
+
+# 公布日。收盘后公布将会标记为下一日。行情数据其实有报告日，隐去了公布日
+ANNOUNCE_DATE = '__ANNOUNCE_DATE__'
 
 
-def ts_pit(df: pl.DataFrame, func=None,
-           date='date', update_time='update_time', asset='asset'):
-    """Computing Point In Time
+def pit_prepare(df: pl.DataFrame,
+                by1: str = 'asset',
+                by2: str = 'announce_date',
+                by3: str = 'report_date') -> pl.DataFrame:
+    """将原始的财务表根据公布日重新扩展，输出满足以下条件：
 
-    Parameters
-    ----------
-    df: pl.DataFrame
-        dataframe after group_by(date)
-    func:
-        apply to the dataframe output from pit, can be None
-    date:str
-        column name, group by this col
-    update_time:str
-        column name, group by this col
-    asset:str
-        asset column name
-        资产。asfreq时，asset为空，后面要分组时不方便
+    1. 根据股票和公布日分组
+    2. 组内没有未来数据
+    3. 组内的同一报告期数据只取最新
 
     Returns
     -------
-    pd.DataFrame
-
-    Notes
-    -----
-    1. Data update might be weekeng
-    2. You cannot use this for further time-series computation.
-        Alert for inclusion of future data
-    3. This is different from general `ts_` functions, be careful
-
-
-    Point In Time计算
-
-    Parameters
-    ----------
-    df: pl.DataFrame
-        group_by(date)后的数据块
-    func:
-        作用于pit提取出的DataFrame，可不填
-    date:str
-        分组依据
-    update_time:str
-        分组依据
-    asset:str
-        资产。asfreq时，asset为空，后面要分组时不方便
-
-    Returns
-    -------
-    pd.DataFrame
-
-    Notes
-    -----
-    1. 数据更新可能是周末
-    2. 输出的数据不能再做时序计算，因为再算就引入未来数据了
-    3. 此算子与一般的`ts_`算子不同，小心使用
+    pl.DataFrame
+        - asset
+        - announce_date
+        - report_date
+        - __ANNOUNCE_DATE__
+            是公布日也是观察日，在观察日可以看到最新的历史数据，看不到未来数据
 
     """
-    # sort first
-    # 一定要提前排序
-    sort_by = [date, update_time]
-    df = df.sort(sort_by)
+    TMP = '__TMP__'
 
-    dr = (
-        # group by, record the count and update time
-        # 分组，记录数量，和更新时间
-        df.group_by(date).agg(update_time, pl.len())
-        # 多加一行是否最后值
-        .filter(pl.col('len') > 1)
-        .select(pl.col(update_time).list.slice(1))
-        .explode(update_time).to_series()
+    # 根据发布日期，笛卡尔扩展，过滤掉未来数据
+    df1 = (
+        df
+        .select(pl.col(by1).alias(TMP), pl.col(by2).alias(ANNOUNCE_DATE))
+        .join_where(df, (pl.col(TMP) == pl.col(by1)) & (pl.col(ANNOUNCE_DATE) >= pl.col(by2)))
+        .drop(TMP)
     )
 
-    # 最大的更新时间
-    max_update_time = df.select(update_time).max().to_series()
-    dr = dr.append(max_update_time).unique().sort().to_list()
-
-    # fill missing data to 4 quarters
-    # 部分很早的财报有缺失，比如只有年报或半年报，仿asfreq补充成4季
-    min_max_q = df.select(date).unique().upsample(date, every='1q')
-    # TODO 使用date填充update_time是否会引入问题？
-    df = df.join(min_max_q, on=date, how='outer_coalesce').with_columns(pl.col(update_time).fill_null(pl.col(date)))
-    # 由于asfreq导致asset可能为空，但之后可能要用到，所以填充一下
-    df = df.with_columns(pl.col(asset).forward_fill())
-
-    dd = []
-    # iterate over the key dates
-    # 遍历关键日期
-    for dt in dr:
-        # 每次只看指定更新日之间的记录
-        d: pl.DataFrame = df.filter(pl.col(update_time) <= dt)
-        # 已经排序了，只取能取最新值
-        d = d.group_by(date, maintain_order=True).last()
-        # TODO 其实asfreq放这更合理，但为了提速将其提前
-
-        d = d.with_columns(pl.col(date).dt.quarter().alias('quarter'))
-        if func is not None:
-            # 分块计算
-            d = func(d)
-        dd.append(d)
-
-    # sort by the date and update time
-    # 按报告期排序
-    x = pl.concat(dd)
-    x = x.unique(subset=sort_by, keep='first').sort(sort_by)
-
-    return x
+    # 过滤数据，同报告期只保留最新的一条
+    df2 = (
+        df1
+        .sort(by1, ANNOUNCE_DATE, by3, by2)
+        .unique([by1, ANNOUNCE_DATE, by3], keep="last", maintain_order=True)
+    )
+    return df2
 
 
-def period_to_quarter():
-    """时段数据转单成季"""
-    csnum = cs.numeric().exclude('quarter')
-    return pl.when(pl.col('quarter') == 1).then(csnum).otherwise(csnum.diff()).name.suffix('_Q')
+def pit_calc(df: pl.DataFrame,
+             by1: str = 'asset',
+             by2: str = ANNOUNCE_DATE,
+             by3: str = 'report_date') -> pl.DataFrame:
+    """输入PIT分组的财务数据，组内计算时序指标"""
+    df1 = (
+        df.with_columns(
+            # TODO 补充其他各种时序指标，注意，不要少了`( ).over(by1, by2, order_by=by3)`
+            net_profit_to_total_operate_revenue_ttm=(pl.col('net_profit').rolling_mean(4) / pl.col('total_operating_revenue').rolling_mean(4)).over(by1, by2, order_by=by3)
+        )
+    )
+    return df1
 
 
-def peroid_to_ttm():
-    """时段数据计算ttm"""
-    csnum = cs.numeric().exclude('quarter')
+def pit_frist(df: pl.DataFrame,
+              by1: str = 'asset',
+              by2: str = 'announce_date',
+              by3: str = 'report_date',
+              by4: str = ANNOUNCE_DATE) -> pl.DataFrame:
+    """输入PIT分组的财务数据，多组合并保留最先发布的数据
+
+    此数据不含未来数据，但原则上不能再做时序处理
+
+    Returns
+    -------
+    pl.DataFrame
+        - asset
+        - announce_date
+        - report_date
+
+    """
+    df1 = (
+        df
+        .sort(by1, by2, by3, by4)
+        .unique([by1, by2, by3], keep="first", maintain_order=True)
+        .drop(ANNOUNCE_DATE)
+    )
+    return df1
+
+
+def period_to_quarter(col: pl.Expr | str, quarter: pl.Expr | str) -> pl.Expr:
+    """区间数据转成单季数据
+
+    1. `利润表`和`现金流量表`的`原始表`可以转成单季数据
+    2. `资产负债表`不能转单季
+
+    Examples
+    --------
+    ```python
+    df = df.with_columns(
+        quarter=pl.col('report_date').dt.quarter(),
+    ).with_columns(
+        period_to_quarter(cs.numeric().exclude('quarter'), quarter='quarter').over('code', 'pub_date', order_by='report_date').name.suffix('_Q'),
+    )
+    ```
+
+    """
+    col = pl.col(col)
+    quarter = pl.col(quarter)
+    return pl.when(quarter == 1).then(col).otherwise(col.diff())
+
+
+def ttm_from_point(col: pl.Expr | str) -> pl.Expr:
+    """时点数据计算TTM
+
+    1. 仅`资产负债表`原始表可调用此函数
+    2. `利润表`和`现金流量表`不能调用
+
+    数据要按一年四期排列，不能一年两期
+
+    Examples
+    --------
+    ```python
+    df = df.with_columns(
+        ttm_from_point('total_assets').over('code', 'pub_date', order_by='report_date').name.suffix('_ttm')
+    )
+    ```
+
+    """
+    col = pl.col(col)
+    return pl.coalesce(
+        col.rolling_mean(4),  # 4期平均
+        (col + col.shift(4)) / 2,  # 同比报告期平均
+        col,  # 最新
+    )
+
+
+def last_year(col: pl.Expr | str, quarter: pl.Expr | str) -> pl.Expr:
+    """最新年报
+
+    Examples
+    --------
+    ```python
+    df = df.with_columns(
+        quarter=pl.col('report_date').dt.quarter(),
+    ).with_columns(
+        last_year('total_assets').over('code', 'pub_date', order_by='report_date').name.suffix('_ly')
+    )
+    ```
+
+    """
+    col = pl.col(col)
+    quarter = pl.col(quarter)
+    return pl.when(quarter == 4).then(col).otherwise(None).forward_fill(3)
+
+
+def ttm_from_period(col: pl.Expr | str, quarter: pl.Expr | str) -> pl.Expr:
+    """区间数据计算ttm
+
+    1. `利润表`和`现金流量表`原始表可调用此函数
+    2. `资产负债表`不能调用
+
+    数据要按一年四期排列，不能一年两期
+
+    Examples
+    --------
+    ```python
+    df = df.with_columns(
+        quarter=pl.col('report_date').dt.quarter(),
+    ).with_columns(
+        ttm_from_peroid('total_operating_revenue', quarter='quarter').over('code', 'pub_date', order_by='report_date').name.suffix('_TTM')
+    )
+
+    ```
+    """
+    col = pl.col(col)
+    quarter = pl.col(quarter)
+
     # 年报数据
-    f1 = pl.when(pl.col('quarter') == 4).then(csnum).otherwise(None)
-    # 上年年报和同比都存在。当前报告期-上年报告期+上年年报
-    f2 = csnum - csnum.shift(4) + f1.forward_fill()
+    f1 = pl.when(quarter == 4).then(col).otherwise(None)
+    # 当前报告期+上年年报-上年同比
+    f2 = col + f1.forward_fill(3) - col.shift(4)
     # 年化计算法=当前报告期*年化系数
-    f3 = csnum / pl.col('quarter') * 4
-    # return pl.coalesce(f1, f2, f3).name.suffix('_TTM')
-    return (pl.when(f1.is_not_null()).then(f1)
-            .when(f2.is_not_null()).then(f2)
-            .when(f3.is_not_null()).then(f3)
-            .otherwise(None)).name.suffix('_TTM')
+    f3 = col / quarter * 4
+    return pl.coalesce(f1, f2, f3)
 
 
-def point_to_ttm() -> pl.Expr:
-    """时点数据计算ttm"""
-    csnum = cs.numeric().exclude('quarter')
-    return csnum.rolling_mean(4).name.suffix('_TTM')
+def join_quote_financial(quote: pl.DataFrame,
+                         financial: pl.DataFrame,
+                         by1: str = 'asset',
+                         by2: str = 'date'):
+    """合并行情与财务表。请提前对财务表进行ttm等计算。因为之后再按报告期对齐很麻烦
+
+    1. 同一天发布多期，需要正确排序最新一期
+    2. 更新历史上的某一期，不能把他当成最新一期
+
+    Parameters
+    ----------
+    quote:
+        行情表
+    financial:
+        财务表。收盘后公布会显示第二天，一周7天都可能公布。同一天能公布多期
+    by1
+    by2
+
+    """
+    quote = quote.sort(by1, by2)
+    financial = financial.sort(by1, by2)
+
+    return quote.join_asof(financial, left_on=by2, right_on=by2, by=by1, strategy="backward", check_sortedness=False)

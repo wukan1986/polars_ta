@@ -3,11 +3,11 @@ from pathlib import Path
 import pandas as pd
 import polars as pl
 
-from polars_ta.utils.pit import ts_pit, period_to_quarter, peroid_to_ttm, point_to_ttm
+from polars_ta.utils.pit import pit_prepare, ttm_from_point, ANNOUNCE_DATE, pit_frist, ttm_from_period
 
-PATH_STEP0_INPUT1 = r'M:\data\jqresearch\get_STK_BALANCE_SHEET'
-PATH_STEP0_INPUT2 = r'M:\data\jqresearch\get_STK_INCOME_STATEMENT'
-PATH_STEP0_INPUT3 = r'M:\data\jqresearch\get_STK_CASHFLOW_STATEMENT'
+PATH_STEP0_INPUT1 = r'F:\data\jqresearch\get_STK_BALANCE_SHEET'
+PATH_STEP0_INPUT2 = r'F:\data\jqresearch\get_STK_INCOME_STATEMENT'
+PATH_STEP0_INPUT3 = r'F:\data\jqresearch\get_STK_CASHFLOW_STATEMENT'
 
 
 def load_parquet(folder):
@@ -18,40 +18,51 @@ def load_parquet(folder):
     return pl.from_pandas(dfs, nan_to_null=True)
 
 
-df1 = load_parquet(PATH_STEP0_INPUT1)
-df1 = df1.filter(pl.col('report_type') == 0)
-df2 = load_parquet(PATH_STEP0_INPUT2)
-df2 = df2.filter(pl.col('report_type') == 0)
-df3 = load_parquet(PATH_STEP0_INPUT3)
-df3 = df3.filter(pl.col('report_type') == 0)
-
-
-def func1(df: pl.DataFrame):
-    """balance sheet
-    资产负债表"""
-    df = df.with_columns(
-        point_to_ttm()
+def balance():
+    # https://www.joinquant.com/help/api/help#Stock:合并资产负债表
+    df1 = load_parquet(PATH_STEP0_INPUT1)
+    df1 = df1.filter(pl.col('report_type') == 0)
+    df1 = pit_prepare(df1, by1='code', by2='pub_date', by3='report_date')
+    df2 = df1.select(
+        "code", "pub_date", "report_date", ANNOUNCE_DATE,
+        "total_assets", ttm_from_point('total_assets').over('code', ANNOUNCE_DATE, order_by='report_date').name.suffix('_ttm'),
+        "equities_parent_company_owners", ttm_from_point('equities_parent_company_owners').over('code', ANNOUNCE_DATE, order_by='report_date').name.suffix('_ttm'),
     )
-    return df
+    df3 = pit_frist(df2, by1='code', by2='pub_date', by3='report_date', by4=ANNOUNCE_DATE)
+    return df3
 
 
-def func2(df: pl.DataFrame, date='report_date', update_time='pub_date', asset='code'):
-    """income statment, cash flow statment
-    利润表，现金流量表
-    """
-    df1 = df.with_columns(
-        # 转成单季
-        period_to_quarter(),
-        peroid_to_ttm(),
+def income():
+    # https://www.joinquant.com/help/api/help#Stock:合并利润表
+    df1 = load_parquet(PATH_STEP0_INPUT2)
+    df1 = df1.filter(pl.col('report_type') == 0)
+    df1 = df1.with_columns(quarter=pl.col('report_date').dt.quarter())
+    df1 = pit_prepare(df1, by1='code', by2='pub_date', by3='report_date')
+    df2 = df1.select(
+        "code", "pub_date", "report_date", ANNOUNCE_DATE,
+        "total_operating_revenue", ttm_from_period("total_operating_revenue", quarter='quarter').over('code', ANNOUNCE_DATE, order_by='report_date').name.suffix('_ttm'),
+        "net_profit", ttm_from_period('net_profit', quarter='quarter').over('code', ANNOUNCE_DATE, order_by='report_date').name.suffix('_ttm'),
     )
-    return df1
+    df3 = pit_frist(df2, by1='code', by2='pub_date', by3='report_date', by4=ANNOUNCE_DATE)
+    return df3
+
+
+def cashflow():
+    # https://www.joinquant.com/help/api/help#Stock:合并现金流量表
+    df1 = load_parquet(PATH_STEP0_INPUT3)
+    df1 = df1.filter(pl.col('report_type') == 0)
+    df1 = df1.with_columns(quarter=pl.col('report_date').dt.quarter())
+    df1 = pit_prepare(df1, by1='code', by2='pub_date', by3='report_date')
+    df2 = df1.select(
+        "code", "pub_date", "report_date", ANNOUNCE_DATE,
+        "net_operate_cash_flow", ttm_from_period("net_operate_cash_flow", quarter='quarter').over('code', ANNOUNCE_DATE, order_by='report_date').name.suffix('_ttm'),
+        "financial_cost", ttm_from_period('financial_cost', quarter='quarter').over('code', ANNOUNCE_DATE, order_by='report_date').name.suffix('_ttm'),
+    )
+    df3 = pit_frist(df2, by1='code', by2='pub_date', by3='report_date', by4=ANNOUNCE_DATE)
+    return df3
 
 
 if __name__ == '__main__':
-    d1 = df1.group_by('code').map_groups(lambda x: ts_pit(x, func=func1,
-                                                          date='report_date', update_time='pub_date', asset='code'))
-    d2 = df2.group_by('code').map_groups(lambda x: ts_pit(x, func=func2,
-                                                          date='report_date', update_time='pub_date', asset='code'))
-    d3 = df3.group_by('code').map_groups(lambda x: ts_pit(x, func=func2,
-                                                          date='report_date', update_time='pub_date', asset='code'))
-    print(d3.tail().to_pandas())
+    balance()
+    income()
+    cashflow()
