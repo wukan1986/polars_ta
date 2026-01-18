@@ -2,11 +2,18 @@
 复权算法
 1. 针对现金分红进行复权（使用加减法）
 2. 针对拆股进行复权（使用乘除法）
+
+factor1: 稀疏的复权因子
+factor2: 稠密的复权因子，之后主要使用这个
+
+复权因子使用方法
+乘除复权法：factor2*close
+加减复权法：factor2+close
 """
 
 
 def calc_factor_muldiv(df: pl.DataFrame,
-                       by1: str = 'stock_code', by2: str = 'time',
+                       by1: str = 'asset', by2: str = 'date',
                        close: str = 'close', pre_close: str = 'pre_close') -> pl.DataFrame:
     """计算复权因子，乘除法。使用交易所发布的昨收盘价计算
 
@@ -38,7 +45,7 @@ def calc_factor_muldiv(df: pl.DataFrame,
 
 
 def calc_factor_addsub(df: pl.DataFrame,
-                       by1: str = 'stock_code', by2: str = 'time',
+                       by1: str = 'asset', by2: str = 'date',
                        close: str = 'close', pre_close: str = 'pre_close') -> pl.DataFrame:
     """计算复权因子，加减法。使用交易所发布的昨收盘价计算
 
