@@ -34,14 +34,15 @@
 import polars as pl
 
 # 公布日。收盘后公布将会标记为下一日
-# 其实行情数据的日期就是报告日，隐去了公布日
-ANNOUNCE_DATE = '__ANNOUNCE_DATE__'
+# 其实行情数据的日期相当于报告日report_date，隐去了公布日announce_date，遇到要修正历史数据时才有公布日
+LOOKBACK_DATE = '__LOOKBACK_DATE__'
 
 
-def pit_prepare(df: pl.DataFrame,
+def pit_prepare(df: pl.DataFrame | pl.LazyFrame,
                 by1: str = 'asset',
-                by2: str = 'announce_date',
-                by3: str = 'report_date') -> pl.DataFrame:
+                by2: str = 'report_date',
+                by3: str = 'announce_date',
+                by4: str = LOOKBACK_DATE) -> pl.DataFrame | pl.LazyFrame:
     """将原始的财务表根据公布日重新扩展，输出满足以下条件：
 
     1. 根据股票和公布日分组
@@ -50,69 +51,94 @@ def pit_prepare(df: pl.DataFrame,
 
     Returns
     -------
-    pl.DataFrame
+    pl.DataFrame|pl.LazyFrame
         - asset
-        - announce_date
         - report_date
-        - __ANNOUNCE_DATE__
+        - announce_date
+        - LOOKBACK_DATE
             是公布日也是观察日，在观察日可以看到最新的历史数据，看不到未来数据
 
     """
-    TMP = '__TMP__'
+    tmp = '__TMP__'
+    # 6月30或9月30为一条数据时，upsample会是3月30，12月30，强行改成下月1日
+    df = df.with_columns(pl.col(by2).dt.offset_by(by='1d'))
 
     # 根据发布日期，笛卡尔扩展，过滤掉未来数据
     df1 = (
         df
-        .select(pl.col(by1).alias(TMP), pl.col(by2).alias(ANNOUNCE_DATE))
-        .join_where(df, (pl.col(TMP) == pl.col(by1)) & (pl.col(ANNOUNCE_DATE) >= pl.col(by2)))
-        .drop(TMP)
+        .select(pl.col(by1).alias(tmp), pl.col(by3).alias(by4))
+        .join_where(df, (pl.col(tmp) == pl.col(by1)) & (pl.col(by4) >= pl.col(by3)))
+        .drop(tmp)
     )
+    del df
 
-    # 过滤数据，同报告期只保留最新的一条
+    # 之后的操作shift(4)假定4期报告没有缺失，需要重采样补全
     df2 = (
         df1
-        .sort(by1, ANNOUNCE_DATE, by3, by2)
-        .unique([by1, ANNOUNCE_DATE, by3], keep="last", maintain_order=True)
+        .sort(by1, by4, by2, by3)
+        .upsample(by2, every='1q', group_by=[by1, by4], maintain_order=False)  # TODO 这步很慢，是否可以再优化，比如将upsample提前到join_where前？
+        .with_columns(pl.col(by1, by3, by4).backward_fill())  # TODO maintain_order排序是否影响？
     )
-    return df2
+    del df1
+
+    # 还原成上月底
+    df2 = df2.with_columns(pl.col(by2).dt.offset_by(by='-1d'))
+
+    # 过滤数据，同报告期只保留最新的一条
+    df3 = (
+        df2
+        .sort(by1, by4, by2, by3)
+        .unique([by1, by4, by2], keep="last", maintain_order=True)
+    )
+    del df2
+    return df3
 
 
-def pit_calc(df: pl.DataFrame,
+def pit_calc(df: pl.DataFrame | pl.LazyFrame,
              by1: str = 'asset',
-             by2: str = ANNOUNCE_DATE,
-             by3: str = 'report_date') -> pl.DataFrame:
-    """输入PIT分组的财务数据，组内计算时序指标"""
+             by2: str = 'report_date',
+             by4: str = LOOKBACK_DATE) -> pl.DataFrame | pl.LazyFrame:
+    """输入PIT分组的财务数据，组内计算时序指标
+
+    同观察期下，同一报告期只有一条最新数据，所以没有了by3
+    """
     df1 = (
         df.with_columns(
-            # TODO 补充其他各种时序指标，注意，不要少了`( ).over(by1, by2, order_by=by3)`
-            net_profit_to_total_operate_revenue_ttm=(pl.col('net_profit').rolling_mean(4) / pl.col('total_operating_revenue').rolling_mean(4)).over(by1, by2, order_by=by3)
+            # TODO 补充其他各种时序指标，注意，不要少了`( ).over(by1, by4, order_by=by2)`
+            net_profit_to_total_operate_revenue_ttm=(pl.col('net_profit').rolling_mean(4) / pl.col('total_operating_revenue').rolling_mean(4)).over(by1, by4, order_by=by2)
         )
     )
     return df1
 
 
-def pit_frist(df: pl.DataFrame,
+def pit_frist(df: pl.DataFrame | pl.LazyFrame,
               by1: str = 'asset',
-              by2: str = 'announce_date',
-              by3: str = 'report_date',
-              by4: str = ANNOUNCE_DATE) -> pl.DataFrame:
+              by2: str = 'report_date',
+              by3: str = 'announce_date',
+              by4: str = LOOKBACK_DATE) -> pl.DataFrame | pl.LazyFrame:
     """输入PIT分组的财务数据，多组合并保留最先发布的数据
 
     此数据不含未来数据，但原则上不能再做时序处理
 
     Returns
     -------
-    pl.DataFrame
+    pl.DataFrame|pl.LazyFrame
         - asset
-        - announce_date
         - report_date
+        - announce_date
+
+    Warnings
+    --------
+    结果不能时序计算，不能取历史，只能取最新
+
+    002509.XSHE 怎么处理？2019年报因故更新晚于2020年一季报，因为一季报先公布，所以2019年报显示永远为null
 
     """
     df1 = (
         df
-        .sort(by1, by2, by3, by4)
-        .unique([by1, by2, by3], keep="first", maintain_order=True)
-        .drop(ANNOUNCE_DATE)
+        .sort(by1, by4, by2, by3)
+        .unique([by1, by2], keep="first", maintain_order=True)
+        .drop(by4)  # 处理后by4的值与by2相等，直接丢弃
     )
     return df1
 
@@ -214,10 +240,20 @@ def ttm_from_period(col: pl.Expr | str, quarter: pl.Expr | str) -> pl.Expr:
     return pl.coalesce(f1, f2, f3)
 
 
-def join_quote_financial(quote: pl.DataFrame,
-                         financial: pl.DataFrame,
+def yoy(col: pl.Expr, period: int = 4) -> pl.Expr:
+    """YOY : （Year On Year）同比增长率 """
+    return (col - col.shift(period)) / col.shift(period).abs()
+
+
+def qoq(col: pl.Expr, period: int = 1) -> pl.Expr:
+    """QOQ : （Quarter On Quarter） 环比增长率"""
+    return (col - col.shift(period)) / col.shift(period).abs()
+
+
+def join_quote_financial(quote: pl.DataFrame | pl.LazyFrame,
+                         financial: pl.DataFrame | pl.LazyFrame,
                          by1: str = 'asset',
-                         by2: str = 'date'):
+                         by2: str = 'date') -> pl.DataFrame | pl.LazyFrame:
     """合并行情与财务表。请提前对财务表进行ttm等计算。因为之后再按报告期对齐很麻烦
 
     1. 同一天发布多期，需要正确排序最新一期
