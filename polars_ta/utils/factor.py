@@ -10,6 +10,7 @@ factor2: 稠密的复权因子，之后主要使用这个
 乘除复权法：factor2*close
 加减复权法：factor2+close
 """
+import polars as pl
 
 
 def calc_factor_muldiv(df: pl.DataFrame,
