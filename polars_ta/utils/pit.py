@@ -31,6 +31,8 @@
 这时的数据就可以做因子了，但不能做时序计算，时序计算得回到pit_calc中实现
 
 """
+from typing import Tuple
+
 import polars as pl
 
 # 公布日。收盘后公布将会标记为下一日
@@ -42,7 +44,8 @@ def pit_prepare(df: pl.DataFrame | pl.LazyFrame,
                 by1: str = 'asset',
                 by2: str = 'report_date',
                 by3: str = 'announce_date',
-                by4: str = LOOKBACK_DATE) -> pl.DataFrame | pl.LazyFrame:
+                by4: str = LOOKBACK_DATE,
+                lookback_year: str = '-5y') -> pl.DataFrame | pl.LazyFrame:
     """将原始的财务表根据公布日重新扩展，输出满足以下条件：
 
     1. 根据股票和公布日分组
@@ -59,39 +62,63 @@ def pit_prepare(df: pl.DataFrame | pl.LazyFrame,
             是公布日也是观察日，在观察日可以看到最新的历史数据，看不到未来数据
 
     """
-    tmp = '__TMP__'
-    # 6月30或9月30为一条数据时，upsample会是3月30，12月30，强行改成下月1日
-    df = df.with_columns(pl.col(by2).dt.offset_by(by='1d'))
 
-    # 根据发布日期，笛卡尔扩展，过滤掉未来数据
-    df1 = (
-        df
-        .select(pl.col(by1).alias(tmp), pl.col(by3).alias(by4))
-        .join_where(df, (pl.col(tmp) == pl.col(by1)) & (pl.col(by4) >= pl.col(by3)))
-        .drop(tmp)
-    )
-    del df
+    def upsample_by_cum_max(df: pl.DataFrame) -> Tuple[pl.DataFrame, pl.DataFrame]:
+        """分割数据，并将单调递增的数据进行重采样"""
+        # 取递增
+        df1 = df.filter((pl.col(by2) == pl.col(by2).cum_max()).over(by1, order_by=[by3, by2]))
 
-    # 之后的操作shift(4)假定4期报告没有缺失，需要重采样补全
-    df2 = (
-        df1
-        .sort(by1, by4, by2, by3)
-        .upsample(by2, every='1q', group_by=[by1, by4], maintain_order=False)  # TODO 这步很慢，是否可以再优化，比如将upsample提前到join_where前？
-        .with_columns(pl.col(by1, by3, by4).backward_fill())  # TODO maintain_order排序是否影响？
-    )
+        # 6月30或9月30为一条数据时，upsample会是3月30，12月30，强行改成下月1日
+        df1 = df1.with_columns(pl.col(by2).dt.offset_by(by='1d'))
+        df1 = df1.sort(by1, by2).upsample(by2, every='1q', group_by=by1).with_columns(pl.col(by1, by3).backward_fill())
+        # 还原成上月底
+        df1 = df1.with_columns(pl.col(by2).dt.offset_by(by='-1d'))
+
+        # 取非递增
+        df2 = df.filter((pl.col(by2) < pl.col(by2).cum_max()).over(by1, order_by=[by3, by2]))
+        return df1, df2
+
+    # =========================================
+    # ttm等操作shift(4)假定4期报告没有缺失，需要提前重采样补全
+    df2 = df.sort(by1, by3, by2)  # 按发布日排序，过滤单调递增
+    if isinstance(df, pl.LazyFrame):
+        df2 = df2.collect()
+
+    dfs = []
+    while True:
+        if df2.is_empty():
+            break
+        df1, df2 = upsample_by_cum_max(df2)
+        dfs.append(df1)
+    # 合并
+    df3 = pl.concat(dfs)
+    if isinstance(df, pl.LazyFrame):
+        df3 = df3.lazy()
+
     del df1
-
-    # 还原成上月底
-    df2 = df2.with_columns(pl.col(by2).dt.offset_by(by='-1d'))
-
+    del df2
+    del df
+    del dfs
+    # =========================================
+    # 根据发布日期，笛卡尔扩展，过滤掉未来数据
+    tmp1 = '__TMP_1__'
+    tmp2 = '__TMP_2__'
+    df1 = df3.select(pl.col(by1).alias(tmp1), pl.col(by3).dt.offset_by(lookback_year).alias(tmp2), pl.col(by3).alias(by4)).unique()
+    df1 = df1.join_where(df3,
+                         (pl.col(tmp1) == pl.col(by1))
+                         & (pl.col(by4) >= pl.col(by3))
+                         & (pl.col(tmp2) <= pl.col(by2))  # 最多观察lookback_year年前报告，减少计算量
+                         ).drop(tmp1, tmp2)
+    del df3
+    # =========================================
     # 过滤数据，同报告期只保留最新的一条
-    df3 = (
-        df2
+    df1 = (
+        df1
         .sort(by1, by4, by2, by3)
         .unique([by1, by4, by2], keep="last", maintain_order=True)
     )
-    del df2
-    return df3
+
+    return df1
 
 
 def pit_calc(df: pl.DataFrame | pl.LazyFrame,
@@ -138,7 +165,7 @@ def pit_frist(df: pl.DataFrame | pl.LazyFrame,
         df
         .sort(by1, by4, by2, by3)
         .unique([by1, by2], keep="first", maintain_order=True)
-        .drop(by4)  # 处理后by4的值与by2相等，直接丢弃
+        .drop(by4)  # 处理后by4的值与by2相等，可直接丢弃
     )
     return df1
 

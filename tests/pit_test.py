@@ -20,7 +20,7 @@ def load_parquet(folder):
 
 def balance():
     # https://www.joinquant.com/help/api/help#Stock:合并资产负债表
-    df1 = load_parquet(PATH_STEP0_INPUT1)
+    df1 = load_parquet(PATH_STEP0_INPUT1).lazy()
     df1 = df1.filter(pl.col('report_type') == 0)#.filter(pl.col('code') == '002509.XSHE')  # 天广中贸 疫情期 2019年报晚于2020一季报公布
     df1 = pit_prepare(df1, by1='code', by2='report_date', by3='pub_date', by4=LOOKBACK_DATE)
     df2 = df1.select(
@@ -29,7 +29,7 @@ def balance():
         "equities_parent_company_owners", ttm_from_point('equities_parent_company_owners').over('code', LOOKBACK_DATE, order_by='report_date').name.suffix('_ttm'),
     )
     df3 = pit_frist(df2, by1='code', by2='report_date', by3='pub_date', by4=LOOKBACK_DATE)
-    return df3
+    return df3.collect()
 
 
 def income():
