@@ -314,6 +314,9 @@ def join_quote_financial(quote: pl.DataFrame | pl.LazyFrame,
 #
 # STK_BALANCE_SHEET STK_INCOME_STATEMENT STK_CASHFLOW_STATEMENT
 # 披露最新报表report_type=0时会同时披露基准报表report_type=1，利用此功能实现历史调整
+#
+# 2019年年报20200611疫情晚于一季报公布，但2020一季报20200430资产负债表中基准是用的2019年报 002509.XSHE
+# https://www.cninfo.com.cn/new/disclosure/detail?orgId=9900015939&announcementId=1207687414&announcementTime=2020-04-30
 # =========================================
 def sheet_from_joinquant(df: pl.DataFrame | pl.LazyFrame) -> pl.DataFrame | pl.LazyFrame:
     """报表报告期调整，强制end_date为报告期

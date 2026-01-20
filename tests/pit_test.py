@@ -1,3 +1,4 @@
+import time
 from pathlib import Path
 
 import pandas as pd
@@ -18,9 +19,9 @@ def load_parquet(folder):
     return pl.from_pandas(dfs, nan_to_null=True)
 
 
-def balance():
+def balance(df1):
     # https://www.joinquant.com/help/api/help#Stock:合并资产负债表
-    df1 = load_parquet(PATH_STEP0_INPUT1).lazy()  # 002509.XSHE 600528.XSHG 000528.XSHE # 天广中贸 疫情期 2019年报晚于2020一季报公布
+    # 002509.XSHE 600528.XSHG 000528.XSHE # 天广中贸 疫情期 2019年报晚于2020一季报公布
     df1 = sheet_from_joinquant(df1)
     df1 = pit_prepare(df1, by1='code', by2='report_date', by3='pub_date', by4=LOOKBACK_DATE)
     df2 = df1.select(
@@ -29,12 +30,11 @@ def balance():
         "equities_parent_company_owners", ttm_from_point('equities_parent_company_owners').over('code', LOOKBACK_DATE, order_by='report_date').name.suffix('_ttm'),
     )
     df3 = pit_frist(df2, by1='code', by2='report_date', by3='pub_date', by4=LOOKBACK_DATE)
-    return df3.collect()
+    return df3
 
 
-def income():
+def income(df1):
     # https://www.joinquant.com/help/api/help#Stock:合并利润表
-    df1 = load_parquet(PATH_STEP0_INPUT2)
     df1 = sheet_from_joinquant(df1)
     df1 = df1.with_columns(quarter=pl.col('report_date').dt.quarter())
     df1 = pit_prepare(df1, by1='code', by2='report_date', by3='pub_date', by4=LOOKBACK_DATE)
@@ -47,9 +47,8 @@ def income():
     return df3
 
 
-def cashflow():
+def cashflow(df1):
     # https://www.joinquant.com/help/api/help#Stock:合并现金流量表
-    df1 = load_parquet(PATH_STEP0_INPUT3)
     df1 = sheet_from_joinquant(df1)
     df1 = df1.with_columns(quarter=pl.col('report_date').dt.quarter())
     df1 = pit_prepare(df1, by1='code', by2='report_date', by3='pub_date', by4=LOOKBACK_DATE)
@@ -63,6 +62,14 @@ def cashflow():
 
 
 if __name__ == '__main__':
-    balance()
-    income()
-    cashflow()
+    df1 = load_parquet(PATH_STEP0_INPUT1)
+    df2 = load_parquet(PATH_STEP0_INPUT2)
+    df3 = load_parquet(PATH_STEP0_INPUT3)
+
+    t1 = time.perf_counter()
+    balance(df1)
+    income(df2)
+    cashflow(df3)
+    t2 = time.perf_counter()
+
+    print(t2 - t1)
