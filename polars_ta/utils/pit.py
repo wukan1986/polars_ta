@@ -300,3 +300,24 @@ def join_quote_financial(quote: pl.DataFrame | pl.LazyFrame,
     financial = financial.sort(by1, by2)
 
     return quote.join_asof(financial, left_on=by2, right_on=by2, by=by1, strategy="backward", check_sortedness=False)
+
+
+# =========================================
+# 原始报告期数据预整理
+#
+# 因各种数据源设计理念不同，需要使用不同的预处理方法
+# =========================================
+
+
+# =========================================
+# 聚宽报告期财务数据
+#
+# STK_BALANCE_SHEET STK_INCOME_STATEMENT STK_CASHFLOW_STATEMENT
+# 披露最新报表report_type=0时会同时披露基准报表report_type=1，利用此功能实现历史调整
+# =========================================
+def sheet_from_joinquant(df: pl.DataFrame | pl.LazyFrame) -> pl.DataFrame | pl.LazyFrame:
+    """报表报告期调整，强制end_date为报告期
+
+    利用report_type=1的表进行历史数据调整，可部分实现PIT
+    """
+    return df.with_columns(report_date=pl.col('end_date'))
