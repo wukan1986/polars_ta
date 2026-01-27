@@ -1,8 +1,7 @@
 """
 除了使用概率极高的几个函数，其他函数不再对常量做lit
 """
-import numpy as np
-from polars import Expr, Series, fold, any_horizontal, Float64, Int64, lit
+from polars import Expr, fold, any_horizontal, Float64, Int64, lit
 from polars import arctan2 as _arctan2
 from polars import max_horizontal, sum_horizontal, min_horizontal, mean_horizontal
 
@@ -35,10 +34,9 @@ def abs_(x: Expr) -> Expr:
     ```
 
     """
-    if isinstance(x, (Expr, Series)):
-        return x.abs()
-    else:
-        return np.abs(x)
+    if not isinstance(x, Expr):
+        x = lit(x)
+    return x.abs()
 
 
 def add(a: Expr, b: Expr, *args) -> Expr:
@@ -83,56 +81,78 @@ def add(a: Expr, b: Expr, *args) -> Expr:
 
 def arc_cos(x: Expr) -> Expr:
     """反余弦"""
+    if not isinstance(x, Expr):
+        x = lit(x)
     return x.arccos()
 
 
 def arc_sin(x: Expr) -> Expr:
     """反正弦"""
+    if not isinstance(x, Expr):
+        x = lit(x)
     return x.arcsin()
 
 
 def arc_tan(x: Expr) -> Expr:
     """反正切"""
+    if not isinstance(x, Expr):
+        x = lit(x)
     return x.arctan()
 
 
 def arc_tan2(y: Expr, x: Expr) -> Expr:
     """反正切二值函数"""
+    if not isinstance(x, Expr):
+        x = lit(x)
     return _arctan2(y, x)
 
 
 def cbrt(x: Expr) -> Expr:
     """立方根"""
+    if not isinstance(x, Expr):
+        x = lit(x)
     return x.cbrt()
 
 
 def ceiling(x: Expr) -> Expr:
     """向上取整"""
+    if not isinstance(x, Expr):
+        x = lit(x)
     return x.ceil()
 
 
 def cos(x: Expr) -> Expr:
     """余弦"""
+    if not isinstance(x, Expr):
+        x = lit(x)
     return x.cos()
 
 
 def cosh(x: Expr) -> Expr:
     """双曲余弦"""
+    if not isinstance(x, Expr):
+        x = lit(x)
     return x.cosh()
 
 
 def cot(x: Expr) -> Expr:
     """余切"""
+    if not isinstance(x, Expr):
+        x = lit(x)
     return x.cot()
 
 
 def cube(x: Expr) -> Expr:
     """立方"""
+    if not isinstance(x, Expr):
+        x = lit(x)
     return x.pow(3)
 
 
 def degrees(x: Expr) -> Expr:
     """弧度转角度"""
+    if not isinstance(x, Expr):
+        x = lit(x)
     return x.degrees()
 
 
@@ -232,6 +252,8 @@ def exp(x: Expr) -> Expr:
     ```
 
     """
+    if not isinstance(x, Expr):
+        x = lit(x)
     return x.exp()
 
 
@@ -263,11 +285,15 @@ def expm1(x: Expr) -> Expr:
     ```
 
     """
+    if not isinstance(x, Expr):
+        x = lit(x)
     return x.exp() - 1
 
 
 def floor(x: Expr) -> Expr:
     """向下取整"""
+    if not isinstance(x, Expr):
+        x = lit(x)
     return x.floor()
 
 
@@ -310,6 +336,8 @@ def fraction(x: Expr) -> Expr:
     https://platform.worldquantbrain.com/learn/operators/detailed-operator-descriptions#fractionx
 
     """
+    if not isinstance(x, Expr):
+        x = lit(x)
     return x.sign() * (x.abs() % 1)
 
 
@@ -370,10 +398,9 @@ def log(x: Expr) -> Expr:
     ```
 
     """
-    if isinstance(x, (Expr, Series)):
-        return x.log()
-    else:
-        return np.log(x)
+    if not isinstance(x, Expr):
+        x = lit(x)
+    return x.log()
 
 
 def log10(x: Expr) -> Expr:
@@ -402,6 +429,8 @@ def log10(x: Expr) -> Expr:
     ```
 
     """
+    if not isinstance(x, Expr):
+        x = lit(x)
     return x.log10()
 
 
@@ -435,6 +464,8 @@ def log1p(x: Expr) -> Expr:
     ```
 
     """
+    if not isinstance(x, Expr):
+        x = lit(x)
     return x.log1p()
 
 
@@ -464,6 +495,8 @@ def log2(x: Expr) -> Expr:
     ```
 
     """
+    if not isinstance(x, Expr):
+        x = lit(x)
     return x.log(2)
 
 
@@ -633,6 +666,8 @@ def power(x: Expr, y: Expr) -> Expr:
 
 def radians(x: Expr) -> Expr:
     """角度转弧度"""
+    if not isinstance(x, Expr):
+        x = lit(x)
     return x.radians()
 
 
@@ -680,6 +715,8 @@ def round_(x: Expr, decimals: int = 0) -> Expr:
     四舍五入，不是四舍六入五取偶（银行家舍入）
 
     """
+    if not isinstance(x, Expr):
+        x = lit(x)
     return x.round(decimals)
 
 
@@ -760,15 +797,16 @@ def s_log_1p(x: Expr) -> Expr:
     https://platform.worldquantbrain.com/learn/operators/detailed-operator-descriptions#s_log_1px
 
     """
+    if not isinstance(x, Expr):
+        x = lit(x)
     return (x.abs() + 1).log10() * x.sign()
 
 
 def sign(x: Expr) -> Expr:
     """符号函数"""
-    if isinstance(x, (Expr, Series)):
-        return x.sign()
-    else:
-        return np.sign(x)
+    if not isinstance(x, Expr):
+        x = lit(x)
+    return x.sign()
 
 
 def signed_power(x: Expr, y: Expr) -> Expr:
@@ -824,11 +862,15 @@ def signed_power(x: Expr, y: Expr) -> Expr:
 
 def sin(x: Expr) -> Expr:
     """正弦"""
+    if not isinstance(x, Expr):
+        x = lit(x)
     return x.sin()
 
 
 def sinh(x: Expr) -> Expr:
     """双曲正弦"""
+    if not isinstance(x, Expr):
+        x = lit(x)
     return x.sinh()
 
 
@@ -859,16 +901,22 @@ def softsign(x: Expr) -> Expr:
     ```
 
     """
+    if not isinstance(x, Expr):
+        x = lit(x)
     return x / (1 + x.abs())
 
 
 def sqrt(x: Expr) -> Expr:
     """平方根"""
+    if not isinstance(x, Expr):
+        x = lit(x)
     return x.sqrt()
 
 
 def square(x: Expr) -> Expr:
     """平方"""
+    if not isinstance(x, Expr):
+        x = lit(x)
     return x.pow(2)
 
 
@@ -906,6 +954,8 @@ def tan(x: Expr) -> Expr:
     ```
 
     """
+    if not isinstance(x, Expr):
+        x = lit(x)
     return x.tan()
 
 
@@ -936,6 +986,8 @@ def tanh(x: Expr) -> Expr:
     ```
 
     """
+    if not isinstance(x, Expr):
+        x = lit(x)
     return x.tanh()
 
 

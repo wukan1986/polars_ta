@@ -212,11 +212,15 @@ def right_tail(x: Expr, minimum: float = 0) -> Expr:
 
 def sigmoid(x: Expr) -> Expr:
     """sigmoid激活函数"""
+    if not isinstance(x, Expr):
+        x = lit(x)
     return 1 / (1 + (-x).exp())
 
 
 def logit(x: Expr) -> Expr:
     """对数几率，拉伸中间部分"""
+    if not isinstance(x, Expr):
+        x = lit(x)
     return (x / (1 + x)).log()
 
 
