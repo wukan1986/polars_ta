@@ -1,4 +1,4 @@
-from polars import Expr, when, Boolean, Int32, Float32
+from polars import Expr, when, Boolean, Int32, Float32, lit
 
 
 def cut(x: Expr, b: float, *more_bins) -> Expr:
@@ -264,19 +264,32 @@ def tail(x: Expr, lower: float = 0, upper: float = 0, newval: float = 0) -> Expr
 
 def int_(a: Expr) -> Expr:
     """bool转int"""
+    if not isinstance(a, Expr):
+        a = lit(a)
     return a.cast(Int32)
 
 
 def bool_(a: Expr) -> Expr:
     """int转成bool"""
+    if not isinstance(a, Expr):
+        a = lit(a)
     return a.cast(Boolean)
 
 
 def float_(a: Expr) -> Expr:
     """int转成float"""
+    if not isinstance(a, Expr):
+        a = lit(a)
     return a.cast(Float32)
 
 
 def nop(x: Expr) -> Expr:
     """空操作"""
     return x
+
+
+def lit_(a: Expr) -> Expr:
+    """将常量封装成lit"""
+    if not isinstance(a, Expr):
+        return lit(a)
+    return a

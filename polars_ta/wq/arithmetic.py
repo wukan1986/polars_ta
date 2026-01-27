@@ -1,5 +1,8 @@
+"""
+除了使用概率极高的几个函数，其他函数不再对常量做lit
+"""
 import numpy as np
-from polars import Expr, Series, fold, any_horizontal, Float64, Int64
+from polars import Expr, Series, fold, any_horizontal, Float64, Int64, lit
 from polars import arctan2 as _arctan2
 from polars import max_horizontal, sum_horizontal, min_horizontal, mean_horizontal
 
@@ -619,6 +622,9 @@ def power(x: Expr, y: Expr) -> Expr:
     负数的非整数幂在实数中未定义
 
     """
+    if not isinstance(x, Expr):
+        x = lit(x)
+
     if isinstance(y, (int, float)):
         return x.pow(y)
 
@@ -802,6 +808,9 @@ def signed_power(x: Expr, y: Expr) -> Expr:
     https://platform.worldquantbrain.com/learn/operators/detailed-operator-descriptions#signed_powerx-y
 
     """
+    if not isinstance(x, Expr):
+        x = lit(x)
+
     if isinstance(y, (int, float)):
         if y == 1:
             return x.abs() * x.sign()
