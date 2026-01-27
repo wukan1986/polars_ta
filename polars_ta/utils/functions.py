@@ -32,6 +32,5 @@ def apply_const_to_expr():
     """
     frame = currentframe().f_back
     for k, v in frame.f_globals.items():
-        if inspect.isfunction(v):
-            if v.__module__ and v.__module__.startswith(polars_ta.__package__):
-                frame.f_locals[k] = const_to_expr(v)
+        if inspect.isfunction(v) and v.__module__ and v.__module__.startswith(polars_ta.__package__):
+            frame.f_locals[k] = const_to_expr(v)
