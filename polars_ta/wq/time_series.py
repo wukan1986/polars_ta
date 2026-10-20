@@ -145,7 +145,7 @@ def ts_corr(x: Expr, y: Expr, d: int = 5, ddof: int = 1, min_samples: Optional[i
     y
     d
     ddof
-        自由度
+        自由度。注意。已经弃用
     min_samples
 
     Notes
@@ -154,7 +154,7 @@ def ts_corr(x: Expr, y: Expr, d: int = 5, ddof: int = 1, min_samples: Optional[i
 
     """
     minp = min_samples or polars_ta.MIN_SAMPLES
-    return rolling_corr(x, y, window_size=d, ddof=ddof, min_samples=minp)
+    return rolling_corr(x, y, window_size=d, min_samples=minp)
 
 
 def ts_count(x: Expr, d: int = 30, min_samples: Optional[int] = None) -> Expr:
