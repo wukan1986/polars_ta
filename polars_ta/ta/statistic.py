@@ -10,6 +10,8 @@ from polars_ta.wq.time_series import ts_corr as CORREL  # noqa
 from polars import Expr
 
 from polars_ta.wq.time_series import ts_corr as CORREL  # noqa
+from polars_ta.wq.time_series import ts_decay_linear as _ts_decay_linear
+from polars_ta.wq.time_series import ts_mean as _ts_mean
 from polars_ta.wq.time_series import ts_std_dev
 
 
@@ -18,7 +20,25 @@ def BETA(high: Expr, low: Expr, timeperiod: int = 5) -> Expr:
 
 
 def LINEARREG(close: Expr, timeperiod: int = 14) -> Expr:
-    raise
+    """Linear Regression
+
+    Value at the last point of the least-squares line fitted to the last
+    `timeperiod` values.
+
+    Notes
+    -----
+    With x = 1..n over the window, the slope is `6 * (WMA - SMA) / (n - 1)`,
+    so the end point `SMA + slope * (n - 1) / 2` equals `3 * WMA - 2 * SMA`.
+
+    References
+    ----------
+    https://github.com/TA-Lib/ta-lib/blob/main/src/ta_func/ta_LINEARREG.c
+
+    """
+    # The identity only holds on a full window, so MIN_SAMPLES must not shrink it
+    wma = _ts_decay_linear(close, timeperiod, min_samples=timeperiod)
+    sma = _ts_mean(close, timeperiod, min_samples=timeperiod)
+    return wma * 3 - sma * 2
 
 
 def LINEARREG_ANGLE(close: Expr, timeperiod: int = 14) -> Expr:
